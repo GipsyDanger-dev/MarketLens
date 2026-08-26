@@ -15,9 +15,13 @@
   },
   "dependencies": {
     "@prisma/client": "^7.9.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.544.0",
     "next": "16.3.3",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "tailwind-merge": "^3.5.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
