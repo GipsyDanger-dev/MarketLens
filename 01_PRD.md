@@ -19,6 +19,7 @@ Its core value proposition is:
 Build the most accessible open-source toolkit for local market intelligence.
 
 A user should be able to:
+
 1. Search a category and location.
 2. Collect business/place data from one or more providers.
 3. Normalize and deduplicate the data.
@@ -31,6 +32,7 @@ A user should be able to:
 ## 3. Open-Source Positioning
 
 MarketLens should be:
+
 - Open source.
 - Self-hostable.
 - Easy to fork.
@@ -47,6 +49,7 @@ The project should avoid architecture that requires a single commercial provider
 Local market research is often manual and fragmented.
 
 Typical workflow today:
+
 1. Search businesses one by one.
 2. Copy names, ratings, addresses, categories, and links.
 3. Put data into spreadsheets.
@@ -61,6 +64,7 @@ MarketLens turns this process into a reproducible intelligence pipeline.
 ## 5. Target Users
 
 Primary users:
+
 - Entrepreneurs evaluating a local market.
 - Small business owners studying competitors.
 - Students doing market research.
@@ -70,6 +74,7 @@ Primary users:
 - Developers experimenting with geospatial/business data.
 
 Secondary users:
+
 - Incubators.
 - Universities.
 - Local economic researchers.
@@ -80,12 +85,15 @@ Secondary users:
 ## 6. Example Use Cases
 
 ### Market Research
+
 Input:
+
 - Category: Coffee Shop
 - Location: Malang
 - Radius: 5 km
 
 Output:
+
 - Business count
 - Average rating
 - Median reviews
@@ -96,11 +104,14 @@ Output:
 - Opportunity signals
 
 ### Competitor Analysis
+
 Input:
+
 - Selected business
 - Search radius
 
 Output:
+
 - Nearby competitors
 - Comparative ratings
 - Review authority
@@ -109,11 +120,14 @@ Output:
 - Strengths and weaknesses
 
 ### Location Intelligence
+
 Input:
+
 - Category
 - Candidate area
 
 Output:
+
 - Density map
 - Competition intensity
 - Business clusters
@@ -121,7 +135,9 @@ Output:
 - Opportunity signals
 
 ### Research Export
+
 Output:
+
 - CSV
 - JSON
 - PDF report
@@ -131,10 +147,12 @@ Output:
 MarketLens must use a provider adapter pattern.
 
 Supported MVP providers:
+
 1. OpenStreetMap / Overpass
 2. Google Places API (optional)
 
 Future providers:
+
 - Foursquare
 - Yelp
 - Custom CSV
@@ -166,6 +184,7 @@ interface AIProvider {
 ```
 
 Possible providers:
+
 - Gemini
 - OpenAI
 - Claude
@@ -205,6 +224,7 @@ Export / Report
 ## 10. Core MVP Features
 
 ### Research Management
+
 - Create research.
 - List research.
 - View research.
@@ -213,6 +233,7 @@ Export / Report
 - Track research status.
 
 ### Data Collection
+
 - Search by text/category/location.
 - Radius-based search where provider supports it.
 - Pagination.
@@ -221,6 +242,7 @@ Export / Report
 - Collection progress.
 
 ### Normalization
+
 - Normalize names.
 - Normalize categories.
 - Normalize coordinates.
@@ -228,13 +250,17 @@ Export / Report
 - Normalize provider metadata.
 
 ### Deduplication
+
 Primary:
+
 - provider + external ID
 
 Secondary:
+
 - normalized name + coordinates
 
 ### Market Analytics
+
 - Business count.
 - Average rating.
 - Median rating.
@@ -247,6 +273,7 @@ Secondary:
 - Competition score.
 
 ### Visualization
+
 - Interactive map.
 - Business markers.
 - Marker clustering.
@@ -257,7 +284,9 @@ Secondary:
 - Competitor ranking chart.
 
 ### AI Insights
+
 Optional:
+
 - Market summary.
 - Competition insights.
 - Opportunity signals.
@@ -266,6 +295,7 @@ Optional:
 - Limitations.
 
 ### Export
+
 - CSV
 - JSON
 - PDF report
@@ -289,6 +319,7 @@ All weights must be configurable and exposed.
 MarketLens may produce opportunity signals, but must not claim guaranteed commercial success.
 
 Possible signals:
+
 - Low competitor density.
 - Moderate-to-high review activity nearby.
 - Lack of highly rated incumbents.
@@ -296,6 +327,7 @@ Possible signals:
 - Category underrepresentation.
 
 Use wording such as:
+
 - Potential opportunity.
 - Market signal.
 - Possible gap.
@@ -304,6 +336,7 @@ Use wording such as:
 ## 13. AI Guardrails
 
 AI must:
+
 - Use only supplied data and computed metrics.
 - Never invent businesses.
 - Never invent ratings.
@@ -330,6 +363,7 @@ FAILED
 ## 15. Main Screens
 
 Landing Page:
+
 - Product overview.
 - Open-source positioning.
 - Screenshots.
@@ -339,6 +373,7 @@ Landing Page:
 - Self-hosting CTA.
 
 Dashboard:
+
 - Total research projects.
 - Total businesses analyzed.
 - Recently completed research.
@@ -346,6 +381,7 @@ Dashboard:
 - Quick create.
 
 Create Research:
+
 - Research name.
 - Data provider.
 - Category/query.
@@ -355,6 +391,7 @@ Create Research:
 - Optional filters.
 
 Research Progress:
+
 - Current stage.
 - Places discovered.
 - Places processed.
@@ -362,6 +399,7 @@ Research Progress:
 - Duration.
 
 Research Results:
+
 - Overview metrics.
 - Map.
 - Charts.
@@ -371,6 +409,7 @@ Research Results:
 - Export buttons.
 
 Settings:
+
 - Data providers.
 - API keys.
 - AI provider.
@@ -380,14 +419,17 @@ Settings:
 ## 16. Authentication Modes
 
 Hosted/public deployment:
+
 - Auth.js
 - Google OAuth
 
 Self-hosted/local mode:
+
 - Optional authentication.
 - Environment-configurable local mode.
 
 Future:
+
 - GitHub OAuth.
 - Email/password.
 - SSO.
@@ -395,6 +437,7 @@ Future:
 ## 17. High-Level Data Model
 
 Core entities:
+
 - User
 - ResearchProject
 - ResearchJob
@@ -411,6 +454,7 @@ Provider-specific raw data should be isolated from normalized application data.
 ## 18. Privacy and Data Handling
 
 MarketLens should:
+
 - Keep API keys server-side.
 - Avoid exposing provider secrets.
 - Allow users to delete research.
@@ -425,6 +469,7 @@ MarketLens should:
 ## 19. Non-Goals
 
 The MVP is not intended to:
+
 - Circumvent Google Maps protections.
 - Bypass CAPTCHAs.
 - Scrape private data.
@@ -438,6 +483,7 @@ The MVP is not intended to:
 ## 20. Open-Source Requirements
 
 Repository must contain:
+
 - README.md
 - LICENSE
 - CONTRIBUTING.md
@@ -453,14 +499,17 @@ Repository must contain:
 - Architecture documentation
 
 Recommended license:
+
 - Apache-2.0 or MIT
 
 Recommended default:
+
 - Apache-2.0 for explicit patent protection.
 
 ## 21. Repository Goals
 
 A new contributor should be able to:
+
 1. Clone repository.
 2. Copy `.env.example`.
 3. Start PostgreSQL with Docker.
@@ -477,6 +526,7 @@ Target onboarding:
 ## 22. Technology Stack
 
 Frontend:
+
 - Next.js
 - React
 - TypeScript
@@ -486,29 +536,36 @@ Frontend:
 - Recharts
 
 Backend:
+
 - Next.js Server Actions / Route Handlers
 
 Database:
+
 - PostgreSQL
 - Prisma ORM
 
 Maps:
+
 - Leaflet or MapLibre for provider-neutral visualization
 
 Data Providers:
+
 - OpenStreetMap / Overpass
 - Google Places adapter
 
 AI:
+
 - Provider adapter
 - Gemini initially
 
 Export:
+
 - CSV
 - JSON
 - @react-pdf/renderer
 
 Deployment:
+
 - Docker
 - Docker Compose
 - Vercel-compatible hosted frontend
@@ -537,6 +594,7 @@ AI
 AI is never a blocking dependency for core research data.
 
 If AI fails:
+
 - Dataset remains available.
 - Charts remain available.
 - Metrics remain available.
@@ -545,6 +603,7 @@ If AI fails:
 ## 25. Success Criteria
 
 MVP is successful when a user can:
+
 1. Self-host MarketLens.
 2. Create research.
 3. Select a provider.
@@ -564,6 +623,7 @@ MVP is successful when a user can:
 ## 26. Product Success Metrics
 
 Open-source:
+
 - GitHub stars.
 - Forks.
 - Contributors.
@@ -572,12 +632,14 @@ Open-source:
 - Releases.
 
 Product:
+
 - Research projects completed.
 - Businesses analyzed.
 - Report exports.
 - Repeat research sessions.
 
 Quality:
+
 - Collection success rate.
 - Provider error rate.
 - AI failure rate.

@@ -5,6 +5,7 @@
 ## 1. Architecture Objectives
 
 MarketLens must be:
+
 - Self-hostable.
 - Provider-agnostic.
 - Modular.
@@ -52,6 +53,7 @@ MarketLens must be:
 ## 3. Architectural Layers
 
 Presentation Layer:
+
 - Pages
 - Components
 - Forms
@@ -60,6 +62,7 @@ Presentation Layer:
 - Loading/error states
 
 Application Layer:
+
 - Research orchestration
 - Authentication
 - Authorization
@@ -68,6 +71,7 @@ Application Layer:
 - Progress state
 
 Domain Layer:
+
 - Normalization
 - Deduplication
 - Scoring
@@ -76,6 +80,7 @@ Domain Layer:
 - Geographic calculations
 
 Infrastructure Layer:
+
 - PostgreSQL
 - Prisma
 - Provider adapters
@@ -150,12 +155,14 @@ listProviders()
 ## 6. MVP Providers
 
 OpenStreetMap / Overpass:
+
 - Free/open default provider.
 - Basic POI discovery.
 - Self-host friendly.
 - Ratings/reviews may not exist.
 
 Google Places:
+
 - Optional enriched provider.
 - Ratings.
 - Review counts.
@@ -222,10 +229,12 @@ Any state may transition to FAILED.
 ## 10. Job Orchestration
 
 MVP:
+
 - Server-side async task abstraction.
 - Progress persisted in database.
 
 Future:
+
 - BullMQ
 - Redis
 - Worker service
@@ -267,6 +276,7 @@ If fields are unavailable, reweight available dimensions and disclose missing di
 ## 13. Geographic Engine
 
 Responsibilities:
+
 - Haversine distance
 - Radius filtering
 - Grid-based density
@@ -310,9 +320,11 @@ interface AIProvider {
 ```
 
 MVP:
+
 - Gemini adapter
 
 Future:
+
 - OpenAI
 - Anthropic
 - Ollama
@@ -321,6 +333,7 @@ Future:
 ## 16. Database Blueprint
 
 User:
+
 - id
 - name
 - email
@@ -329,6 +342,7 @@ User:
 - updatedAt
 
 ResearchProject:
+
 - id
 - userId
 - name
@@ -345,6 +359,7 @@ ResearchProject:
 - updatedAt
 
 ResearchJob:
+
 - id
 - researchProjectId
 - status
@@ -357,6 +372,7 @@ ResearchJob:
 - error
 
 Place:
+
 - id
 - researchProjectId
 - providerId
@@ -368,12 +384,14 @@ Unique:
 `researchProjectId + providerId + externalId`
 
 PlaceSnapshot:
+
 - id
 - placeId
 - payload
 - capturedAt
 
 MarketMetrics:
+
 - researchProjectId
 - totalBusinesses
 - averageRating
@@ -386,6 +404,7 @@ MarketMetrics:
 - calculatedAt
 
 CompetitorScore:
+
 - researchProjectId
 - placeId
 - overallScore
@@ -393,6 +412,7 @@ CompetitorScore:
 - explanation
 
 AIInsight:
+
 - researchProjectId
 - provider
 - model
@@ -401,6 +421,7 @@ AIInsight:
 - generatedAt
 
 Report:
+
 - researchProjectId
 - reportData
 - generatedAt
@@ -408,6 +429,7 @@ Report:
 ## 17. API / Server Action Blueprint
 
 Research:
+
 ```text
 createResearch()
 updateResearch()
@@ -417,6 +439,7 @@ listResearch()
 ```
 
 Collection:
+
 ```text
 startResearch()
 retryResearch()
@@ -424,24 +447,28 @@ getResearchProgress()
 ```
 
 Providers:
+
 ```text
 listProviders()
 testProvider()
 ```
 
 Analytics:
+
 ```text
 calculateResearchMetrics()
 getResearchAnalytics()
 ```
 
 AI:
+
 ```text
 generateResearchInsights()
 regenerateResearchInsights()
 ```
 
 Exports:
+
 ```text
 exportCSV()
 exportJSON()
@@ -451,17 +478,20 @@ generatePDF()
 ## 18. UI Blueprint
 
 Landing:
+
 - Get Started
 - View GitHub
 - Self Host
 
 Dashboard:
+
 - Research Projects
 - Businesses Analyzed
 - Completed Jobs
 - Providers Enabled
 
 Research Create Wizard:
+
 1. Provider
 2. Market
 3. Location
@@ -469,6 +499,7 @@ Research Create Wizard:
 5. Review
 
 Research Progress:
+
 - Discover
 - Collect
 - Normalize
@@ -476,6 +507,7 @@ Research Progress:
 - Generate Insights
 
 Research Result Tabs:
+
 - Overview
 - Businesses
 - Map
@@ -486,6 +518,7 @@ Research Result Tabs:
 ## 19. Map Architecture
 
 Default:
+
 - MapLibre GL or Leaflet
 
 Provider-specific renderer constraints must be enforced by adapters/UI integration when required.
@@ -493,14 +526,17 @@ Provider-specific renderer constraints must be enforced by adapters/UI integrati
 ## 20. Export Architecture
 
 CSV:
+
 - normalized tabular data
 
 JSON:
+
 - metadata
 - normalized places
 - metrics
 
 PDF:
+
 - executive summary
 - market statistics
 - charts
@@ -533,12 +569,14 @@ MAX_RESEARCH_RESULTS=250
 ## 22. Docker Blueprint
 
 MVP services:
+
 ```text
 web
 postgres
 ```
 
 Future:
+
 ```text
 worker
 redis
@@ -550,6 +588,7 @@ Goal:
 ## 23. Testing Strategy
 
 Unit:
+
 - normalization
 - deduplication
 - scoring
@@ -557,12 +596,14 @@ Unit:
 - provider mapping
 
 Integration:
+
 - research creation
 - provider adapter
 - DB persistence
 - analytics pipeline
 
 E2E:
+
 ```text
 Create research
 → run collection
@@ -592,6 +633,7 @@ build
 ## 25. Git Workflow
 
 Branches:
+
 ```text
 main
 feature/*
@@ -600,6 +642,7 @@ docs/*
 ```
 
 Conventional commits:
+
 ```text
 feat(provider): add openstreetmap adapter
 feat(analytics): add competition scoring
@@ -654,6 +697,7 @@ Open PR
 ```
 
 Provider test kit validates:
+
 - interface compatibility
 - normalized output
 - error handling

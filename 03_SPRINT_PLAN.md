@@ -9,6 +9,7 @@ Recommended duration: **1 week per sprint**
 Total: **13 development sprints + 1 release sprint**
 
 Every sprint ends with:
+
 - working build
 - tests for new core logic
 - docs update
@@ -21,6 +22,7 @@ Every sprint ends with:
 Goal: professional open-source repository before feature development.
 
 Tasks:
+
 - Initialize repository.
 - Next.js + TypeScript.
 - Tailwind + shadcn/ui.
@@ -42,12 +44,14 @@ Tasks:
 - CI workflow.
 
 Exit criteria:
+
 ```text
 git clone
 npm install
 docker compose up -d
 npm run dev
 ```
+
 works.
 
 Release: `v0.1.0`
@@ -57,6 +61,7 @@ Release: `v0.1.0`
 Goal: provider-neutral domain models and persistence.
 
 Tasks:
+
 - Prisma schema.
 - User.
 - ResearchProject.
@@ -83,6 +88,7 @@ Release: `v0.2.0`
 Goal: extensible data collection with a free default.
 
 Tasks:
+
 - PlaceProvider interface.
 - Provider capabilities.
 - Provider registry.
@@ -104,6 +110,7 @@ Release: `v0.3.0`
 Goal: convert provider results into persistent research datasets.
 
 Tasks:
+
 - Research orchestration.
 - Job status tracking.
 - Progress updates.
@@ -124,6 +131,7 @@ Release: `v0.4.0`
 Goal: clean, consistent datasets.
 
 Tasks:
+
 - Normalize business names.
 - Normalize categories.
 - Normalize addresses.
@@ -144,6 +152,7 @@ Release: `v0.5.0`
 Goal: deterministic local market intelligence.
 
 Tasks:
+
 - Total businesses.
 - Rating statistics.
 - Review statistics.
@@ -166,6 +175,7 @@ Release: `v0.6.0`
 Goal: make research visually understandable.
 
 Tasks:
+
 - Research results page.
 - Metric cards.
 - Business table.
@@ -187,6 +197,7 @@ Release: `v0.7.0`
 Goal: add geographic context.
 
 Tasks:
+
 - MapLibre/Leaflet integration.
 - Markers.
 - Clustering.
@@ -207,6 +218,7 @@ Release: `v0.8.0`
 Goal: actionable competitive analysis.
 
 Tasks:
+
 - Competitor ranking.
 - Competitor detail.
 - Score breakdown.
@@ -218,6 +230,7 @@ Tasks:
 
 Exit criteria:
 User can answer:
+
 ```text
 Who are the strongest competitors?
 Why are they strong?
@@ -231,6 +244,7 @@ Release: `v0.9.0-alpha.1`
 Goal: optional AI interpretation without making AI a dependency.
 
 Tasks:
+
 - AI provider interface.
 - Gemini adapter.
 - Structured output.
@@ -256,6 +270,7 @@ Release: `v0.9.0-alpha.2`
 Goal: richer optional provider.
 
 Tasks:
+
 - Google Places adapter.
 - Provider config UI.
 - API-key validation.
@@ -276,6 +291,7 @@ Release: `v0.9.0-beta.1`
 Goal: make research portable.
 
 Tasks:
+
 - CSV export.
 - JSON export.
 - PDF report.
@@ -297,6 +313,7 @@ Release: `v0.9.0-beta.2`
 Goal: genuinely usable open-source deployment.
 
 Tasks:
+
 - Production Docker image.
 - Docker Compose production profile.
 - Self-hosting guide.
@@ -322,6 +339,7 @@ Release: `v0.9.0-rc.1`
 Goal: polished v1.0.0.
 
 Tasks:
+
 - Landing page.
 - GitHub screenshots.
 - Architecture diagram.
@@ -340,6 +358,7 @@ Tasks:
 - Roadmap.
 
 Exit criteria:
+
 ```text
 Discover MarketLens
 ↓
@@ -359,15 +378,18 @@ Release: `v1.0.0`
 ## Fully Functional v1.0 Goal
 
 Installation:
+
 - local npm development
 - Docker Compose
 - PostgreSQL
 
 Providers:
+
 - OpenStreetMap / Overpass
 - Google Places optional
 
 Research:
+
 - create
 - run
 - track
@@ -375,12 +397,14 @@ Research:
 - delete
 
 Data Pipeline:
+
 - collection
 - normalization
 - deduplication
 - persistence
 
 Intelligence:
+
 - market metrics
 - geographic density
 - competition scoring
@@ -388,11 +412,13 @@ Intelligence:
 - opportunity signals
 
 Visualization:
+
 - table
 - charts
 - interactive map
 
 AI:
+
 - optional provider
 - market insights
 - risks
@@ -400,11 +426,13 @@ AI:
 - limitations
 
 Export:
+
 - CSV
 - JSON
 - PDF
 
 Open Source:
+
 - contributor docs
 - provider SDK
 - tests
@@ -424,6 +452,7 @@ npm run build       ✓
 ```
 
 For UI:
+
 ```text
 responsive check    ✓
 loading state       ✓
@@ -432,6 +461,7 @@ empty state         ✓
 ```
 
 For provider code:
+
 ```text
 provider tests      ✓
 error mapping       ✓
@@ -442,6 +472,7 @@ documentation       ✓
 ## Git Rule
 
 Recommended:
+
 ```text
 1 logical task
 =
@@ -452,6 +483,7 @@ Push commits to the remote after at most every 3 logical changes (3 commits).
 Push sooner when a milestone, handoff, or backup point requires it.
 
 Examples:
+
 ```text
 feat(provider): add provider registry
 feat(osm): implement overpass search
@@ -466,26 +498,31 @@ Never accumulate an entire sprint into one commit.
 ## Post-v1.0 Roadmap
 
 v1.1:
+
 - Research comparison.
 - Custom scoring profiles.
 - Better heatmaps.
 
 v1.2:
+
 - Provider plugin packages.
 - Foursquare/Yelp adapters.
 - CSV import provider.
 
 v1.3:
+
 - Ollama/local AI support.
 - Local embeddings.
 - Offline reports.
 
 v1.4:
+
 - Historical snapshots.
 - Change tracking.
 - Scheduled research.
 
 v2.0:
+
 - Worker architecture.
 - Queue support.
 - Multi-user organizations.
