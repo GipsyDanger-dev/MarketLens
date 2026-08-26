@@ -7,6 +7,15 @@ and this project uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-27
+
+### Added
+
+- Provider-neutral SDK contracts, capabilities, registry, typed errors, and
+  reusable contract test kit.
+- OpenStreetMap/Overpass provider with bounded search mapping, raw candidate
+  preservation, health checks, configuration, and provider documentation.
+
 ## [0.2.0] - 2026-08-26
 
 ### Added
