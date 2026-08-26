@@ -103,6 +103,7 @@ export class OpenStreetMapProvider implements PlaceProvider {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+          "User-Agent": "MarketLens/0.2.0 (self-hosted place intelligence)",
         },
         body: new URLSearchParams({ data: query }),
         signal: controller.signal,
