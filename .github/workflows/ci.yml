@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      - run: npm ci --ignore-scripts
+      - run: npm ci
       - run: npm run db:validate
       - run: npm run lint
       - run: npm run typecheck
