@@ -10,10 +10,10 @@ provider so a local installation remains useful without paid data or AI APIs.
 
 ## Status
 
-Sprint 2 (`v0.3.0`) is complete. The foundation now includes the provider-neutral
-domain/database layer plus a tested OpenStreetMap/Overpass adapter, provider
-registry, health checks, and typed error handling. Research orchestration and
-persistence of provider results begin in Sprint 3.
+Sprint 3 (`v0.4.0`) is complete. Research projects now run a persisted
+collection job from `QUEUED` through `READY` or `FAILED`, store provider
+candidates and raw snapshots, support explicit retry, and expose progress over
+API and UI. Deterministic normalization and deduplication begin in Sprint 4.
 
 ## Quick start
 
@@ -62,6 +62,8 @@ npm run test:e2e --workspace=@marketlens/web
 
 See [docs/provider-sdk.md](docs/provider-sdk.md) for Overpass configuration,
 limits, attribution, and the contract for new adapters.
+See [docs/research-pipeline.md](docs/research-pipeline.md) for the collection
+lifecycle, API, retry behavior, and operational constraints.
 
 See the product and implementation plans in [01_PRD.md](01_PRD.md),
 [02_BLUEPRINT.md](02_BLUEPRINT.md), and [03_SPRINT_PLAN.md](03_SPRINT_PLAN.md).

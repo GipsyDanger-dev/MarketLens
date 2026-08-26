@@ -11,6 +11,15 @@ cascades to its jobs, places, snapshots, metrics, scores, insights, and reports.
 Provider payloads are retained only in `PlaceSnapshot.payload`; analytics must
 use the normalized `Place` fields instead.
 
+## Collection jobs
+
+Sprint 3 creates a `ResearchJob` for every collection attempt. The job and its
+project advance through `QUEUED`, `COLLECTING`, `NORMALIZING`, `ANALYZING`, and
+`READY`, or both become `FAILED`. `totalDiscovered`, `totalProcessed`,
+`totalFailed`, and `progress` are persisted for the progress UI. Retrying after
+a failure creates a new job while place upserts preserve one row per provider
+external ID and append a fresh `PlaceSnapshot`.
+
 ## Commands
 
 ```bash
