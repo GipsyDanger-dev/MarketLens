@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 export default function Home() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-slate-100">
@@ -15,6 +17,9 @@ export default function Home() {
         <p className="text-sm text-slate-400">
           Sprint 0 foundation is underway.
         </p>
+        <Button variant="outline" disabled>
+          Research workspace coming in Sprint 1
+        </Button>
       </section>
     </main>
   );
