@@ -7,6 +7,15 @@ and this project uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-08-27
+
+### Added
+
+- Persisted research collection jobs with project state transitions, progress
+  counters, failed-item handling, and explicit retry.
+- Provider candidate persistence with idempotent place upserts, raw snapshots,
+  Node runtime collection API, and responsive progress UI.
+
 ## [0.3.0] - 2026-08-27
 
 ### Added
