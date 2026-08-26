@@ -16,6 +16,8 @@
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
+    "format": "prettier --check .",
+    "format:write": "prettier --write .",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
@@ -28,6 +30,7 @@
   "packageManager": "npm@11.17.0",
   "devDependencies": {
     "dotenv": "^17.3.1",
+    "prettier": "^3.8.3",
     "prisma": "^7.9.1"
   }
 }
