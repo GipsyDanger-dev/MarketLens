@@ -18,7 +18,9 @@ export const metadata: Metadata = {
   description: "Open-source local business intelligence.",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: ReactNode }>) {
   return (
     <html
       lang="en"

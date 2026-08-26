@@ -12,7 +12,9 @@ export default function Home() {
           An open-source platform for collecting, normalizing, and analyzing
           local business data without making paid providers or AI mandatory.
         </p>
-        <p className="text-sm text-slate-400">Sprint 0 foundation is underway.</p>
+        <p className="text-sm text-slate-400">
+          Sprint 0 foundation is underway.
+        </p>
       </section>
     </main>
   );
