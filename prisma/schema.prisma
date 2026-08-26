@@ -7,10 +7,165 @@ datasource db {
   provider = "postgresql"
 }
 
+enum ResearchStatus {
+  DRAFT
+  QUEUED
+  COLLECTING
+  NORMALIZING
+  ANALYZING
+  READY
+  FAILED
+}
+
 model AppMetadata {
   id        String   @id @default(cuid())
   key       String   @unique
   value     Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model User {
+  id        String            @id @default(cuid())
+  name      String?
+  email     String            @unique
+  image     String?
+  projects  ResearchProject[]
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
+model ResearchProject {
+  id               String            @id @default(cuid())
+  userId           String?
+  name             String
+  providerId       String
+  query            String
+  category         String?
+  locationQuery    String
+  latitude         Float
+  longitude        Float
+  radiusMeters     Int
+  maxResults       Int               @default(250)
+  status           ResearchStatus    @default(DRAFT)
+  user             User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
+  jobs             ResearchJob[]
+  places           Place[]
+  marketMetrics    MarketMetrics?
+  competitorScores CompetitorScore[]
+  aiInsights       AIInsight[]
+  reports          Report[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model ResearchJob {
+  id                String          @id @default(cuid())
+  researchProjectId String
+  status            ResearchStatus  @default(QUEUED)
+  totalDiscovered   Int             @default(0)
+  totalProcessed    Int             @default(0)
+  totalFailed       Int             @default(0)
+  progress          Int             @default(0)
+  startedAt         DateTime?
+  completedAt       DateTime?
+  error             String?
+  researchProject   ResearchProject @relation(fields: [researchProjectId], references: [id], onDelete: Cascade)
+
+  @@index([researchProjectId, status])
+}
+
+model Place {
+  id                String            @id @default(cuid())
+  researchProjectId String
+  providerId        String
+  externalId        String
+  name              String
+  normalizedName    String
+  category          String?
+  providerTypes     String[]
+  address           String?
+  city              String?
+  district          String?
+  country           String?
+  latitude          Float
+  longitude         Float
+  rating            Float?
+  reviewCount       Int?
+  phone             String?
+  website           String?
+  sourceUrl         String?
+  businessStatus    String?
+  collectedAt       DateTime          @default(now())
+  researchProject   ResearchProject   @relation(fields: [researchProjectId], references: [id], onDelete: Cascade)
+  snapshots         PlaceSnapshot[]
+  competitorScores  CompetitorScore[]
+
+  @@unique([researchProjectId, providerId, externalId])
+  @@index([researchProjectId, normalizedName])
+}
+
+model PlaceSnapshot {
+  id         String   @id @default(cuid())
+  placeId    String
+  payload    Json
+  capturedAt DateTime @default(now())
+  place      Place    @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  @@index([placeId, capturedAt])
+}
+
+model MarketMetrics {
+  id                 String          @id @default(cuid())
+  researchProjectId  String          @unique
+  totalBusinesses    Int
+  averageRating      Float?
+  medianRating       Float?
+  averageReviewCount Float?
+  medianReviewCount  Float?
+  competitionScore   Float?
+  densityScore       Float?
+  metricJson         Json
+  calculatedAt       DateTime        @default(now())
+  researchProject    ResearchProject @relation(fields: [researchProjectId], references: [id], onDelete: Cascade)
+}
+
+model CompetitorScore {
+  id                String          @id @default(cuid())
+  researchProjectId String
+  placeId           String
+  overallScore      Float
+  componentScores   Json
+  explanation       String?
+  researchProject   ResearchProject @relation(fields: [researchProjectId], references: [id], onDelete: Cascade)
+  place             Place           @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  @@unique([researchProjectId, placeId])
+  @@index([researchProjectId, overallScore])
+}
+
+model AIInsight {
+  id                String          @id @default(cuid())
+  researchProjectId String
+  provider          String
+  model             String
+  promptVersion     String
+  insightJson       Json
+  generatedAt       DateTime        @default(now())
+  researchProject   ResearchProject @relation(fields: [researchProjectId], references: [id], onDelete: Cascade)
+
+  @@index([researchProjectId, generatedAt])
+}
+
+model Report {
+  id                String          @id @default(cuid())
+  researchProjectId String
+  reportData        Json
+  generatedAt       DateTime        @default(now())
+  researchProject   ResearchProject @relation(fields: [researchProjectId], references: [id], onDelete: Cascade)
+
+  @@index([researchProjectId, generatedAt])
 }

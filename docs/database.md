@@ -1,8 +1,15 @@
 # Database
 
-MarketLens uses PostgreSQL with Prisma ORM. Sprint 0 establishes the connection
-configuration and an `AppMetadata` table used only to verify the migration path;
-the research, provider, and analytics domain models begin in Sprint 1.
+MarketLens uses PostgreSQL with Prisma ORM. The Sprint 1 schema stores the
+provider-neutral research domain: users, research projects and jobs, normalized
+places and raw snapshots, deterministic metrics and scores, optional AI insights,
+and generated reports. `AppMetadata` remains available for application metadata.
+
+Each `ResearchProject` uses one `providerId` for the MVP. A project can be
+unowned when authentication is disabled for self-hosting. Deleting a project
+cascades to its jobs, places, snapshots, metrics, scores, insights, and reports.
+Provider payloads are retained only in `PlaceSnapshot.payload`; analytics must
+use the normalized `Place` fields instead.
 
 ## Commands
 
