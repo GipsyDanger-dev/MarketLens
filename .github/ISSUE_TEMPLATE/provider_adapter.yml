@@ -1,0 +1,32 @@
+name: Provider adapter proposal
+description: Propose or request a provider integration.
+title: "provider: "
+labels: ["provider"]
+body:
+  - type: input
+    id: provider
+    attributes:
+      label: Provider name
+    validations:
+      required: true
+  - type: textarea
+    id: capabilities
+    attributes:
+      label: Supported capabilities
+      description: Cover text/nearby search, details, ratings, reviews, phone, website, and opening hours.
+    validations:
+      required: true
+  - type: textarea
+    id: compliance
+    attributes:
+      label: Terms, attribution, and retention
+      description: Link official documentation. Do not include credentials.
+    validations:
+      required: true
+  - type: textarea
+    id: operational
+    attributes:
+      label: Limits and failure behavior
+      description: Describe rate limits, pagination, quotas, error formats, and expected availability.
+    validations:
+      required: true
