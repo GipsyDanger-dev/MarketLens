@@ -80,6 +80,7 @@ export async function updateResearchCollectionStage(options: {
   totalDiscovered?: number;
   totalProcessed?: number;
   totalFailed?: number;
+  progress?: number;
 }): Promise<void> {
   await prisma.$transaction([
     prisma.researchProject.update({
@@ -90,7 +91,9 @@ export async function updateResearchCollectionStage(options: {
       where: { id: options.jobId },
       data: {
         status: options.status,
-        progress: collectionProgressByStatus[options.status],
+        progress: clampProgress(
+          options.progress ?? collectionProgressByStatus[options.status],
+        ),
         totalDiscovered: options.totalDiscovered,
         totalProcessed: options.totalProcessed,
         totalFailed: options.totalFailed,
@@ -280,4 +283,8 @@ function serializeRawData(value: unknown): Prisma.InputJsonObject {
   }
 
   return { data: JSON.parse(serialized) } as Prisma.InputJsonObject;
+}
+
+function clampProgress(progress: number): number {
+  return Math.max(0, Math.min(100, Math.round(progress)));
 }
