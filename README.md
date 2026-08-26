@@ -10,9 +10,10 @@ provider so a local installation remains useful without paid data or AI APIs.
 
 ## Status
 
-Sprint 0 is establishing the project foundation. The web application, test
-tooling, Prisma/PostgreSQL configuration, and Docker development stack are in
-place; product data models and provider adapters begin in Sprint 1 and Sprint 2.
+Sprint 2 (`v0.3.0`) is complete. The foundation now includes the provider-neutral
+domain/database layer plus a tested OpenStreetMap/Overpass adapter, provider
+registry, health checks, and typed error handling. Research orchestration and
+persistence of provider results begin in Sprint 3.
 
 ## Quick start
 
@@ -58,6 +59,9 @@ npm run test:e2e --workspace=@marketlens/web
 - Place and AI integrations use provider adapters.
 - Provider-specific data stays outside normalized analytics models.
 - Secrets remain server-side and the project remains self-hostable.
+
+See [docs/provider-sdk.md](docs/provider-sdk.md) for Overpass configuration,
+limits, attribution, and the contract for new adapters.
 
 See the product and implementation plans in [01_PRD.md](01_PRD.md),
 [02_BLUEPRINT.md](02_BLUEPRINT.md), and [03_SPRINT_PLAN.md](03_SPRINT_PLAN.md).
