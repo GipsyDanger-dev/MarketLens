@@ -15,10 +15,10 @@ export default function Home() {
           local business data without making paid providers or AI mandatory.
         </p>
         <p className="text-sm text-slate-400">
-          Sprint 0 foundation is underway.
+          Sprint 3 collection pipeline is ready for research projects.
         </p>
         <Button variant="outline" disabled>
-          Research workspace coming in Sprint 1
+          Research creation workspace coming next
         </Button>
       </section>
     </main>
