@@ -10,6 +10,13 @@ export const serverEnvironmentSchema = z.object({
   DEFAULT_PLACE_PROVIDER: z.string().min(1).default("openstreetmap"),
   ENABLE_AI: booleanFromEnvironment,
   ENABLE_AUTH: booleanFromEnvironment,
+  OVERPASS_API_URL: z.url().default("https://overpass-api.de/api/interpreter"),
+  OVERPASS_TIMEOUT_SECONDS: z.coerce
+    .number()
+    .int()
+    .positive()
+    .max(60)
+    .default(25),
   MAX_RESEARCH_RESULTS: z.coerce
     .number()
     .int()
