@@ -25,3 +25,13 @@ jobs:
       - run: npm run typecheck
       - run: npm run test
       - run: npm run build
+
+  docker-compose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose up --build --wait
+      - run: docker compose exec -T web npm run db:deploy
+      - run: docker compose ps
+      - if: always()
+        run: docker compose down --volumes --remove-orphans
