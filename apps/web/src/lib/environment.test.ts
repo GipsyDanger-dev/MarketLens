@@ -5,7 +5,8 @@ import { parseServerEnvironment } from "./environment";
 describe("parseServerEnvironment", () => {
   it("uses safe feature defaults and parses numeric configuration", () => {
     const environment = parseServerEnvironment({
-      DATABASE_URL: "postgresql://marketlens:marketlens@localhost:5432/marketlens",
+      DATABASE_URL:
+        "postgresql://marketlens:marketlens@localhost:5432/marketlens",
       MAX_RESEARCH_RESULTS: "250",
     });
 
