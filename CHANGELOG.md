@@ -7,13 +7,18 @@ and this project uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-26
+
 ### Added
 
-- Sprint 0 repository, web application, testing, Prisma, Docker, and
-  contribution foundations.
+- Provider-neutral Prisma models and migration for research, places, metrics,
+  competitor scores, AI insights, and reports.
+- Validated research-domain contracts, status transitions, and project
+  persistence with PostgreSQL integration coverage.
 
 ## [0.1.0] - 2026-08-26
 
 ### Added
 
-- Initial MarketLens project foundation.
+- Sprint 0 repository, web application, testing, Prisma, Docker, and
+  contribution foundations.
