@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.8.0 — Map & Geospatial Intelligence
+
+- Add a provider-neutral MapLibre map with GeoJSON clusters and research radius.
+- Synchronize selected places and geographic filtering between the map and table.
+
 ## v0.7.0 — Results Dashboard
 
 - Add an API payload for persisted research results and analytics.
