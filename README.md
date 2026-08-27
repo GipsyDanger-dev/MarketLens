@@ -10,10 +10,9 @@ provider so a local installation remains useful without paid data or AI APIs.
 
 ## Status
 
-Sprint 6 (`v0.7.0`) is complete. Completed research now has a responsive
-results dashboard with market metric cards, rating/review distributions,
-business search and sorting, competition scores, plus clear loading, empty, and
-error states.
+Sprint 7 (`v0.8.0`) is complete. Completed research now adds a provider-neutral
+interactive map with clustered businesses, research-radius visualization,
+marker/table selection, and an in-radius geographic filter.
 
 ## Quick start
 
@@ -70,6 +69,7 @@ See [docs/analytics.md](docs/analytics.md) for deterministic metric, scoring,
 and opportunity-signal rules.
 See [docs/results-dashboard.md](docs/results-dashboard.md) for the results
 endpoint and dashboard behavior.
+See [docs/map.md](docs/map.md) for map tiles, clustering, and geospatial filters.
 
 See the product and implementation plans in [01_PRD.md](01_PRD.md),
 [02_BLUEPRINT.md](02_BLUEPRINT.md), and [03_SPRINT_PLAN.md](03_SPRINT_PLAN.md).
