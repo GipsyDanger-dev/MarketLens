@@ -9,6 +9,10 @@ import type { ResearchStatus } from "../core/research-status";
 import type { PersistablePlaceCandidate } from "../research/candidate-to-place";
 import { ResearchCollectionError } from "../research/collection-error";
 import {
+  calculateDataQualityMetrics,
+  type DataQualityMetrics,
+} from "../research/data-quality";
+import {
   collectionProgressByStatus,
   type ResearchProgress,
 } from "../research/progress";
@@ -258,6 +262,38 @@ export async function getResearchProgress(
     completedAt: job?.completedAt ?? null,
     error: job?.error ?? null,
   };
+}
+
+export async function getResearchDataQuality(
+  projectId: string,
+): Promise<DataQualityMetrics> {
+  const project = await prisma.researchProject.findUnique({
+    where: { id: projectId },
+    select: {
+      places: {
+        select: {
+          providerId: true,
+          externalId: true,
+          normalizedName: true,
+          category: true,
+          address: true,
+          latitude: true,
+          longitude: true,
+          phone: true,
+          website: true,
+        },
+      },
+    },
+  });
+
+  if (!project) {
+    throw new ResearchCollectionError(
+      "PROJECT_NOT_FOUND",
+      "Research project was not found.",
+    );
+  }
+
+  return calculateDataQualityMetrics(project.places);
 }
 
 function pickCollectableProject(

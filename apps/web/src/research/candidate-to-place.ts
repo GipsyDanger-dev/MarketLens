@@ -1,4 +1,10 @@
 import type { PlaceCandidate } from "../providers/types";
+import {
+  normalizeAddress,
+  normalizeBusinessName,
+  normalizeCategory,
+  normalizeCoordinates,
+} from "./normalization";
 
 export interface PersistablePlaceCandidate {
   providerId: string;
@@ -25,14 +31,22 @@ export function candidateToPersistablePlace(
   candidate: PlaceCandidate,
 ): PersistablePlaceCandidate | null {
   const name = candidate.name?.trim();
+  const normalizedName = normalizeBusinessName(name);
+  const coordinates = normalizeCoordinates(
+    candidate.latitude,
+    candidate.longitude,
+  );
 
-  if (!name) {
+  if (!name || !normalizedName || !coordinates) {
     return null;
   }
 
   return {
     ...candidate,
     name,
-    normalizedName: name.normalize("NFKC").toLocaleLowerCase(),
+    normalizedName,
+    category: normalizeCategory(candidate.category, candidate.providerTypes),
+    address: normalizeAddress(candidate.address),
+    ...coordinates,
   };
 }

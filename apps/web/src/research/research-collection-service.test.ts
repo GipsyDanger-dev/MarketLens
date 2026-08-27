@@ -12,15 +12,15 @@ const describeDatabase =
 const candidate = {
   providerId: "test-provider",
   externalId: "node/42",
-  name: "Kopi Kita",
-  category: "cafe",
+  name: "  Kopi Kità ",
+  category: "Coffee Shop",
   providerTypes: ["amenity:cafe"],
-  address: null,
+  address: " Jl. Kemang No. 10 ",
   city: "Jakarta",
   district: null,
   country: "ID",
-  latitude: -6.2,
-  longitude: 106.8,
+  latitude: -6.2000004,
+  longitude: 106.7999996,
   phone: null,
   website: null,
   sourceUrl: "https://example.test/node/42",
@@ -33,6 +33,7 @@ describeDatabase("research collection service", () => {
   let createResearchProject: typeof import("../lib/research-project-repository").createResearchProject;
   let deleteResearchProject: typeof import("../lib/research-project-repository").deleteResearchProject;
   let prisma: typeof import("../lib/prisma").prisma;
+  let getResearchDataQuality: typeof import("../lib/research-collection-repository").getResearchDataQuality;
   let runResearchCollection: typeof import("./research-collection-service").runResearchCollection;
   let retryResearchCollection: typeof import("./research-collection-service").retryResearchCollection;
   const projectIds: string[] = [];
@@ -41,6 +42,8 @@ describeDatabase("research collection service", () => {
     ({ createResearchProject, deleteResearchProject } =
       await import("../lib/research-project-repository"));
     ({ prisma } = await import("../lib/prisma"));
+    ({ getResearchDataQuality } =
+      await import("../lib/research-collection-repository"));
     ({ runResearchCollection, retryResearchCollection } =
       await import("./research-collection-service"));
   });
@@ -78,8 +81,26 @@ describeDatabase("research collection service", () => {
       }),
     ).resolves.toMatchObject({
       status: "READY",
-      places: [{ externalId: "node/42", snapshots: [{}, {}] }],
+      places: [
+        {
+          externalId: "node/42",
+          name: "Kopi Kità",
+          normalizedName: "kopi kita",
+          category: "cafe",
+          address: "jalan kemang nomor 10",
+          latitude: -6.2,
+          longitude: 106.8,
+          snapshots: [{}, {}],
+        },
+      ],
       jobs: [{ status: "READY" }, { status: "READY" }],
+    });
+    await expect(getResearchDataQuality(project.id)).resolves.toMatchObject({
+      totalPlaces: 1,
+      completeRecords: 1,
+      duplicatePrimaryIdentities: 0,
+      fieldCompletenessPercent: 67,
+      recordCompletenessPercent: 100,
     });
   });
 
