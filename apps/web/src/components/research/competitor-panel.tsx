@@ -1,10 +1,17 @@
 "use client";
 
+import {
+  nearbyCompetitors,
+  scoreNarrative,
+} from "@/analytics/competitor-intelligence";
+
 interface Competitor {
   id: string;
   name: string;
   rating: number | null;
   reviewCount: number | null;
+  latitude: number;
+  longitude: number;
   competitorScores: {
     overallScore: number;
     explanation: string | null;
@@ -33,6 +40,8 @@ export function CompetitorPanel({
   const components = Object.entries(score?.componentScores ?? {}).sort(
     ([, left], [, right]) => right - left,
   );
+  const narrative = scoreNarrative(score?.componentScores ?? {});
+  const nearby = nearbyCompetitors(selected, ranked, 1_000);
   return (
     <section className="grid gap-5 rounded-2xl border border-slate-800 bg-slate-900/70 p-5 lg:grid-cols-2">
       <div>
@@ -76,6 +85,21 @@ export function CompetitorPanel({
             </div>
           ))}
         </dl>
+        <p className="mt-4 text-sm text-slate-300">
+          Strengths: {narrative.strengths.join(", ") || "—"}
+        </p>
+        <p className="text-sm text-slate-300">
+          Weaknesses: {narrative.weaknesses.join(", ") || "—"}
+        </p>
+        <p className="mt-4 text-sm text-slate-300">
+          Nearby within 1 km:{" "}
+          {nearby
+            .map(
+              ({ place, distanceMeters }) =>
+                `${place.name} (${distanceMeters}m)`,
+            )
+            .join(", ") || "None"}
+        </p>
       </div>
     </section>
   );
