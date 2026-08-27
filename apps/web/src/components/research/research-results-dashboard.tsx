@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ResearchMap } from "./research-map";
 import { CompetitorPanel } from "./competitor-panel";
 import { ResearchAiInsights } from "./research-ai-insights";
+import { ResearchExportControls } from "./research-export-controls";
 
 interface PlaceResult {
   id: string;
@@ -190,6 +191,7 @@ export function ResearchResultsDashboard({
         selectedPlaceId={selectedPlaceId}
       />
       <ResearchAiInsights researchId={researchId} />
+      <ResearchExportControls researchId={researchId} />
       <section className="space-y-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:p-6">
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
           <div>
