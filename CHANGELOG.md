@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.9.0-alpha.2 — Optional AI Intelligence
+
+- Add a strict, provider-neutral AI insight contract and prompt versioning.
+- Add a resilient server-only Gemini adapter with structured JSON, timeout, and
+  retry behavior.
+- Persist optional market interpretations and expose the insights endpoint and
+  results-dashboard controls without blocking core research data.
+
 ## v0.9.0-alpha.1 — Competitor Intelligence
 
 - Add competitor rankings, score breakdowns, nearby context, and comparisons.
