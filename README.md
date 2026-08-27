@@ -10,12 +10,10 @@ provider so a local installation remains useful without paid data or AI APIs.
 
 ## Status
 
-Sprint 4 (`v0.5.0`) is complete. Provider candidates now receive deterministic
-name, category, address, and coordinate normalization before persistence.
-Primary duplicate rows remain prevented by provider/external ID, while
-cross-provider matches are surfaced as confidence-scored candidates without
-automatic merges. Persisted datasets also expose deterministic data-quality
-metrics.
+Sprint 5 (`v0.6.0`) is complete. Each successful collection now persists
+deterministic market metrics, rating/review distributions, density, explainable
+competitor scores, and cautious opportunity signals. These analytics work with
+the available provider fields and never require AI.
 
 ## Quick start
 
@@ -68,6 +66,8 @@ See [docs/research-pipeline.md](docs/research-pipeline.md) for the collection
 lifecycle, API, retry behavior, and operational constraints.
 See [docs/normalization.md](docs/normalization.md) for canonicalization,
 deduplication confidence, and data-quality metrics.
+See [docs/analytics.md](docs/analytics.md) for deterministic metric, scoring,
+and opportunity-signal rules.
 
 See the product and implementation plans in [01_PRD.md](01_PRD.md),
 [02_BLUEPRINT.md](02_BLUEPRINT.md), and [03_SPRINT_PLAN.md](03_SPRINT_PLAN.md).

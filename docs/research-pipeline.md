@@ -58,6 +58,11 @@ is confidence-scored groundwork only: it never merges records automatically.
 See [normalization.md](normalization.md) for the field rules, confidence model,
 and persisted data-quality metrics.
 
+At `ANALYZING`, the persisted places produce deterministic market metrics and
+competitor scores before the job reaches `READY`. Analytics failures fail the
+job rather than presenting stale or partial results. See
+[analytics.md](analytics.md) for calculation and interpretation rules.
+
 ## Operational notes
 
 - No automatic retry loop is used for the default public Overpass endpoint.
