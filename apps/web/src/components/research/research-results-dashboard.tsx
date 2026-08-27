@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { ResearchMap } from "./research-map";
+
 interface PlaceResult {
   id: string;
   name: string;
@@ -9,6 +11,8 @@ interface PlaceResult {
   address: string | null;
   rating: number | null;
   reviewCount: number | null;
+  latitude: number;
+  longitude: number;
   competitorScores: { overallScore: number; explanation: string | null }[];
 }
 
@@ -17,6 +21,9 @@ interface ResultsPayload {
   query: string;
   locationQuery: string;
   status: string;
+  latitude: number;
+  longitude: number;
+  radiusMeters: number;
   marketMetrics: {
     totalBusinesses: number;
     averageRating: number | null;
@@ -152,6 +159,11 @@ export function ResearchResultsDashboard({
           items={metrics.metricJson.reviewDistribution ?? []}
         />
       </div>
+      <ResearchMap
+        center={{ latitude: data.latitude, longitude: data.longitude }}
+        places={data.places}
+        radiusMeters={data.radiusMeters}
+      />
       <section className="space-y-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:p-6">
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
           <div>

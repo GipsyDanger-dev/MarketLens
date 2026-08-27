@@ -13,6 +13,9 @@ export async function getResearchResults(projectId: string) {
       category: true,
       locationQuery: true,
       status: true,
+      latitude: true,
+      longitude: true,
+      radiusMeters: true,
       marketMetrics: true,
       places: {
         orderBy: { name: "asc" },
@@ -25,6 +28,8 @@ export async function getResearchResults(projectId: string) {
           reviewCount: true,
           phone: true,
           website: true,
+          latitude: true,
+          longitude: true,
           competitorScores: {
             where: { researchProjectId: projectId },
             select: { overallScore: true, explanation: true },
