@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.0-alpha.1 — Competitor Intelligence
+
+- Add competitor rankings, score breakdowns, nearby context, and comparisons.
+
 ## v0.8.0 — Map & Geospatial Intelligence
 
 - Add a provider-neutral MapLibre map with GeoJSON clusters and research radius.
