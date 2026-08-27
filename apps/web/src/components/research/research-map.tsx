@@ -130,13 +130,7 @@ export function ResearchMap({
       disposed = true;
       map?.remove();
     };
-  }, [
-    center.latitude,
-    center.longitude,
-    onPlaceSelect,
-    places,
-    selectedPlaceId,
-  ]);
+  }, [center, onPlaceSelect, places, radiusMeters, selectedPlaceId]);
 
   return (
     <section className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/70">
