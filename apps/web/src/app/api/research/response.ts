@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { AiProviderError } from "@/ai/errors";
 import { ResearchCollectionError } from "@/research/collection-error";
 import type { ResearchProgress } from "@/research/progress";
 
@@ -40,4 +41,21 @@ export function researchCollectionErrorResponse(error: unknown): NextResponse {
     { error: "Unable to process research collection." },
     { status: 500 },
   );
+}
+
+export function researchInsightErrorResponse(error: unknown): NextResponse {
+  if (error instanceof AiProviderError) {
+    const status =
+      error.code === "CONFIGURATION"
+        ? 400
+        : error.code === "TIMEOUT" || error.code === "NETWORK"
+          ? 502
+          : 422;
+    return NextResponse.json(
+      { error: error.message, code: error.code },
+      { status },
+    );
+  }
+
+  return researchCollectionErrorResponse(error);
 }
