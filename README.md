@@ -10,9 +10,8 @@ provider so a local installation remains useful without paid data or AI APIs.
 
 ## Status
 
-Sprint 10 (`v0.9.0-beta.1`) is complete. Google Places (New) is available as an
-optional, server-configured provider while OpenStreetMap remains the free
-default.
+Sprint 11 (`v0.9.0-beta.2`) is complete. Ready research can be exported as
+CSV, JSON, or a professional PDF report grounded in persisted market data.
 
 ## Quick start
 
@@ -75,6 +74,8 @@ See [docs/ai-insights.md](docs/ai-insights.md) for optional Gemini setup,
 guardrails, retry behavior, and the insight API.
 See [docs/google-places.md](docs/google-places.md) for Google Places setup,
 field selection, attribution, retention, and usage constraints.
+See [docs/exports.md](docs/exports.md) for report contents, download formats,
+and the export API.
 
 See the product and implementation plans in [01_PRD.md](01_PRD.md),
 [02_BLUEPRINT.md](02_BLUEPRINT.md), and [03_SPRINT_PLAN.md](03_SPRINT_PLAN.md).
