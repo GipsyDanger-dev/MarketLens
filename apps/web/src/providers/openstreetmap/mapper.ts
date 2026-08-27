@@ -37,6 +37,8 @@ export function mapOverpassElement(
     country: tags["addr:country"] ?? null,
     latitude: coordinates.latitude,
     longitude: coordinates.longitude,
+    rating: null,
+    reviewCount: null,
     phone: tags["contact:phone"] ?? tags.phone ?? null,
     website: tags["contact:website"] ?? tags.website ?? null,
     sourceUrl: `https://www.openstreetmap.org/${element.type}/${element.id}`,

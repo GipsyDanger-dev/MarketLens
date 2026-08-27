@@ -19,6 +19,8 @@ export interface PersistablePlaceCandidate {
   country: string | null;
   latitude: number;
   longitude: number;
+  rating?: number | null;
+  reviewCount?: number | null;
   phone: string | null;
   website: string | null;
   sourceUrl: string | null;
