@@ -10,9 +10,9 @@ provider so a local installation remains useful without paid data or AI APIs.
 
 ## Status
 
-Sprint 9 (`v0.9.0-alpha.2`) is complete. Completed research can now generate
-optional, structured Gemini insights with explicit risks, recommendations, and
-limitations while retaining a fully usable AI-disabled mode.
+Sprint 10 (`v0.9.0-beta.1`) is complete. Google Places (New) is available as an
+optional, server-configured provider while OpenStreetMap remains the free
+default.
 
 ## Quick start
 
@@ -73,6 +73,8 @@ See [docs/map.md](docs/map.md) for map tiles, clustering, and geospatial filters
 See [docs/competitors.md](docs/competitors.md) for ranking and score interpretation.
 See [docs/ai-insights.md](docs/ai-insights.md) for optional Gemini setup,
 guardrails, retry behavior, and the insight API.
+See [docs/google-places.md](docs/google-places.md) for Google Places setup,
+field selection, attribution, retention, and usage constraints.
 
 See the product and implementation plans in [01_PRD.md](01_PRD.md),
 [02_BLUEPRINT.md](02_BLUEPRINT.md), and [03_SPRINT_PLAN.md](03_SPRINT_PLAN.md).
