@@ -32,7 +32,11 @@ export async function getResearchResults(projectId: string) {
           longitude: true,
           competitorScores: {
             where: { researchProjectId: projectId },
-            select: { overallScore: true, explanation: true },
+            select: {
+              overallScore: true,
+              componentScores: true,
+              explanation: true,
+            },
           },
         },
       },

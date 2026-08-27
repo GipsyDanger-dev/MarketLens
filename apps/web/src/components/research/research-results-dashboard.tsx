@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { ResearchMap } from "./research-map";
+import { CompetitorPanel } from "./competitor-panel";
 
 interface PlaceResult {
   id: string;
@@ -13,7 +14,11 @@ interface PlaceResult {
   reviewCount: number | null;
   latitude: number;
   longitude: number;
-  competitorScores: { overallScore: number; explanation: string | null }[];
+  competitorScores: {
+    overallScore: number;
+    explanation: string | null;
+    componentScores: Record<string, number>;
+  }[];
 }
 
 interface ResultsPayload {
@@ -177,6 +182,11 @@ export function ResearchResultsDashboard({
         radiusMeters={data.radiusMeters}
         selectedPlaceId={selectedPlaceId}
         onPlaceSelect={setSelectedPlaceId}
+      />
+      <CompetitorPanel
+        onSelect={setSelectedPlaceId}
+        places={places}
+        selectedPlaceId={selectedPlaceId}
       />
       <section className="space-y-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:p-6">
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
