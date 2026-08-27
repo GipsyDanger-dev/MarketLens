@@ -10,9 +10,9 @@ provider so a local installation remains useful without paid data or AI APIs.
 
 ## Status
 
-Sprint 8 (`v0.9.0-alpha.1`) is complete. Completed research now includes
-explainable competitor rankings, score-component breakdowns, nearby competitor
-context, strengths/weaknesses, and a comparison table.
+Sprint 9 (`v0.9.0-alpha.2`) is complete. Completed research can now generate
+optional, structured Gemini insights with explicit risks, recommendations, and
+limitations while retaining a fully usable AI-disabled mode.
 
 ## Quick start
 
@@ -71,6 +71,8 @@ See [docs/results-dashboard.md](docs/results-dashboard.md) for the results
 endpoint and dashboard behavior.
 See [docs/map.md](docs/map.md) for map tiles, clustering, and geospatial filters.
 See [docs/competitors.md](docs/competitors.md) for ranking and score interpretation.
+See [docs/ai-insights.md](docs/ai-insights.md) for optional Gemini setup,
+guardrails, retry behavior, and the insight API.
 
 See the product and implementation plans in [01_PRD.md](01_PRD.md),
 [02_BLUEPRINT.md](02_BLUEPRINT.md), and [03_SPRINT_PLAN.md](03_SPRINT_PLAN.md).
