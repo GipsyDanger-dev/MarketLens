@@ -8,6 +8,7 @@ const booleanFromEnvironment = z
 export const serverEnvironmentSchema = z.object({
   DATABASE_URL: z.url(),
   DEFAULT_PLACE_PROVIDER: z.string().min(1).default("openstreetmap"),
+  GOOGLE_MAPS_API_KEY: z.string().min(1).optional(),
   ENABLE_AI: booleanFromEnvironment,
   DEFAULT_AI_PROVIDER: z.literal("gemini").default("gemini"),
   GEMINI_API_KEY: z.string().min(1).optional(),

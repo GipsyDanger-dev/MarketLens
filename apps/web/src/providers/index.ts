@@ -1,6 +1,7 @@
 import "server-only";
 
 import { parseServerEnvironment } from "../lib/environment";
+import { GooglePlacesProvider } from "./google/provider";
 import { OpenStreetMapProvider } from "./openstreetmap/provider";
 import { ProviderRegistry } from "./registry";
 
@@ -17,6 +18,12 @@ export function createProviderRegistry(
       maxResults: configuration.MAX_RESEARCH_RESULTS,
     }),
   );
+
+  if (configuration.GOOGLE_MAPS_API_KEY) {
+    registry.register(
+      new GooglePlacesProvider({ apiKey: configuration.GOOGLE_MAPS_API_KEY }),
+    );
+  }
 
   return registry;
 }
