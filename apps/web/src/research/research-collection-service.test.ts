@@ -104,7 +104,7 @@ describeDatabase("research collection service", () => {
         averageRating: null,
         densityScore: 0.01,
       },
-      competitorScores: [{ overallScore: 1 }],
+      competitorScores: [{ overallScore: 0 }],
     });
     await expect(getResearchDataQuality(project.id)).resolves.toMatchObject({
       totalPlaces: 1,
