@@ -8,6 +8,7 @@ import {
   queueResearchCollection,
   updateResearchCollectionStage,
 } from "../lib/research-collection-repository";
+import { calculateAndPersistResearchAnalytics } from "../lib/research-analytics-repository";
 import { createProviderRegistry } from "../providers";
 import type { ProviderRegistry } from "../providers/registry";
 import { candidateToPersistablePlace } from "./candidate-to-place";
@@ -93,6 +94,7 @@ export async function runResearchCollection(
       totalProcessed,
       totalFailed,
     });
+    await calculateAndPersistResearchAnalytics(projectId);
     await completeResearchCollection({
       projectId,
       jobId: job.id,

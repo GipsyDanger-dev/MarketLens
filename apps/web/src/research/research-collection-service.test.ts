@@ -77,7 +77,12 @@ describeDatabase("research collection service", () => {
     await expect(
       prisma.researchProject.findUniqueOrThrow({
         where: { id: project.id },
-        include: { places: { include: { snapshots: true } }, jobs: true },
+        include: {
+          places: { include: { snapshots: true } },
+          jobs: true,
+          marketMetrics: true,
+          competitorScores: true,
+        },
       }),
     ).resolves.toMatchObject({
       status: "READY",
@@ -94,6 +99,12 @@ describeDatabase("research collection service", () => {
         },
       ],
       jobs: [{ status: "READY" }, { status: "READY" }],
+      marketMetrics: {
+        totalBusinesses: 1,
+        averageRating: null,
+        densityScore: 0.01,
+      },
+      competitorScores: [{ overallScore: 1 }],
     });
     await expect(getResearchDataQuality(project.id)).resolves.toMatchObject({
       totalPlaces: 1,
