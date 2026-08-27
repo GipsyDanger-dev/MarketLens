@@ -108,6 +108,39 @@ export function CompetitorPanel({
             .join(", ") || "None"}
         </p>
       </div>
+      <div className="lg:col-span-2">
+        <h3 className="font-semibold text-slate-100">Comparison</h3>
+        <div className="mt-3 overflow-x-auto">
+          <table className="w-full min-w-[560px] text-left text-sm">
+            <thead className="border-b border-slate-700 text-slate-400">
+              <tr>
+                <th className="p-2">Competitor</th>
+                <th className="p-2">Rating</th>
+                <th className="p-2">Reviews</th>
+                <th className="p-2">Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ranked.map((place) => (
+                <tr
+                  className="border-b border-slate-800 text-slate-200"
+                  key={place.id}
+                >
+                  <td className="p-2">{place.name}</td>
+                  <td className="p-2">{place.rating ?? "—"}</td>
+                  <td className="p-2">{place.reviewCount ?? "—"}</td>
+                  <td className="p-2">
+                    {Math.round(
+                      (place.competitorScores[0]?.overallScore ?? 0) * 100,
+                    )}
+                    %
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </section>
   );
 }
