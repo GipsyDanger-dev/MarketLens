@@ -47,6 +47,7 @@ export function ResearchResultsDashboard({
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState<"name" | "rating" | "score">("score");
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -163,6 +164,8 @@ export function ResearchResultsDashboard({
         center={{ latitude: data.latitude, longitude: data.longitude }}
         places={data.places}
         radiusMeters={data.radiusMeters}
+        selectedPlaceId={selectedPlaceId}
+        onPlaceSelect={setSelectedPlaceId}
       />
       <section className="space-y-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:p-6">
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
@@ -212,8 +215,9 @@ export function ResearchResultsDashboard({
               <tbody>
                 {places.map((place) => (
                   <tr
-                    className="border-b border-slate-800 text-slate-200"
+                    className={`cursor-pointer border-b border-slate-800 text-slate-200 ${selectedPlaceId === place.id ? "bg-cyan-300/10" : ""}`}
                     key={place.id}
+                    onClick={() => setSelectedPlaceId(place.id)}
                   >
                     <td className="p-3">
                       <p className="font-medium text-slate-100">{place.name}</p>

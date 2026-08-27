@@ -13,10 +13,14 @@ export function ResearchMap({
   center,
   radiusMeters,
   places,
+  selectedPlaceId,
+  onPlaceSelect,
 }: {
   center: { latitude: number; longitude: number };
   radiusMeters: number;
   places: readonly MappablePlace[];
+  selectedPlaceId: string | null;
+  onPlaceSelect: (placeId: string) => void;
 }) {
   const mapElement = useRef<HTMLDivElement>(null);
 
@@ -35,13 +39,72 @@ export function ResearchMap({
       });
       map = mapInstance;
       mapInstance.addControl(new maplibregl.NavigationControl(), "top-right");
+      mapInstance.on("load", () => {
+        mapInstance.addSource("places", {
+          type: "geojson",
+          cluster: true,
+          clusterRadius: 50,
+          data: {
+            type: "FeatureCollection",
+            features: places.map((place) => ({
+              type: "Feature" as const,
+              properties: { id: place.id, name: place.name },
+              geometry: {
+                type: "Point" as const,
+                coordinates: [place.longitude, place.latitude],
+              },
+            })),
+          },
+        });
+        mapInstance.addLayer({
+          id: "clusters",
+          type: "circle",
+          source: "places",
+          filter: ["has", "point_count"],
+          paint: {
+            "circle-color": "#0891b2",
+            "circle-radius": [
+              "step",
+              ["get", "point_count"],
+              18,
+              10,
+              22,
+              30,
+              28,
+            ],
+          },
+        });
+        mapInstance.addLayer({
+          id: "cluster-count",
+          type: "symbol",
+          source: "places",
+          filter: ["has", "point_count"],
+          layout: {
+            "text-field": ["get", "point_count_abbreviated"],
+            "text-font": ["Open Sans Bold"],
+            "text-size": 12,
+          },
+        });
+        mapInstance.addLayer({
+          id: "unclustered-place",
+          type: "circle",
+          source: "places",
+          filter: ["!", ["has", "point_count"]],
+          paint: {
+            "circle-color": "#67e8f9",
+            "circle-radius": 8,
+            "circle-stroke-width": 2,
+            "circle-stroke-color": "#0f172a",
+          },
+        });
+        mapInstance.on("click", "unclustered-place", (event) => {
+          const id = event.features?.[0]?.properties?.id;
+          if (typeof id === "string") onPlaceSelect(id);
+        });
+      });
       const bounds = new maplibregl.LngLatBounds();
       bounds.extend([center.longitude, center.latitude]);
       for (const place of places) {
-        new maplibregl.Marker({ color: "#67e8f9" })
-          .setLngLat([place.longitude, place.latitude])
-          .setPopup(new maplibregl.Popup({ offset: 18 }).setText(place.name))
-          .addTo(mapInstance);
         bounds.extend([place.longitude, place.latitude]);
       }
       if (places.length > 1)
@@ -51,7 +114,13 @@ export function ResearchMap({
       disposed = true;
       map?.remove();
     };
-  }, [center.latitude, center.longitude, places]);
+  }, [
+    center.latitude,
+    center.longitude,
+    onPlaceSelect,
+    places,
+    selectedPlaceId,
+  ]);
 
   return (
     <section className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/70">
