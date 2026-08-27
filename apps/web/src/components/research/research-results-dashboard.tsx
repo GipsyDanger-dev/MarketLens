@@ -48,6 +48,7 @@ export function ResearchResultsDashboard({
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState<"name" | "rating" | "score">("score");
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
+  const [withinRadiusOnly, setWithinRadiusOnly] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -87,6 +88,16 @@ export function ResearchResultsDashboard({
             .toLocaleLowerCase()
             .includes(search),
       )
+      .filter(
+        (place) =>
+          !withinRadiusOnly ||
+          distanceMeters(
+            data.latitude,
+            data.longitude,
+            place.latitude,
+            place.longitude,
+          ) <= data.radiusMeters,
+      )
       .sort((left, right) => {
         if (sortBy === "name") return left.name.localeCompare(right.name);
         if (sortBy === "rating")
@@ -96,7 +107,7 @@ export function ResearchResultsDashboard({
           (left.competitorScores[0]?.overallScore ?? -1)
         );
       });
-  }, [data, query, sortBy]);
+  }, [data, query, sortBy, withinRadiusOnly]);
 
   if (error)
     return (
@@ -162,7 +173,7 @@ export function ResearchResultsDashboard({
       </div>
       <ResearchMap
         center={{ latitude: data.latitude, longitude: data.longitude }}
-        places={data.places}
+        places={places}
         radiusMeters={data.radiusMeters}
         selectedPlaceId={selectedPlaceId}
         onPlaceSelect={setSelectedPlaceId}
@@ -195,6 +206,14 @@ export function ResearchResultsDashboard({
               <option value="rating">Rating</option>
               <option value="name">Name</option>
             </select>
+            <label className="flex items-center gap-2 text-sm text-slate-300">
+              <input
+                checked={withinRadiusOnly}
+                onChange={(event) => setWithinRadiusOnly(event.target.checked)}
+                type="checkbox"
+              />
+              In radius
+            </label>
           </div>
         </div>
         {places.length === 0 ? (
@@ -290,4 +309,21 @@ function formatNumber(value: number | null | undefined) {
 }
 function formatPercent(value: number | undefined) {
   return value === undefined ? "—" : `${Math.round(value * 100)}%`;
+}
+
+function distanceMeters(
+  latitudeA: number,
+  longitudeA: number,
+  latitudeB: number,
+  longitudeB: number,
+) {
+  const radians = (value: number) => (value * Math.PI) / 180;
+  const latitudeDelta = radians(latitudeB - latitudeA);
+  const longitudeDelta = radians(longitudeB - longitudeA);
+  const a =
+    Math.sin(latitudeDelta / 2) ** 2 +
+    Math.cos(radians(latitudeA)) *
+      Math.cos(radians(latitudeB)) *
+      Math.sin(longitudeDelta / 2) ** 2;
+  return 6_371_000 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
