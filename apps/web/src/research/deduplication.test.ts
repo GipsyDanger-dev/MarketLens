@@ -20,11 +20,17 @@ const subject = {
 
 describe("place deduplication", () => {
   it("uses provider plus external ID as the primary identity", () => {
-    expect(isPrimaryDuplicate(subject, { ...subject, id: "place-2" })).toBe(
-      true,
-    );
     expect(
-      isPrimaryDuplicate(subject, { ...subject, providerId: "google-places" }),
+      isPrimaryDuplicate(subject, {
+        providerId: subject.providerId,
+        externalId: subject.externalId,
+      }),
+    ).toBe(true);
+    expect(
+      isPrimaryDuplicate(subject, {
+        providerId: "google-places",
+        externalId: subject.externalId,
+      }),
     ).toBe(false);
   });
 

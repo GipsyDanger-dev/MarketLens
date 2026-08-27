@@ -10,10 +10,12 @@ provider so a local installation remains useful without paid data or AI APIs.
 
 ## Status
 
-Sprint 3 (`v0.4.0`) is complete. Research projects now run a persisted
-collection job from `QUEUED` through `READY` or `FAILED`, store provider
-candidates and raw snapshots, support explicit retry, and expose progress over
-API and UI. Deterministic normalization and deduplication begin in Sprint 4.
+Sprint 4 (`v0.5.0`) is complete. Provider candidates now receive deterministic
+name, category, address, and coordinate normalization before persistence.
+Primary duplicate rows remain prevented by provider/external ID, while
+cross-provider matches are surfaced as confidence-scored candidates without
+automatic merges. Persisted datasets also expose deterministic data-quality
+metrics.
 
 ## Quick start
 
@@ -64,6 +66,8 @@ See [docs/provider-sdk.md](docs/provider-sdk.md) for Overpass configuration,
 limits, attribution, and the contract for new adapters.
 See [docs/research-pipeline.md](docs/research-pipeline.md) for the collection
 lifecycle, API, retry behavior, and operational constraints.
+See [docs/normalization.md](docs/normalization.md) for canonicalization,
+deduplication confidence, and data-quality metrics.
 
 See the product and implementation plans in [01_PRD.md](01_PRD.md),
 [02_BLUEPRINT.md](02_BLUEPRINT.md), and [03_SPRINT_PLAN.md](03_SPRINT_PLAN.md).
