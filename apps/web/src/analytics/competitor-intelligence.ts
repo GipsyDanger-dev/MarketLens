@@ -2,6 +2,7 @@ import { haversineDistanceMeters } from "./geospatial";
 
 export interface CompetitorPlace {
   id: string;
+  name: string;
   latitude: number;
   longitude: number;
   componentScores: Record<string, number>;

@@ -6,6 +6,7 @@ describe("competitor intelligence", () => {
   it("orders nearby competitors by geographic distance", () => {
     const subject = {
       id: "a",
+      name: "A",
       latitude: -6.2,
       longitude: 106.8,
       componentScores: {},
