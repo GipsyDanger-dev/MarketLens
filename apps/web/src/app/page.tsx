@@ -15,7 +15,7 @@ export default function Home() {
           local business data without making paid providers or AI mandatory.
         </p>
         <p className="text-sm text-slate-400">
-          Sprint 3 collection pipeline is ready for research projects.
+          Sprint 6 results dashboard is ready for completed research projects.
         </p>
         <Button variant="outline" disabled>
           Research creation workspace coming next

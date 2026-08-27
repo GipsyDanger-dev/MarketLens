@@ -10,10 +10,10 @@ provider so a local installation remains useful without paid data or AI APIs.
 
 ## Status
 
-Sprint 5 (`v0.6.0`) is complete. Each successful collection now persists
-deterministic market metrics, rating/review distributions, density, explainable
-competitor scores, and cautious opportunity signals. These analytics work with
-the available provider fields and never require AI.
+Sprint 6 (`v0.7.0`) is complete. Completed research now has a responsive
+results dashboard with market metric cards, rating/review distributions,
+business search and sorting, competition scores, plus clear loading, empty, and
+error states.
 
 ## Quick start
 
@@ -68,6 +68,8 @@ See [docs/normalization.md](docs/normalization.md) for canonicalization,
 deduplication confidence, and data-quality metrics.
 See [docs/analytics.md](docs/analytics.md) for deterministic metric, scoring,
 and opportunity-signal rules.
+See [docs/results-dashboard.md](docs/results-dashboard.md) for the results
+endpoint and dashboard behavior.
 
 See the product and implementation plans in [01_PRD.md](01_PRD.md),
 [02_BLUEPRINT.md](02_BLUEPRINT.md), and [03_SPRINT_PLAN.md](03_SPRINT_PLAN.md).
