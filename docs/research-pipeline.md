@@ -49,9 +49,14 @@ place is upserted by `(researchProjectId, providerId, externalId)`, so a repeat
 run does not create duplicate place rows. Every successful provider payload is
 recorded as a new `PlaceSnapshot` for auditability.
 
-This sprint uses a lightweight persistence key only for writing the required
-`normalizedName` field. Full name/address/category normalization and
-cross-provider deduplication are deliberately delivered in Sprint 4.
+Before an upsert, Sprint 4 converts provider candidates into canonical name,
+category, address, and six-decimal coordinate values. Candidates without a
+usable name or valid coordinates count as failed items rather than entering the
+dataset. Primary idempotency remains the database-enforced
+`(researchProjectId, providerId, externalId)` identity. Cross-provider matching
+is confidence-scored groundwork only: it never merges records automatically.
+See [normalization.md](normalization.md) for the field rules, confidence model,
+and persisted data-quality metrics.
 
 ## Operational notes
 
