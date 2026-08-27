@@ -41,7 +41,14 @@ export function CompetitorPanel({
     ([, left], [, right]) => right - left,
   );
   const narrative = scoreNarrative(score?.componentScores ?? {});
-  const nearby = nearbyCompetitors(selected, ranked, 1_000);
+  const nearby = nearbyCompetitors(
+    { ...selected, componentScores: score?.componentScores ?? {} },
+    ranked.map((place) => ({
+      ...place,
+      componentScores: place.competitorScores[0]?.componentScores ?? {},
+    })),
+    1_000,
+  );
   return (
     <section className="grid gap-5 rounded-2xl border border-slate-800 bg-slate-900/70 p-5 lg:grid-cols-2">
       <div>
