@@ -40,6 +40,22 @@ export function ResearchMap({
       map = mapInstance;
       mapInstance.addControl(new maplibregl.NavigationControl(), "top-right");
       mapInstance.on("load", () => {
+        mapInstance.addSource("research-radius", {
+          type: "geojson",
+          data: circleFeature(center, radiusMeters),
+        });
+        mapInstance.addLayer({
+          id: "research-radius-fill",
+          type: "fill",
+          source: "research-radius",
+          paint: { "fill-color": "#22d3ee", "fill-opacity": 0.1 },
+        });
+        mapInstance.addLayer({
+          id: "research-radius-line",
+          type: "line",
+          source: "research-radius",
+          paint: { "line-color": "#67e8f9", "line-width": 2 },
+        });
         mapInstance.addSource("places", {
           type: "geojson",
           cluster: true,
@@ -140,4 +156,25 @@ export function ResearchMap({
       />
     </section>
   );
+}
+
+function circleFeature(
+  center: { latitude: number; longitude: number },
+  radiusMeters: number,
+) {
+  const radius = Math.max(0, radiusMeters) / 111_320;
+  const coordinates = Array.from({ length: 65 }, (_, index) => {
+    const angle = (index / 64) * Math.PI * 2;
+    return [
+      center.longitude +
+        (radius * Math.cos(angle)) /
+          Math.cos((center.latitude * Math.PI) / 180),
+      center.latitude + radius * Math.sin(angle),
+    ];
+  });
+  return {
+    type: "Feature" as const,
+    properties: {},
+    geometry: { type: "Polygon" as const, coordinates: [coordinates] },
+  };
 }
