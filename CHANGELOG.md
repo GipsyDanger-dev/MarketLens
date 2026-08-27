@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.9.0-beta.1 — Optional Google Places
+
+- Add the optional Google Places (New) Text Search adapter with explicit field
+  selection, token pagination, capability mapping, and typed rate handling.
+- Register Google Places only when a server-side API key is configured.
+- Add provider selection to the research creation workspace and document
+  provider attribution, retention, and compliance requirements.
+
 ## v0.9.0-alpha.2 — Optional AI Intelligence
 
 - Add a strict, provider-neutral AI insight contract and prompt versioning.
