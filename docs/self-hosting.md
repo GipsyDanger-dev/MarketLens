@@ -7,10 +7,25 @@ application, and PostgreSQL.
 ## Requirements
 
 - Docker Desktop with Docker Compose
-- Node.js 24+
-- npm 11+
+- Node.js 22+ for the CLI; Node.js 24+ and npm 11+ for source development
 
-## Start locally
+## Recommended local-first workflow
+
+From an empty directory, run the published CLI:
+
+```bash
+npx marketlens init
+npx marketlens up
+```
+
+The CLI creates a git-ignored `.env` containing a strong local PostgreSQL
+password, keeps `.marketlens` state local, runs migrations, and binds both
+published Docker ports to `localhost`. Open `http://localhost:3000` after the
+command completes. Use `marketlens doctor`, `marketlens status`, and
+`marketlens logs` for diagnostics. Full command and external-database guidance
+is in the [local-first CLI guide](local-first.md).
+
+## Source development workflow
 
 ```bash
 copy .env.example .env
@@ -29,9 +44,11 @@ Visit `http://localhost:3000`; process health is available at
 docker compose up --build
 ```
 
-The `postgres-data` Docker volume retains PostgreSQL data between container
-restarts. To reset local data during development, intentionally remove that
-named volume; never run destructive volume commands against an unknown target.
+This manual workflow uses the development values in `.env.example`. Prefer the
+CLI workflow for a generated local database password. The `postgres-data`
+Docker volume retains PostgreSQL data between container restarts. To reset
+local data during development, intentionally remove that named volume; never
+run destructive volume commands against an unknown target.
 
 ## Configuration
 
@@ -39,6 +56,11 @@ Copy `.env.example` to `.env`. `DATABASE_URL` is required by Prisma commands.
 Keep `ENABLE_AI=false` unless an AI provider is deliberately configured.
 Credentials for Google Places or any future provider belong only in server-side
 environment variables and must never be embedded in browser code.
+
+For external PostgreSQL under the CLI, set `DATABASE_URL` in the generated local
+`.env`, run `marketlens config database external`, then run `marketlens up`.
+The external Compose override prevents the bundled PostgreSQL service from
+starting.
 
 ## Production Compose
 

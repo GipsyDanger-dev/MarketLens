@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.1.0 — Local-First Runtime
+
+- Add a publish-ready `marketlens` CLI with non-interactive init, up, down,
+  status, open, doctor, logs, and configuration commands.
+- Generate local-only configuration and a random PostgreSQL password; retain
+  user-supplied provider keys and external database URLs through config updates.
+- Bind default Docker ports to localhost, support configurable web ports, and
+  add a tested Compose override for external PostgreSQL.
+- Add local-first onboarding, source workflow, diagnostics, and npm package
+  documentation.
+
 ## v1.0.0 — Public Open-Source Release
 
 - Publish a functional public landing page with responsive, production-runtime
