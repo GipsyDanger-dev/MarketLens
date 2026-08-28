@@ -5,6 +5,9 @@
 - Add the keyboard-driven `marketlens` terminal dashboard, also available with
   `marketlens tui`, for local initialization, service control, status, logs,
   browser open, and configuration.
+- Add a first-run wizard for the provider, optional AI integration, and local
+  web port, plus interactive provider/AI/database/port settings and a Doctor
+  diagnostics view.
 - Keep the interface focused on operating MarketLens rather than AI chat.
 - Expose OpenStreetMap, Google Places, disabled AI, and Gemini choices without
   collecting or displaying credentials; paid providers and AI remain optional
