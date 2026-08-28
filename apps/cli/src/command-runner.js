@@ -47,5 +47,7 @@ export function assertSuccessful(result, nextStep) {
   }
 
   const detail = result.stderr.trim() || result.stdout.trim() || "No output.";
-  throw new Error(`${result.command} failed. ${detail}\nNext step: ${nextStep}`);
+  throw new Error(
+    `${result.command} failed. ${detail}\nNext step: ${nextStep}`,
+  );
 }

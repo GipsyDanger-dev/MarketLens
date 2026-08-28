@@ -49,7 +49,11 @@ export async function writeConfig(rootDirectory, config) {
   await mkdir(paths.localDirectory, { recursive: true });
   await mkdir(paths.logs, { recursive: true });
   await mkdir(paths.data, { recursive: true });
-  await writeFile(paths.config, `${JSON.stringify(validated, null, 2)}\n`, "utf8");
+  await writeFile(
+    paths.config,
+    `${JSON.stringify(validated, null, 2)}\n`,
+    "utf8",
+  );
 
   return paths;
 }
@@ -91,7 +95,9 @@ export function createEnvironment(config) {
   ];
 
   if (validated.database.mode === "external") {
-    values.push("DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/marketlens?schema=public");
+    values.push(
+      "DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/marketlens?schema=public",
+    );
   }
 
   return `${values.join("\n")}\n`;
@@ -124,8 +130,13 @@ export function validateConfig(config) {
   if (typeof aiEnabled !== "boolean") {
     throw new Error("AI enabled must be a boolean.");
   }
-  if (aiEnabled && !["gemini", "ollama", "openai-compatible"].includes(aiProvider)) {
-    throw new Error("An enabled AI configuration must choose a supported provider.");
+  if (
+    aiEnabled &&
+    !["gemini", "ollama", "openai-compatible"].includes(aiProvider)
+  ) {
+    throw new Error(
+      "An enabled AI configuration must choose a supported provider.",
+    );
   }
 
   return {
