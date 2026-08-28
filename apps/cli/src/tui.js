@@ -12,7 +12,10 @@ export const TUI_ACTIONS = Object.freeze({
   5: "open",
   6: "logs",
   7: "settings",
+  8: "doctor",
   "/help": "help",
+  "/doctor": "doctor",
+  "/settings": "settings",
   "/exit": "exit",
   0: "exit",
 });
@@ -51,7 +54,8 @@ export function renderTuiScreen({ config, notice, status }) {
     "  [1] Initialize local workspace     [2] Start services",
     "  [3] Stop services                  [4] Check status",
     "  [5] Open dashboard                 [6] View logs",
-    "  [7] Settings                       [?] Help",
+    "  [7] Settings                       [8] Run doctor",
+    "  [?] Help                           [0] Exit",
     "",
     notice ? `  ${notice}` : "  Select an option or type /help.",
     "",
@@ -97,8 +101,7 @@ async function performTuiAction({ action, ask, cli, config, output }) {
   try {
     switch (action) {
       case "initialize":
-        await cli.init(config ?? defaultConfig);
-        return "Workspace initialized. Choose Start services when Docker is ready.";
+        return initializeWorkspace(cli, config, ask);
       case "up": {
         const result = await cli.up();
         return `Services started at ${result.url}.`;
@@ -120,8 +123,10 @@ async function performTuiAction({ action, ask, cli, config, output }) {
       }
       case "settings":
         return await updateSettings(cli, config, output, ask);
+      case "doctor":
+        return await runDoctor(cli, output, ask);
       case "help":
-        return "Use numbers 1–7 for actions. Settings controls provider and optional AI.";
+        return "Use 1–8 for actions. Provider and AI are optional settings; API keys stay in .env.";
       default:
         return "Unknown option. Type ? for help or 0 to exit.";
     }
@@ -130,25 +135,126 @@ async function performTuiAction({ action, ask, cli, config, output }) {
   }
 }
 
+async function initializeWorkspace(cli, config, ask) {
+  if (config) {
+    return "Workspace is already initialized. Use Settings to update it.";
+  }
+
+  const initialConfig = await createInitialConfig(ask);
+  await cli.init(initialConfig);
+  return "Workspace initialized. Docker, paid providers, and AI remain optional.";
+}
+
+async function createInitialConfig(ask) {
+  const providerChoice = await ask(
+    "\n  Provider: [1] OpenStreetMap (default)  [2] Google Places\n  › ",
+  );
+  const aiChoice = await ask(
+    "  Optional AI: [1] Disabled (default)  [2] Gemini  [3] Ollama  [4] OpenAI-compatible\n  › ",
+  );
+  const port = await ask("  Web port [3000]: ");
+
+  return createTuiConfig({ aiChoice, port, providerChoice });
+}
+
+export function createTuiConfig({
+  aiChoice = "",
+  port = "",
+  providerChoice = "",
+}) {
+  const config = structuredClone(defaultConfig);
+  config.provider =
+    providerChoice.trim() === "2" ? "google-places" : "openstreetmap";
+  config.ai = aiConfiguration(aiChoice);
+
+  if (port.trim()) {
+    const parsedPort = Number(port);
+    if (!Number.isInteger(parsedPort) || parsedPort < 1 || parsedPort > 65535) {
+      throw new Error("Web port must be an integer between 1 and 65535.");
+    }
+    config.web.port = parsedPort;
+  }
+
+  return config;
+}
+
 async function updateSettings(cli, config, output, ask) {
   if (!config) {
     return "Initialize the workspace before changing settings.";
   }
 
   output.write(
-    "\n  Settings: [1] OpenStreetMap  [2] Google Places  [3] Disable AI  [4] Gemini AI\n",
+    "\n  Settings: [1] Data provider  [2] Optional AI  [3] Database mode  [4] Web port\n",
   );
-  const selection = await ask("  › ");
+  const category = await ask("  › ");
   const next = structuredClone(config);
 
-  if (selection === "1") next.provider = "openstreetmap";
-  else if (selection === "2") next.provider = "google-places";
-  else if (selection === "3") next.ai = { enabled: false, provider: null };
-  else if (selection === "4") next.ai = { enabled: true, provider: "gemini" };
-  else return "Settings unchanged.";
+  if (category === "1") {
+    const selection = await ask(
+      "  Provider: [1] OpenStreetMap  [2] Google Places\n  › ",
+    );
+    next.provider = selection === "2" ? "google-places" : "openstreetmap";
+  } else if (category === "2") {
+    const selection = await ask(
+      "  Optional AI: [1] Disabled  [2] Gemini  [3] Ollama  [4] OpenAI-compatible\n  › ",
+    );
+    next.ai = aiConfiguration(selection);
+  } else if (category === "3") {
+    const selection = await ask(
+      "  Database: [1] Bundled Docker  [2] External PostgreSQL\n  › ",
+    );
+    next.database = { mode: selection === "2" ? "external" : "docker" };
+  } else if (category === "4") {
+    const port = await ask(`  Web port [${config.web.port}]: `);
+    if (port.trim()) {
+      const parsedPort = Number(port);
+      if (
+        !Number.isInteger(parsedPort) ||
+        parsedPort < 1 ||
+        parsedPort > 65535
+      ) {
+        return "Settings unchanged. Web port must be an integer between 1 and 65535.";
+      }
+      next.web.port = parsedPort;
+    }
+  } else {
+    return "Settings unchanged.";
+  }
 
   await cli.config(next);
+  if (next.database.mode === "external") {
+    return "Settings saved. Set DATABASE_URL in .env before starting external PostgreSQL.";
+  }
   return "Settings saved. Add optional API keys only to the local .env file.";
+}
+
+function aiConfiguration(selection) {
+  const providerBySelection = {
+    2: "gemini",
+    3: "ollama",
+    4: "openai-compatible",
+  };
+  const provider = providerBySelection[selection.trim()];
+  return provider
+    ? { enabled: true, provider }
+    : { enabled: false, provider: null };
+}
+
+async function runDoctor(cli, output, ask) {
+  const result = await cli.doctor();
+  output.write(
+    [
+      "\n  MarketLens Doctor",
+      `  Node.js    ${result.nodeVersion}`,
+      `  Config     ${result.config ? "READY" : "MISSING"}`,
+      `  Docker     ${result.dockerAvailable ? "READY" : "MISSING"}`,
+      `  Compose    ${result.composeAvailable ? "READY" : "MISSING"}`,
+      `  Web port   ${result.portAvailable ? "AVAILABLE" : "IN USE OR UNCONFIGURED"}`,
+      "",
+    ].join("\n"),
+  );
+  await ask("  Press Enter to continue: ");
+  return "Doctor completed.";
 }
 
 async function getConfig(cli) {
