@@ -63,10 +63,11 @@ npm install --global @gipsydanger-dev/marketlens
 marketlens
 ```
 
-The keyboard-driven TUI offers initialization, service controls, health status,
-logs, and provider/AI settings. It is a local operations menu—not an AI chat.
-OpenStreetMap works without a key; Google Places and Gemini are optional and
-their server-side credentials stay in the local `.env` file.
+The keyboard-driven TUI offers a first-run wizard (provider, optional AI, and
+local web port), service controls, health status, logs, diagnostics, and
+provider/AI/database settings. It is a local operations menu—not an AI chat.
+OpenStreetMap works without a key; Google Places and AI integrations are
+optional and their server-side credentials stay in the local `.env` file.
 
 The CLI creates local configuration and a strong PostgreSQL password in `.env`,
 then serves the dashboard at `http://localhost:3000`. It binds the local web

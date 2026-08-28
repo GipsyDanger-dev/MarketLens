@@ -31,12 +31,13 @@ marketlens
 ```
 
 The TUI can also be opened explicitly with `marketlens tui`. It is an
-operations dashboard—not a conversational AI interface—and exposes local
-initialization, start/stop, status, browser open, logs, and settings. Provider
-and AI selection is optional: the default OpenStreetMap provider works without
-a key, while Google Places and Gemini only need credentials if you opt in. Keep
-those credentials server-side in the generated local `.env`; the TUI never asks
-for or displays API keys.
+operations dashboard—not a conversational AI interface—and exposes a first-run
+wizard, start/stop, status, browser open, logs, diagnostics, and settings. The
+wizard can set the data provider, optional AI integration, and local web port;
+Settings can subsequently change provider, AI, database mode, or web port.
+OpenStreetMap works without a key, while Google Places and AI integrations only
+need credentials if you opt in. Keep those credentials server-side in the
+generated local `.env`; the TUI never asks for or displays API keys.
 
 Use a source checkout before the npm package is published:
 
