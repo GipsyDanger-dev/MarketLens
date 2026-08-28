@@ -15,7 +15,9 @@ test("renders a public landing page with a usable research CTA", async ({
   ).toHaveAttribute("href", "/research/new");
 });
 
-test("keeps the research CTA available on a mobile viewport", async ({ page }) => {
+test("keeps the research CTA available on a mobile viewport", async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/");
 
