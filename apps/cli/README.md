@@ -4,8 +4,8 @@ The MarketLens CLI creates and runs a secure local MarketLens installation.
 It requires Node.js 22+ and Docker Desktop with Docker Compose.
 
 ```bash
-npx marketlens init
-npx marketlens up
+npx @gipsydanger-dev/marketlens init
+npx @gipsydanger-dev/marketlens up
 ```
 
 The CLI writes its configuration and generated local PostgreSQL password to the
@@ -17,13 +17,12 @@ for configuration, external PostgreSQL, and operational commands.
 
 ## Publishing
 
-This package is published from `apps/cli` as `marketlens`. Validate it before
-publishing with:
+This package is published from `apps/cli` as `@gipsydanger-dev/marketlens`.
+Validate it before publishing with:
 
 ```bash
-npm pack --dry-run --workspace=marketlens
-npm publish --workspace=marketlens
+npm pack --dry-run --workspace=@gipsydanger-dev/marketlens
+npm publish --workspace=@gipsydanger-dev/marketlens
 ```
 
-Publishing requires an npm account authorized for the unscoped `marketlens`
-package name.
+Publishing requires an npm account authorized for the `gipsydanger-dev` scope.

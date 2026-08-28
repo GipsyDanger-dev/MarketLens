@@ -31,6 +31,6 @@ operators.
 ## Publishing note
 
 The npm package is intentionally not published by this release process. Running
-`npm publish --workspace=marketlens` requires an npm account authorized to
-claim and publish the `marketlens` package name. See
+`npm publish --workspace=@gipsydanger-dev/marketlens` requires an npm account
+authorized to publish under the `gipsydanger-dev` scope. See
 [`apps/cli/README.md`](../apps/cli/README.md) for the exact pre-publish checks.

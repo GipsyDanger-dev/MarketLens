@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.1.2 — Scoped npm CLI Distribution
+
+- Prepare the CLI for `@gipsydanger-dev/marketlens` after npm rejected the
+  unscoped name as too similar to an existing package.
+- Configure public scoped publishing and update all `npx` and package release
+  instructions to the owned npm scope.
+
 ## v1.1.1 — MIT License Alternative
 
 - Add the official MIT License as `LICENSE-MIT` with the 2026 copyright notice
