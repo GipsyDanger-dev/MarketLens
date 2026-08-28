@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.9.0-rc.1 — Production Hardening
+
+- Add a non-root standalone production image and Compose production override.
+- Add request rate limiting, structured operational events, and recovery error
+  boundaries.
+- Add production self-hosting, backup, secret-handling, and security guidance.
+
 ## v0.9.0-beta.2 — Exports and Professional Reports
 
 - Add reproducible report snapshots containing metadata, methodology, metrics,
