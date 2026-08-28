@@ -3,11 +3,29 @@
   "version": "1.0.0",
   "description": "Local-first lifecycle manager for MarketLens.",
   "type": "module",
+  "keywords": [
+    "marketlens",
+    "local-first",
+    "market-research",
+    "self-hosted"
+  ],
+  "homepage": "https://github.com/GipsyDanger-dev/MarketLens#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GipsyDanger-dev/MarketLens.git"
+  },
+  "bugs": {
+    "url": "https://github.com/GipsyDanger-dev/MarketLens/issues"
+  },
   "bin": {
     "marketlens": "./src/index.js"
   },
   "files": [
-    "src"
+    "src/command-runner.js",
+    "src/config.js",
+    "src/index.js",
+    "src/marketlens-cli.js",
+    "README.md"
   ],
   "scripts": {
     "start": "node src/index.js",
