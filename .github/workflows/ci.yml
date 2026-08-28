@@ -32,9 +32,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: docker compose up --build --wait
-      - run: docker compose exec -T web npm run db:deploy
-      - run: docker compose exec -T web npm run db:generate
-      - run: docker compose exec -T -e RUN_DATABASE_TESTS=true web npm run test --workspace=@marketlens/web
+      - run: docker compose --profile tools run --rm migrate run db:deploy
+      - run: docker compose --profile tools run --rm migrate run db:generate
+      - run: docker compose --profile tools run --rm -e RUN_DATABASE_TESTS=true migrate run test --workspace=@marketlens/web
       - run: docker compose ps
       - if: always()
         run: docker compose down --volumes --remove-orphans

@@ -50,13 +50,17 @@ Build and start the hardened production stack:
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.production.yml up -d --build
-docker compose exec web npm run db:deploy
+docker compose --profile tools run --rm migrate run db:deploy
 ```
 
 The production override runs a non-root, standalone Next.js image with
 `NODE_ENV=production`, a read-only application filesystem, a temporary `/tmp`,
 and a web health check. PostgreSQL is not published to the host in that profile.
 Terminate TLS at a reverse proxy and expose only the web service.
+
+The `migrate` tools service uses the build stage with Prisma and source files;
+it is not part of the serving runtime. Invoke it explicitly for migrations or
+maintenance checks, then let it exit.
 
 ## Backups and recovery
 

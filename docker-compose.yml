@@ -28,5 +28,19 @@ services:
       postgres:
         condition: service_healthy
 
+  migrate:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: builder
+    profiles: ["tools"]
+    environment:
+      DATABASE_URL: postgresql://marketlens:marketlens@postgres:5432/marketlens?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint: ["npm"]
+    command: ["run", "db:deploy"]
+
 volumes:
   postgres-data:
