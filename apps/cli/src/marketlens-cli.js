@@ -1,4 +1,4 @@
-import { access, mkdir } from "node:fs/promises";
+import { access, mkdir, readFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -58,19 +58,15 @@ export function createMarketLensCli(options = {}) {
   async function up() {
     const { config, runtimeDirectory } = await loadInstallation();
     await assertDockerAvailable(runner);
-    assertDockerDatabase(config);
-    await assertPortAvailable(config.web.port);
+    if (config.database.mode === "external") {
+      await assertExternalDatabaseConfigured(cwd);
+    }
 
-    const compose = composeArguments(cwd, runtimeDirectory);
+    const compose = composeArguments(cwd, runtimeDirectory, config);
+    const services =
+      config.database.mode === "docker" ? ["postgres", "web"] : ["web"];
     assertSuccessful(
-      await runner("docker", [
-        ...compose,
-        "up",
-        "-d",
-        "--build",
-        "postgres",
-        "web",
-      ]),
+      await runner("docker", [...compose, "up", "-d", "--build", ...services]),
       "Run 'marketlens doctor' and inspect Docker Desktop.",
     );
     assertSuccessful(
@@ -94,10 +90,10 @@ export function createMarketLensCli(options = {}) {
   }
 
   async function down() {
-    const { runtimeDirectory } = await loadInstallation();
+    const { config, runtimeDirectory } = await loadInstallation();
     await assertDockerAvailable(runner);
     const result = await runner("docker", [
-      ...composeArguments(cwd, runtimeDirectory),
+      ...composeArguments(cwd, runtimeDirectory, config),
       "down",
     ]);
     return assertSuccessful(
@@ -113,7 +109,7 @@ export function createMarketLensCli(options = {}) {
 
     if (dockerAvailable) {
       const result = await runner("docker", [
-        ...composeArguments(cwd, runtimeDirectory),
+        ...composeArguments(cwd, runtimeDirectory, config),
         "ps",
         "--format",
         "json",
@@ -168,10 +164,10 @@ export function createMarketLensCli(options = {}) {
   }
 
   async function logs() {
-    const { runtimeDirectory } = await loadInstallation();
+    const { config, runtimeDirectory } = await loadInstallation();
     await assertDockerAvailable(runner);
     return runner("docker", [
-      ...composeArguments(cwd, runtimeDirectory),
+      ...composeArguments(cwd, runtimeDirectory, config),
       "logs",
       "--tail",
       "100",
@@ -226,14 +222,18 @@ export async function resolveRuntimeDirectory(
   return localRuntime;
 }
 
-export function composeArguments(installationDirectory, runtimeDirectory) {
+export function composeArguments(
+  installationDirectory,
+  runtimeDirectory,
+  config,
+) {
   if (!runtimeDirectory) {
     throw new Error(
       "MarketLens runtime files are unavailable. Run 'marketlens init' again.",
     );
   }
 
-  return [
+  const argumentsList = [
     "compose",
     "--project-directory",
     runtimeDirectory,
@@ -242,6 +242,15 @@ export function composeArguments(installationDirectory, runtimeDirectory) {
     "-f",
     join(runtimeDirectory, "docker-compose.yml"),
   ];
+
+  if (config?.database.mode === "external") {
+    argumentsList.push(
+      "-f",
+      join(runtimeDirectory, "docker-compose.external.yml"),
+    );
+  }
+
+  return argumentsList;
 }
 
 export async function assertDockerAvailable(runner) {
@@ -258,10 +267,26 @@ export async function assertDockerAvailable(runner) {
   );
 }
 
-export function assertDockerDatabase(config) {
-  if (config.database.mode !== "docker") {
+export async function assertExternalDatabaseConfigured(installationDirectory) {
+  const environmentPath = getLocalPaths(installationDirectory).environment;
+  let environment;
+
+  try {
+    environment = await readFile(environmentPath, "utf8");
+  } catch {
     throw new Error(
-      "External PostgreSQL is configured but runtime wiring is not enabled. Set 'marketlens config database docker' or provide the external runtime override before starting.",
+      "External PostgreSQL requires a local .env file. Run 'marketlens init' and set DATABASE_URL before starting.",
+    );
+  }
+
+  const databaseUrl = environment.match(/^DATABASE_URL=(.+)$/m)?.[1]?.trim();
+  if (
+    !databaseUrl ||
+    databaseUrl.includes("USER:PASSWORD@HOST") ||
+    !databaseUrl.startsWith("postgresql://")
+  ) {
+    throw new Error(
+      "External PostgreSQL requires a valid DATABASE_URL in .env. Set it to a PostgreSQL connection URL, then run 'marketlens up'.",
     );
   }
 }
