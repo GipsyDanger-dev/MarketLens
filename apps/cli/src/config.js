@@ -79,6 +79,20 @@ export async function writeEnvironment(rootDirectory, config, options = {}) {
     databasePassword:
       readEnvironmentValue(existingEnvironment, "POSTGRES_PASSWORD") ??
       createDatabasePassword(),
+    databaseUrl: readEnvironmentValue(existingEnvironment, "DATABASE_URL"),
+    geminiApiKey: readEnvironmentValue(existingEnvironment, "GEMINI_API_KEY"),
+    googleMapsApiKey: readEnvironmentValue(
+      existingEnvironment,
+      "GOOGLE_MAPS_API_KEY",
+    ),
+    overpassApiUrl: readEnvironmentValue(
+      existingEnvironment,
+      "OVERPASS_API_URL",
+    ),
+    overpassTimeoutSeconds: readEnvironmentValue(
+      existingEnvironment,
+      "OVERPASS_TIMEOUT_SECONDS",
+    ),
   });
   await mkdir(dirname(paths.environment), { recursive: true });
   await writeFile(paths.environment, content, "utf8");
@@ -95,10 +109,10 @@ export function createEnvironment(config, options = {}) {
     "ENABLE_AUTH=false",
     `ENABLE_AI=${validated.ai.enabled}`,
     `DEFAULT_PLACE_PROVIDER=${validated.provider}`,
-    "OVERPASS_API_URL=https://overpass-api.de/api/interpreter",
-    "OVERPASS_TIMEOUT_SECONDS=25",
-    "GOOGLE_MAPS_API_KEY=",
-    "GEMINI_API_KEY=",
+    `OVERPASS_API_URL=${options.overpassApiUrl ?? "https://overpass-api.de/api/interpreter"}`,
+    `OVERPASS_TIMEOUT_SECONDS=${options.overpassTimeoutSeconds ?? "25"}`,
+    `GOOGLE_MAPS_API_KEY=${options.googleMapsApiKey ?? ""}`,
+    `GEMINI_API_KEY=${options.geminiApiKey ?? ""}`,
     "POSTGRES_DB=marketlens",
     "POSTGRES_USER=marketlens",
     `POSTGRES_PASSWORD=${databasePassword}`,
@@ -106,7 +120,7 @@ export function createEnvironment(config, options = {}) {
 
   if (validated.database.mode === "external") {
     values.push(
-      "DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/marketlens?schema=public",
+      `DATABASE_URL=${options.databaseUrl ?? "postgresql://USER:PASSWORD@HOST:5432/marketlens?schema=public"}`,
     );
   }
 
