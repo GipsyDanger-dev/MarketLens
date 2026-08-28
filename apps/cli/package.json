@@ -1,6 +1,6 @@
 {
   "name": "marketlens",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Local-first lifecycle manager for MarketLens.",
   "type": "module",
   "keywords": [
@@ -18,7 +18,7 @@
     "url": "https://github.com/GipsyDanger-dev/MarketLens/issues"
   },
   "bin": {
-    "marketlens": "./src/index.js"
+    "marketlens": "src/index.js"
   },
   "files": [
     "src/command-runner.js",
