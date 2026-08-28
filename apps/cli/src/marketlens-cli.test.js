@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 import { configFromArguments, main } from "./index.js";
@@ -120,4 +122,15 @@ test("command parsing and help remain non-interactive", async () => {
   assert.equal(config.web.port, 4100);
   assert.equal(exitCode, 0);
   assert.match(messages[0], /marketlens init/);
+});
+
+test("the executable entrypoint runs when invoked by Node", () => {
+  const result = spawnSync(
+    process.execPath,
+    [fileURLToPath(new URL("./index.js", import.meta.url)), "help"],
+    { encoding: "utf8" },
+  );
+
+  assert.equal(result.status, 0);
+  assert.match(result.stdout, /MarketLens local-first CLI/);
 });

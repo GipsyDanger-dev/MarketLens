@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-import { fileURLToPath } from "node:url";
-
 import { defaultConfig } from "./config.js";
 import { createMarketLensCli } from "./marketlens-cli.js";
 
@@ -180,7 +178,7 @@ function output(options, message, isError = false) {
   writer(message);
 }
 
-if (process.argv[1] && process.argv[1] === fileURLToPath(import.meta.url)) {
+if (import.meta.main) {
   main().then((exitCode) => {
     process.exitCode = exitCode;
   });
