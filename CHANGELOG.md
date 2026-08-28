@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.0.0 — Public Open-Source Release
+
+- Publish a functional public landing page with responsive, production-runtime
+  screenshots and end-to-end coverage for its first-research CTA.
+- Add a fictional demo dataset, an up-to-date architecture diagram, release
+  notes, roadmap, expanded quick start, provider contribution guide, and known
+  limitations.
+- Stabilize the full research pipeline: compliant providers, persistence,
+  deterministic analytics, map and competitor intelligence, optional AI, exports,
+  self-hosting, and production hardening.
+
 ## v0.9.0-rc.1 — Production Hardening
 
 - Add a non-root standalone production image and Compose production override.
