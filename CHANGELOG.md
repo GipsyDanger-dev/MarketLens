@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.9.0-beta.2 — Exports and Professional Reports
+
+- Add reproducible report snapshots containing metadata, methodology, metrics,
+  competitors, optional AI interpretation, and limitations.
+- Add CSV, JSON, and professional PDF report downloads from ready research.
+- Add dashboard export controls and report-format documentation.
+
 ## v0.9.0-beta.1 — Optional Google Places
 
 - Add the optional Google Places (New) Text Search adapter with explicit field
