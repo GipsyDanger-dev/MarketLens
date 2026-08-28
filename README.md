@@ -55,6 +55,19 @@ npx --yes @gipsydanger-dev/marketlens init
 npx --yes @gipsydanger-dev/marketlens up
 ```
 
+For an interactive terminal dashboard, install the CLI globally and launch it
+with no subcommand:
+
+```bash
+npm install --global @gipsydanger-dev/marketlens
+marketlens
+```
+
+The keyboard-driven TUI offers initialization, service controls, health status,
+logs, and provider/AI settings. It is a local operations menu—not an AI chat.
+OpenStreetMap works without a key; Google Places and Gemini are optional and
+their server-side credentials stay in the local `.env` file.
+
 The CLI creates local configuration and a strong PostgreSQL password in `.env`,
 then serves the dashboard at `http://localhost:3000`. It binds the local web
 and PostgreSQL ports to loopback only. See the [local-first guide](docs/local-first.md)

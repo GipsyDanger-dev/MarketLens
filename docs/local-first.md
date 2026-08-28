@@ -20,6 +20,24 @@ random local PostgreSQL password and contains placeholders only for optional
 provider and AI credentials. `up` starts PostgreSQL and the web app, runs Prisma
 migrations, and prints the local dashboard address.
 
+## Interactive terminal UI
+
+For a Codex-style terminal application with a keyboard menu, install the CLI
+globally and run it without a command:
+
+```bash
+npm install --global @gipsydanger-dev/marketlens
+marketlens
+```
+
+The TUI can also be opened explicitly with `marketlens tui`. It is an
+operations dashboard—not a conversational AI interface—and exposes local
+initialization, start/stop, status, browser open, logs, and settings. Provider
+and AI selection is optional: the default OpenStreetMap provider works without
+a key, while Google Places and Gemini only need credentials if you opt in. Keep
+those credentials server-side in the generated local `.env`; the TUI never asks
+for or displays API keys.
+
 Use a source checkout before the npm package is published:
 
 ```bash
@@ -40,12 +58,14 @@ without configuring authentication, TLS, and a reverse proxy.
 marketlens init [--port <number>] [--provider <openstreetmap|google-places>] [--ai <disabled|gemini|ollama|openai-compatible>]
 marketlens up | down | status | open | doctor | logs
 marketlens config [provider|ai|database|port] [value]
+marketlens tui
 ```
 
 `down` stops containers without deleting the PostgreSQL volume. `doctor` checks
 the local configuration, Docker Compose availability, runtime files, and web
-port. `logs` prints the latest container output. The CLI is non-interactive so
-it can be used in local scripts.
+port. `logs` prints the latest container output. Direct commands remain
+non-interactive for use in local scripts; the optional `tui` command is intended
+for a person operating the local installation.
 
 ## Configuration examples
 
