@@ -40,18 +40,30 @@ The landing page links directly to `/research/new`. For a live first run, keep
 OpenStreetMap selected and use the prefilled `coffee shop` / `Malang, Indonesia`
 example. No API key is required.
 
-## Quick start
+## Local-first quick start
 
 Requirements: Node.js 24+, npm 11+, and Docker Desktop with Docker Compose.
+
+After the CLI package is published to npm, the shortest path is:
+
+```bash
+npx marketlens init
+npx marketlens up
+```
+
+The CLI creates local configuration and a strong PostgreSQL password in `.env`,
+then serves the dashboard at `http://localhost:3000`. It binds the local web
+and PostgreSQL ports to loopback only. See the [local-first guide](docs/local-first.md)
+for configuration, diagnostics, external PostgreSQL, and source checkout use.
+
+To run from a cloned checkout today:
 
 ```bash
 git clone https://github.com/GipsyDanger-dev/MarketLens.git
 cd MarketLens
-copy .env.example .env
 npm install
-docker compose up -d postgres
-npm run db:migrate
-npm run dev
+node apps/cli/src/index.js init
+node apps/cli/src/index.js up
 ```
 
 Open [http://localhost:3000](http://localhost:3000), create a project, and run
@@ -81,6 +93,7 @@ timeouts, and retry behavior.
 - [Competitor intelligence](docs/competitors.md)
 - [Exports and reports](docs/exports.md)
 - [Demo dataset](docs/demo-dataset.md)
+- [Local-first CLI](docs/local-first.md)
 - [Self-hosting and operations](docs/self-hosting.md)
 - [Known limitations](docs/known-limitations.md)
 - [Public roadmap](docs/roadmap.md)
