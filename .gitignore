@@ -11,6 +11,7 @@ generated/
 .env
 .env.local
 .env.*.local
+.marketlens/
 
 # Tooling
 *.tsbuildinfo

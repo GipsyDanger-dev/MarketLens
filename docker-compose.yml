@@ -3,15 +3,15 @@ services:
     image: postgres:17-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: marketlens
-      POSTGRES_USER: marketlens
-      POSTGRES_PASSWORD: marketlens
+      POSTGRES_DB: ${POSTGRES_DB:-marketlens}
+      POSTGRES_USER: ${POSTGRES_USER:-marketlens}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-marketlens}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U marketlens -d marketlens"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -21,9 +21,15 @@ services:
       context: .
       dockerfile: docker/Dockerfile
     environment:
-      DATABASE_URL: postgresql://marketlens:marketlens@postgres:5432/marketlens?schema=public
+      DATABASE_URL: postgresql://${POSTGRES_USER:-marketlens}:${POSTGRES_PASSWORD:-marketlens}@postgres:5432/${POSTGRES_DB:-marketlens}?schema=public
+      DEFAULT_PLACE_PROVIDER: ${DEFAULT_PLACE_PROVIDER:-openstreetmap}
+      ENABLE_AI: ${ENABLE_AI:-false}
+      GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      OVERPASS_API_URL: ${OVERPASS_API_URL:-https://overpass-api.de/api/interpreter}
+      OVERPASS_TIMEOUT_SECONDS: ${OVERPASS_TIMEOUT_SECONDS:-25}
     ports:
-      - "3000:3000"
+      - "127.0.0.1:${PORT:-3000}:3000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -35,7 +41,7 @@ services:
       target: builder
     profiles: ["tools"]
     environment:
-      DATABASE_URL: postgresql://marketlens:marketlens@postgres:5432/marketlens?schema=public
+      DATABASE_URL: postgresql://${POSTGRES_USER:-marketlens}:${POSTGRES_PASSWORD:-marketlens}@postgres:5432/${POSTGRES_DB:-marketlens}?schema=public
     depends_on:
       postgres:
         condition: service_healthy

@@ -1,0 +1,15 @@
+# Use this override through `marketlens config database external`.
+# DATABASE_URL must be set in the installation's local .env file.
+services:
+  postgres:
+    profiles: ["internal"]
+
+  web:
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?set DATABASE_URL in .env for external PostgreSQL}
+    depends_on: []
+
+  migrate:
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?set DATABASE_URL in .env for external PostgreSQL}
+    depends_on: []
