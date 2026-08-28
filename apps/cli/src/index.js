@@ -2,6 +2,7 @@
 
 import { defaultConfig } from "./config.js";
 import { createMarketLensCli } from "./marketlens-cli.js";
+import { runTui } from "./tui.js";
 
 const HELP = `MarketLens local-first CLI
 
@@ -9,6 +10,7 @@ Usage:
   marketlens init [--port <number>] [--provider <openstreetmap|google-places>] [--ai <disabled|gemini|ollama|openai-compatible>]
   marketlens up | down | status | open | doctor | logs
   marketlens config [provider|ai|database|port] [value]
+  marketlens tui
 `;
 
 export async function main(
@@ -59,10 +61,20 @@ export async function main(
       }
       case "config":
         return runConfig(cli, rest, options);
+      case "tui":
+        return runTui({ ...options, cli });
       case "help":
       case "--help":
       case "-h":
+        output(options, HELP);
+        return 0;
       case undefined:
+        if (
+          options.interactive ??
+          (process.stdin.isTTY && process.stdout.isTTY)
+        ) {
+          return runTui({ ...options, cli });
+        }
         output(options, HELP);
         return 0;
       default:
