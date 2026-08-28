@@ -28,9 +28,10 @@ operators.
 - Repository linting, type checking, unit tests, production build, and Docker
   Compose CI pass on the release branch.
 
-## Publishing note
+## npm publication
 
-The npm package is intentionally not published by this release process. Running
-`npm publish --workspace=@gipsydanger-dev/marketlens` requires an npm account
-authorized to publish under the `gipsydanger-dev` scope. See
-[`apps/cli/README.md`](../apps/cli/README.md) for the exact pre-publish checks.
+The CLI is published as
+[`@gipsydanger-dev/marketlens@1.1.2`](https://www.npmjs.com/package/@gipsydanger-dev/marketlens).
+Use `npx --yes @gipsydanger-dev/marketlens init` from the target local
+installation directory. The package is public, while npm publishing remains
+restricted to the `gipsydanger-dev` scope.

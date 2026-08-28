@@ -47,11 +47,12 @@ example. No API key is required.
 
 Requirements: Node.js 24+, npm 11+, and Docker Desktop with Docker Compose.
 
-After the CLI package is published to npm, the shortest path is:
+For a new local installation, run this from the directory where you want to
+keep MarketLens (not from this cloned repository):
 
 ```bash
-npx @gipsydanger-dev/marketlens init
-npx @gipsydanger-dev/marketlens up
+npx --yes @gipsydanger-dev/marketlens init
+npx --yes @gipsydanger-dev/marketlens up
 ```
 
 The CLI creates local configuration and a strong PostgreSQL password in `.env`,
