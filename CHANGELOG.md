@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.1.1 — MIT License Alternative
+
+- Add the official MIT License as `LICENSE-MIT` with the 2026 copyright notice
+  for Adam Fairuz Akmal Aryaguna, while retaining the existing Apache-2.0
+  `LICENSE` unchanged.
+- Declare `Apache-2.0 OR MIT` in root and CLI package metadata and document the
+  choice with MIT and Apache badges in the README.
+
 ## v1.1.0 — Local-First Runtime
 
 - Add a publish-ready `marketlens` CLI with non-interactive init, up, down,
