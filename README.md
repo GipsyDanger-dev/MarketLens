@@ -50,8 +50,8 @@ Requirements: Node.js 24+, npm 11+, and Docker Desktop with Docker Compose.
 After the CLI package is published to npm, the shortest path is:
 
 ```bash
-npx marketlens init
-npx marketlens up
+npx @gipsydanger-dev/marketlens init
+npx @gipsydanger-dev/marketlens up
 ```
 
 The CLI creates local configuration and a strong PostgreSQL password in `.env`,

@@ -10,8 +10,8 @@ After the `marketlens` package is available from npm, run this from an empty
 working directory:
 
 ```bash
-npx marketlens init
-npx marketlens up
+npx @gipsydanger-dev/marketlens init
+npx @gipsydanger-dev/marketlens up
 ```
 
 `init` creates `.marketlens/config.json`, `.marketlens/data`,

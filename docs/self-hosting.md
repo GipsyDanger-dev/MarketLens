@@ -14,8 +14,8 @@ application, and PostgreSQL.
 From an empty directory, run the published CLI:
 
 ```bash
-npx marketlens init
-npx marketlens up
+npx @gipsydanger-dev/marketlens init
+npx @gipsydanger-dev/marketlens up
 ```
 
 The CLI creates a git-ignored `.env` containing a strong local PostgreSQL
