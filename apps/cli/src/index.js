@@ -165,7 +165,7 @@ function formatStatus(status) {
     `Database     ${config.database.mode}`,
     `Provider     ${config.provider}`,
     `AI           ${config.ai.enabled ? config.ai.provider : "Disabled"}`,
-    `Version      1.0.0`,
+    `Version      1.2.0`,
     `URL          http://${config.web.host}:${config.web.port}`,
   ].join("\n");
 }

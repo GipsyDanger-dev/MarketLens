@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.2.0 — Interactive Terminal UI
+
+- Add the keyboard-driven `marketlens` terminal dashboard, also available with
+  `marketlens tui`, for local initialization, service control, status, logs,
+  browser open, and configuration.
+- Keep the interface focused on operating MarketLens rather than AI chat.
+- Expose OpenStreetMap, Google Places, disabled AI, and Gemini choices without
+  collecting or displaying credentials; paid providers and AI remain optional
+  server-side `.env` configuration.
+
 ## v1.1.2 — Scoped npm CLI Distribution
 
 - Publish the CLI as `@gipsydanger-dev/marketlens` after npm rejected the
