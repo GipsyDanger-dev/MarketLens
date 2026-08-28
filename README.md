@@ -83,6 +83,8 @@ timeouts, and retry behavior.
 - [Demo dataset](docs/demo-dataset.md)
 - [Self-hosting and operations](docs/self-hosting.md)
 - [Known limitations](docs/known-limitations.md)
+- [Public roadmap](docs/roadmap.md)
+- [v1.0.0 release notes](docs/release-v1.0.md)
 
 The project direction is recorded in the [PRD](01_PRD.md),
 [Blueprint](02_BLUEPRINT.md), and [Sprint Plan](03_SPRINT_PLAN.md).
