@@ -11,7 +11,7 @@ WORKDIR /app
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV DATABASE_URL=postgresql://marketlens:marketlens@localhost:5432/marketlens?schema=public
-RUN npm run db:generate && npm run build
+RUN mkdir -p apps/web/public && npm run db:generate && npm run build
 
 FROM node:24-alpine AS runner
 
