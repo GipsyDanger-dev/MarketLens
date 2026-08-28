@@ -1,5 +1,8 @@
 # MarketLens
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+
 **Open-source local market intelligence that you can inspect, self-host, and
 extend.**
 
@@ -129,4 +132,7 @@ request templates. Please report vulnerabilities privately according to
 
 ## License
 
-MarketLens is licensed under the [Apache License 2.0](LICENSE).
+MarketLens is dual-licensed under the [Apache License 2.0](LICENSE) or the
+[MIT License](LICENSE-MIT), at your option. The Apache license remains the
+repository's primary `LICENSE` file; retain the applicable copyright and
+license notices when redistributing the project.
