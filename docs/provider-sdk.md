@@ -1,8 +1,33 @@
-# Provider SDK
+# Provider development guide
 
 MarketLens treats place-data sources as adapters. Core research and analytics
 code must depend on provider-neutral contracts, never directly on OpenStreetMap,
-Google Places, or another vendor SDK.
+Google Places, or another vendor SDK. This guide is the contributor contract for
+adding a provider.
+
+## Before you implement
+
+1. Confirm the provider permits this use through its API and terms. Do not use
+   browser automation, CAPTCHA bypasses, private-data collection, or login
+   session scraping.
+2. Define the adapter's capabilities honestly. A provider without ratings or
+   reviews must report those fields as unavailable rather than fabricating them.
+3. Decide the source attribution shown in the UI and preserved in exports.
+4. Add mapping, pagination/limit, and error fixtures before registering the
+   adapter in the default registry.
+
+## Implementation path
+
+1. Add an adapter under `apps/web/src/providers` that implements
+   `PlaceProvider`.
+2. Map the upstream response into `PlaceCandidate`; preserve stable external IDs
+   and raw provider data only at the adapter boundary.
+3. Translate quota, timeout, and upstream failures into `ProviderError` with an
+   accurate retryability flag.
+4. Register the provider behind an explicit server-side configuration check.
+5. Add unit tests for successful mapping and every meaningful error path.
+6. Document configuration, attribution, field coverage, retention, and terms in
+   a provider-specific document.
 
 ## Target contract
 
@@ -33,6 +58,20 @@ preserves the provider payload; it must not be used as canonical analytics data.
 - Do not implement browser automation, CAPTCHA bypass, private-data collection,
   or session/login scraping.
 - Supply fixtures for mapping, error handling, and pagination tests.
+
+## Pull request checklist
+
+- [ ] No provider credential is present in client code, fixtures, screenshots,
+      logs, or documentation examples.
+- [ ] A stable provider + external ID forms the primary deduplication key.
+- [ ] Coordinates, names, categories, and addresses map to the shared candidate
+      shape or are explicitly unavailable.
+- [ ] 429, 5xx, timeout, malformed-payload, and unsupported-pagination behavior
+      are tested or documented as inapplicable.
+- [ ] Attribution and source URLs are preserved.
+- [ ] The adapter does not leak upstream raw payloads into analytics fields.
+- [ ] `npm run lint`, `npm run typecheck`, `npm run test`, and `npm run build`
+      pass.
 
 ## Built-in OpenStreetMap / Overpass adapter
 
