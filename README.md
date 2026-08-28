@@ -10,8 +10,9 @@ provider so a local installation remains useful without paid data or AI APIs.
 
 ## Status
 
-Sprint 11 (`v0.9.0-beta.2`) is complete. Ready research can be exported as
-CSV, JSON, or a professional PDF report grounded in persisted market data.
+Sprint 12 (`v0.9.0-rc.1`) is complete. The application now includes a hardened
+production image, Compose override, rate limiting, structured operational logs,
+and recovery error boundaries.
 
 ## Quick start
 

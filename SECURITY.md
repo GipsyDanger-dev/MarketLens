@@ -25,3 +25,7 @@ does not belong to you while researching an issue.
   execution.
 - New external integrations must document authentication, retention,
   attribution, and terms-of-service constraints.
+- Production deployments must use a unique PostgreSQL password, TLS at the
+  ingress, non-public database networking, and backups with restricted access.
+- Do not log API keys, authorization headers, request bodies, or provider raw
+  payloads. MarketLens operational logs use structured event metadata only.
