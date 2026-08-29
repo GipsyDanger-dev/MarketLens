@@ -29,7 +29,12 @@ export function renderTuiScreen({ config, notice, status }) {
   const ai = config?.ai?.enabled ? config.ai.provider : "Disabled";
   const database = config?.database?.mode ?? "Not configured";
   const webStatus = status?.composeStatus ?? "NOT STARTED";
-  const docker = status?.dockerAvailable ? "Ready" : "Not detected";
+  const docker =
+    database === "embedded"
+      ? "Not required"
+      : status?.dockerAvailable
+        ? "Ready"
+        : "Not detected";
   const url = config
     ? `http://${config.web.host}:${config.web.port}`
     : "Run Initialize to create a local installation";
@@ -49,7 +54,7 @@ export function renderTuiScreen({ config, notice, status }) {
     "  Configuration",
     `  Provider  ${provider}`,
     `  AI        ${ai} (optional)`,
-    `  Database  ${database}`,
+    `  Storage   ${database === "embedded" ? "Embedded local" : database}`,
     "",
     "  [1] Initialize local workspace     [2] Start services",
     "  [3] Stop services                  [4] Check status",
@@ -184,7 +189,7 @@ async function updateSettings(cli, config, output, ask) {
   }
 
   output.write(
-    "\n  Settings: [1] Data provider  [2] Optional AI  [3] Database mode  [4] Web port\n",
+    "\n  Settings: [1] Data provider  [2] Optional AI  [3] Runtime mode  [4] Web port\n",
   );
   const category = await ask("  › ");
   const next = structuredClone(config);
@@ -201,9 +206,16 @@ async function updateSettings(cli, config, output, ask) {
     next.ai = aiConfiguration(selection);
   } else if (category === "3") {
     const selection = await ask(
-      "  Database: [1] Bundled Docker  [2] External PostgreSQL\n  › ",
+      "  Runtime: [1] Lightweight local (default)  [2] Docker  [3] External PostgreSQL\n  › ",
     );
-    next.database = { mode: selection === "2" ? "external" : "docker" };
+    next.database = {
+      mode:
+        selection === "2"
+          ? "docker"
+          : selection === "3"
+            ? "external"
+            : "embedded",
+    };
   } else if (category === "4") {
     const port = await ask(`  Web port [${config.web.port}]: `);
     if (port.trim()) {
@@ -249,9 +261,14 @@ async function runDoctor(cli, output, ask) {
       `  Config     ${result.config ? "READY" : "MISSING"}`,
       `  Docker     ${result.dockerAvailable ? "READY" : "MISSING"}`,
       `  Compose    ${result.composeAvailable ? "READY" : "MISSING"}`,
+      result.embedded
+        ? `  Embedded  ${result.embedded.running ? "RUNNING" : "READY"}`
+        : null,
       `  Web port   ${result.portAvailable ? "AVAILABLE" : "IN USE OR UNCONFIGURED"}`,
       "",
-    ].join("\n"),
+    ]
+      .filter(Boolean)
+      .join("\n"),
   );
   await ask("  Press Enter to continue: ");
   return "Doctor completed.";

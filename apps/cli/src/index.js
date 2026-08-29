@@ -162,7 +162,11 @@ function formatStatus(status) {
     "",
     `Web          ${composeStatus}`,
     `Docker       ${dockerAvailable ? "AVAILABLE" : "UNAVAILABLE"}`,
-    `Database     ${config.database.mode}`,
+    `Runtime      ${
+      config.database.mode === "embedded"
+        ? "LIGHTWEIGHT LOCAL"
+        : config.database.mode.toUpperCase()
+    }`,
     `Provider     ${config.provider}`,
     `AI           ${config.ai.enabled ? config.ai.provider : "Disabled"}`,
     `Version      1.2.0`,
@@ -179,8 +183,13 @@ function formatDoctor(result) {
     `Docker       ${result.dockerAvailable ? "READY" : "MISSING"}`,
     `Compose      ${result.composeAvailable ? "READY" : "MISSING"}`,
     `Runtime      ${result.runtimeDirectory ?? "MISSING"}`,
+    result.embedded
+      ? `Embedded     ${result.embedded.running ? "RUNNING" : "READY"}`
+      : null,
     `Web port     ${result.portAvailable ? "AVAILABLE" : "IN USE OR UNCONFIGURED"}`,
-  ].join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 function output(options, message, isError = false) {

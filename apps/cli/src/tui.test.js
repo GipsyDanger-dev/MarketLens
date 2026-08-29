@@ -25,6 +25,7 @@ test("TUI renders runtime and optional AI state", () => {
   assert.match(screen, /MARKETLENS TERMINAL/);
   assert.match(screen, /Web       RUNNING/);
   assert.match(screen, /AI        Disabled \(optional\)/);
+  assert.match(screen, /Storage   Embedded local/);
   assert.match(screen, /Run doctor/);
 });
 
