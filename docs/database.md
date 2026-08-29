@@ -1,6 +1,6 @@
 # Database
 
-MarketLens uses PostgreSQL with Prisma ORM. The Sprint 1 schema stores the
+MarketLens uses PostgreSQL-compatible storage with Prisma ORM. The Sprint 1 schema stores the
 provider-neutral research domain: users, research projects and jobs, normalized
 places and raw snapshots, deterministic metrics and scores, optional AI insights,
 and generated reports. `AppMetadata` remains available for application metadata.
@@ -36,8 +36,9 @@ npm run db:migrate
 npm run db:deploy
 ```
 
-For the local Compose stack, use the `DATABASE_URL` from `.env.example` and
-start PostgreSQL first:
+The TUI's default Lightweight local mode manages its embedded database and
+migrations automatically. Docker Compose remains available for advanced local
+or production-like PostgreSQL workflows:
 
 ```bash
 docker compose up -d postgres

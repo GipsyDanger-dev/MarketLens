@@ -1,24 +1,25 @@
 # Local-first CLI
 
-MarketLens can run as a local, self-hosted application with Docker Desktop and
-no paid data or AI provider. The default data source is OpenStreetMap/Overpass;
-AI is disabled until explicitly configured.
+MarketLens can run as a local, self-hosted application with no paid data or AI
+provider. The default **Lightweight local** runtime is managed by the terminal
+UI and does not require Docker Desktop. It uses embedded PostgreSQL-compatible
+storage; the default data source is OpenStreetMap/Overpass and AI is disabled
+until explicitly configured.
 
 ## Start a local installation
 
-After the `marketlens` package is available from npm, run this from an empty
-working directory:
+After the `marketlens` package is available from npm, run this from the
+directory where you want to keep local MarketLens data:
 
 ```bash
-npx @gipsydanger-dev/marketlens init
-npx @gipsydanger-dev/marketlens up
+npx @gipsydanger-dev/marketlens
 ```
 
-`init` creates `.marketlens/config.json`, `.marketlens/data`,
-`.marketlens/logs`, and a git-ignored `.env`. The generated `.env` includes a
-random local PostgreSQL password and contains placeholders only for optional
-provider and AI credentials. `up` starts PostgreSQL and the web app, runs Prisma
-migrations, and prints the local dashboard address.
+Choose **Initialize local workspace**, then **Start services**. The TUI creates
+`.marketlens/config.json`, `.marketlens/data`, `.marketlens/logs`, and a
+git-ignored `.env`. It starts the embedded database, runs Prisma migrations,
+builds the web app, and prints the local dashboard address. Provider and AI
+credentials remain optional.
 
 ## Interactive terminal UI
 
@@ -37,7 +38,8 @@ wizard can set the data provider, optional AI integration, and local web port;
 Settings can subsequently change provider, AI, database mode, or web port.
 OpenStreetMap works without a key, while Google Places and AI integrations only
 need credentials if you opt in. Keep those credentials server-side in the
-generated local `.env`; the TUI never asks for or displays API keys.
+generated local `.env`; the TUI never asks for or displays API keys. Docker and
+external PostgreSQL are available only as Advanced runtime choices in Settings.
 
 Use a source checkout before the npm package is published:
 
