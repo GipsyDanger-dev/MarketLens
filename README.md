@@ -45,7 +45,8 @@ example. No API key is required.
 
 ## Local-first quick start
 
-Requirements: Node.js 24+, npm 11+, and Docker Desktop with Docker Compose.
+Requirements: Node.js 24+ and npm 11+. Docker Desktop with Docker Compose is
+only needed for the Advanced Docker runtime.
 
 For a new local installation, run this from the directory where you want to
 keep MarketLens (not from this cloned repository):
