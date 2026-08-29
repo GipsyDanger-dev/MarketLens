@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "db:embedded": "node scripts/migrate-embedded.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -14,6 +15,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.9.1",
     "@react-pdf/renderer": "^4.8.1",
@@ -23,6 +25,7 @@
     "maplibre-gl": "^6.6.0",
     "next": "16.3.3",
     "pg": "^8.23.0",
+    "pglite-prisma-adapter": "^0.7.2",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "server-only": "^0.0.1",
