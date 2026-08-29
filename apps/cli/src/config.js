@@ -8,7 +8,7 @@ export const ENVIRONMENT_FILE = ".env";
 
 export const defaultConfig = Object.freeze({
   version: 1,
-  database: { mode: "docker" },
+  database: { mode: "embedded" },
   provider: "openstreetmap",
   ai: { enabled: false, provider: null },
   web: { port: 3000, host: "localhost" },
@@ -122,6 +122,11 @@ export function createEnvironment(config, options = {}) {
     values.push(
       `DATABASE_URL=${options.databaseUrl ?? "postgresql://USER:PASSWORD@HOST:5432/marketlens?schema=public"}`,
     );
+  } else if (validated.database.mode === "embedded") {
+    values.push(
+      "DATABASE_URL=postgresql://marketlens:local@127.0.0.1:5432/marketlens?schema=public",
+      "MARKETLENS_RUNTIME=embedded",
+    );
   }
 
   return `${values.join("\n")}\n`;
@@ -130,8 +135,8 @@ export function createEnvironment(config, options = {}) {
 export function readEnvironmentValue(content, name) {
   if (!content) return null;
 
-  const match = content.match(new RegExp(`^${name}=(.+)$`, "m"));
-  return match?.[1]?.trim() || null;
+  const matches = [...content.matchAll(new RegExp(`^${name}=(.+)$`, "gm"))];
+  return matches.at(-1)?.[1]?.trim() || null;
 }
 
 function createDatabasePassword() {
@@ -150,8 +155,10 @@ export function validateConfig(config) {
   const aiEnabled = config.ai?.enabled;
   const aiProvider = config.ai?.provider;
 
-  if (!["docker", "external"].includes(databaseMode)) {
-    throw new Error("Database mode must be 'docker' or 'external'.");
+  if (!["embedded", "docker", "external"].includes(databaseMode)) {
+    throw new Error(
+      "Database mode must be 'embedded', 'docker', or 'external'.",
+    );
   }
   if (!["openstreetmap", "google-places"].includes(provider)) {
     throw new Error("Provider must be 'openstreetmap' or 'google-places'.");

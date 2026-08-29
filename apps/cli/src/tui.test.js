@@ -15,7 +15,7 @@ test("TUI renders runtime and optional AI state", () => {
   const screen = renderTuiScreen({
     config: {
       ai: { enabled: false, provider: null },
-      database: { mode: "docker" },
+      database: { mode: "embedded" },
       provider: "openstreetmap",
       web: { host: "localhost", port: 3000 },
     },
@@ -33,7 +33,7 @@ test("TUI onboarding creates a local-first configuration without credentials", (
     createTuiConfig({ aiChoice: "3", port: "3010", providerChoice: "2" }),
     {
       ai: { enabled: true, provider: "ollama" },
-      database: { mode: "docker" },
+      database: { mode: "embedded" },
       provider: "google-places",
       version: 1,
       web: { host: "localhost", port: 3010 },

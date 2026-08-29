@@ -26,9 +26,11 @@ export async function migrateEmbeddedDatabase(dataDirectory) {
       );
     `);
 
-    const migrations = (await readdir(migrationsDirectory, {
-      withFileTypes: true,
-    }))
+    const migrations = (
+      await readdir(migrationsDirectory, {
+        withFileTypes: true,
+      })
+    )
       .filter((entry) => entry.isDirectory())
       .map((entry) => entry.name)
       .sort();
