@@ -18,8 +18,12 @@ export interface OverpassResponse {
 
 export interface OpenStreetMapProviderOptions {
   endpoint?: string;
+  fallbackEndpoints?: string[];
   fetch?: typeof globalThis.fetch;
   now?: () => Date;
   requestTimeoutSeconds?: number;
+  maxRetries?: number;
+  retryDelayMilliseconds?: number;
+  sleep?: (milliseconds: number) => Promise<void>;
   maxResults?: number;
 }

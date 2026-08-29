@@ -14,7 +14,11 @@ export function createProviderRegistry(
   registry.register(
     new OpenStreetMapProvider({
       endpoint: configuration.OVERPASS_API_URL,
+      fallbackEndpoints: configuration.OVERPASS_FALLBACK_URLS,
       requestTimeoutSeconds: configuration.OVERPASS_TIMEOUT_SECONDS,
+      maxRetries: configuration.OVERPASS_MAX_RETRIES,
+      retryDelayMilliseconds:
+        configuration.OVERPASS_RETRY_DELAY_MILLISECONDS,
       maxResults: configuration.MAX_RESEARCH_RESULTS,
     }),
   );

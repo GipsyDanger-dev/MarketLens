@@ -11,6 +11,17 @@ const optionalSecret = z
   .transform((value) => value || undefined)
   .pipe(z.string().min(1).optional());
 
+const urlListFromEnvironment = z
+  .string()
+  .default("")
+  .transform((value) =>
+    value
+      .split(",")
+      .map((url) => url.trim())
+      .filter(Boolean),
+  )
+  .pipe(z.array(z.url()));
+
 export const serverEnvironmentSchema = z.object({
   DATABASE_URL: z.url(),
   DEFAULT_PLACE_PROVIDER: z.string().min(1).default("openstreetmap"),
@@ -27,12 +38,20 @@ export const serverEnvironmentSchema = z.object({
   AI_MAX_RETRIES: z.coerce.number().int().min(0).max(3).default(1),
   ENABLE_AUTH: booleanFromEnvironment,
   OVERPASS_API_URL: z.url().default("https://overpass-api.de/api/interpreter"),
+  OVERPASS_FALLBACK_URLS: urlListFromEnvironment,
   OVERPASS_TIMEOUT_SECONDS: z.coerce
     .number()
     .int()
     .positive()
     .max(60)
     .default(25),
+  OVERPASS_MAX_RETRIES: z.coerce.number().int().min(0).max(3).default(1),
+  OVERPASS_RETRY_DELAY_MILLISECONDS: z.coerce
+    .number()
+    .int()
+    .min(100)
+    .max(10_000)
+    .default(750),
   MAX_RESEARCH_RESULTS: z.coerce
     .number()
     .int()
