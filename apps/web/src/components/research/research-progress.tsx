@@ -113,20 +113,18 @@ export function ResearchProgress({ researchId }: { researchId: string }) {
     progress !== null && activeStatuses.has(progress.projectStatus);
 
   return (
-    <section className="mx-auto w-full max-w-2xl space-y-6 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-2xl shadow-slate-950/30 sm:p-8">
-      <div className="space-y-2">
-        <p className="text-sm font-semibold tracking-[0.2em] text-cyan-300 uppercase">
-          Research collection
-        </p>
-        <h1 className="text-2xl font-semibold text-slate-50 sm:text-3xl">
-          Collection progress
-        </h1>
-        <p className="break-all text-sm text-slate-400">{researchId}</p>
+    <section className="paper-panel w-full p-5 sm:p-7">
+      <div className="grid gap-4 border-b border-[var(--rule)] pb-5 sm:grid-cols-[1fr_auto] sm:items-end">
+        <div>
+          <p className="eyebrow">Collection control</p>
+          <h1 className="type-display mt-3 text-3xl leading-none tracking-[-0.04em] sm:text-4xl">Field collection</h1>
+        </div>
+        <p className="max-w-55 break-all font-mono text-[0.65rem] leading-5 text-[var(--ink-faint)]">ID / {researchId}</p>
       </div>
 
       {error ? (
         <div
-          className="rounded-lg border border-rose-400/40 bg-rose-400/10 p-4 text-sm text-rose-100"
+          className="mt-6 border border-[color:var(--danger)] bg-[#f7e6e2] p-4 text-sm text-[var(--danger)]"
           role="alert"
         >
           {error}
@@ -135,18 +133,18 @@ export function ResearchProgress({ researchId }: { researchId: string }) {
 
       {!progress ? (
         <p
-          className="rounded-lg bg-slate-800/70 p-4 text-sm text-slate-300"
+          className="mt-6 bg-[var(--paper-muted)] p-4 text-sm text-[var(--ink-soft)]"
           aria-live="polite"
         >
           Loading persisted research progress…
         </p>
       ) : (
-        <div className="space-y-5" aria-live="polite">
+        <div className="mt-6 space-y-6" aria-live="polite">
           <div className="flex flex-wrap items-baseline justify-between gap-3">
-            <p className="text-lg font-medium text-slate-100">
+            <p className="text-lg font-semibold text-[var(--ink)]">
               {progress.projectStatus.replaceAll("_", " ")}
             </p>
-            <p className="text-sm tabular-nums text-cyan-200">
+            <p className="font-mono text-sm tabular-nums text-[var(--accent)]">
               {progress.progress}%
             </p>
           </div>
@@ -156,16 +154,16 @@ export function ResearchProgress({ researchId }: { researchId: string }) {
             aria-valuemax={100}
             aria-valuemin={0}
             aria-valuenow={progress.progress}
-            className="h-3 overflow-hidden rounded-full bg-slate-800"
+            className="h-2 overflow-hidden bg-[var(--paper-muted)]"
             role="progressbar"
           >
             <div
-              className="h-full rounded-full bg-cyan-300 transition-[width] duration-500"
+              className="h-full bg-[var(--accent)] transition-[width] duration-500"
               style={{ width: `${progress.progress}%` }}
             />
           </div>
 
-          <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
+          <dl className="grid divide-y divide-[var(--rule)] border-y border-[var(--rule)] text-sm sm:grid-cols-3 sm:divide-x sm:divide-y-0">
             <ProgressMetric
               label="Discovered"
               value={progress.totalDiscovered}
@@ -175,37 +173,34 @@ export function ResearchProgress({ researchId }: { researchId: string }) {
           </dl>
 
           {progress.error ? (
-            <p className="rounded-lg border border-amber-300/30 bg-amber-300/10 p-4 text-sm text-amber-100">
+            <p className="border border-[#c9954f] bg-[#f4ead8] p-4 text-sm text-[#7b4d18]">
               {progress.error}
             </p>
           ) : null}
 
           {!progress.jobId ? (
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-[var(--ink-soft)]">
               No collection job has been recorded for this research yet.
             </p>
           ) : null}
         </div>
       )}
 
-      <Button disabled={isRunning || isActive} onClick={runCollection}>
-        {isRunning
-          ? "Running collection…"
-          : isRetry
-            ? "Retry collection"
-            : progress?.jobId
-              ? "Run collection again"
-              : "Run collection"}
-      </Button>
+      <div className="mt-6 flex flex-col gap-3 border-t border-[var(--rule)] pt-5 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm text-[var(--ink-soft)]">Collection normalizes and deduplicates source records before analysis.</p>
+        <Button disabled={isRunning || isActive} onClick={runCollection}>
+          {isRunning ? "Running collection…" : isRetry ? "Retry collection" : progress?.jobId ? "Run collection again" : "Run collection"}
+        </Button>
+      </div>
     </section>
   );
 }
 
 function ProgressMetric({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-lg bg-slate-800/70 p-4">
-      <dt className="text-slate-400">{label}</dt>
-      <dd className="mt-1 text-xl font-semibold tabular-nums text-slate-100">
+    <div className="p-4">
+      <dt className="data-label">{label}</dt>
+      <dd className="type-display mt-2 text-3xl leading-none tabular-nums text-[var(--ink)]">
         {value}
       </dd>
     </div>

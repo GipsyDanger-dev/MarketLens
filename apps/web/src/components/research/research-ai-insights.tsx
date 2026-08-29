@@ -104,16 +104,12 @@ export function ResearchAiInsights({ researchId }: { researchId: string }) {
   };
 
   return (
-    <section className="space-y-4 rounded-2xl border border-violet-400/20 bg-violet-400/5 p-5 sm:p-6">
-      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+    <section className="border-y border-[var(--rule-strong)] bg-[var(--accent-wash)] px-5 py-6 sm:px-7">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
         <div>
-          <p className="text-sm font-semibold tracking-[0.2em] text-violet-200 uppercase">
-            Optional AI insight
-          </p>
-          <h2 className="mt-1 text-xl font-semibold text-slate-50">
-            Evidence-bound market interpretation
-          </h2>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="eyebrow">Optional interpretation</p>
+          <h2 className="type-display mt-3 text-3xl leading-none tracking-[-0.035em] text-[var(--ink)]">Evidence-bound interpretation</h2>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--ink-soft)]">
             Uses only this research dataset. Validate all market signals before
             acting.
           </p>
@@ -124,7 +120,7 @@ export function ResearchAiInsights({ researchId }: { researchId: string }) {
       </div>
       {error ? (
         <p
-          className="rounded-lg border border-amber-300/30 bg-amber-300/10 p-3 text-sm text-amber-100"
+          className="border border-[#c9954f] bg-[#f4ead8] p-3 text-sm text-[#7b4d18]"
           role="status"
         >
           {error}
@@ -146,18 +142,18 @@ function InsightContent({ insight }: { insight: MarketInsight }) {
   ] as const;
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="mt-6 grid gap-x-8 gap-y-0 border-t border-[var(--rule-strong)] md:grid-cols-2">
       {sections.map(([title, items]) => (
-        <div className="rounded-xl bg-slate-950/50 p-4" key={title}>
-          <h3 className="font-medium text-slate-100">{title}</h3>
+        <div className="border-b border-[var(--rule)] py-5" key={title}>
+          <h3 className="font-semibold text-[var(--ink)]">{title}</h3>
           {items.length ? (
-            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-300">
+            <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm leading-6 text-[var(--ink-soft)]">
               {items.map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
           ) : (
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="mt-3 text-sm text-[var(--ink-faint)]">
               No signal in this dataset.
             </p>
           )}
