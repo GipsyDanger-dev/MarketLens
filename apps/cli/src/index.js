@@ -161,7 +161,13 @@ function formatStatus(status) {
     "MarketLens Status",
     "",
     `Web          ${composeStatus}`,
-    `Docker       ${dockerAvailable ? "AVAILABLE" : "UNAVAILABLE"}`,
+    `Docker       ${
+      config.database.mode === "embedded"
+        ? "NOT REQUIRED"
+        : dockerAvailable
+          ? "AVAILABLE"
+          : "UNAVAILABLE"
+    }`,
     `Runtime      ${
       config.database.mode === "embedded"
         ? "LIGHTWEIGHT LOCAL"

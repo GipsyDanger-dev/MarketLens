@@ -113,7 +113,9 @@ async function performTuiAction({ action, ask, cli, config, output }) {
       }
       case "down":
         await cli.down();
-        return "Services stopped. Local PostgreSQL data was retained.";
+        return config?.database.mode === "embedded"
+          ? "Lightweight local services stopped. Your local research data was retained."
+          : "Services stopped. Local PostgreSQL data was retained.";
       case "status":
         return "Status refreshed.";
       case "open":

@@ -65,9 +65,12 @@ marketlens
 
 The keyboard-driven TUI offers a first-run wizard (provider, optional AI, and
 local web port), service controls, health status, logs, diagnostics, and
-provider/AI/database settings. It is a local operations menu—not an AI chat.
-OpenStreetMap works without a key; Google Places and AI integrations are
-optional and their server-side credentials stay in the local `.env` file.
+provider/AI/runtime settings. It is a local operations menu—not an AI chat.
+Its default **Lightweight local** runtime stores research in an embedded local
+PostgreSQL-compatible database and starts MarketLens without Docker. Docker and
+external PostgreSQL remain advanced options in Settings. OpenStreetMap works
+without a key; Google Places and AI integrations are optional and their
+server-side credentials stay in the local `.env` file.
 
 The CLI creates local configuration and a strong PostgreSQL password in `.env`,
 then serves the dashboard at `http://localhost:3000`. It binds the local web
