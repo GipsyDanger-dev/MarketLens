@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.3.0 — TUI-Managed Lightweight Local Runtime
+
+- Make the TUI's default runtime Docker-free: it starts an embedded local,
+  PostgreSQL-compatible database, runs migrations, builds the web app, and
+  manages its background lifecycle, logs, status, and shutdown.
+- Keep Docker Compose and external PostgreSQL as explicit advanced runtime
+  choices rather than requirements for ordinary local users.
+- Treat blank optional Google Places and Gemini keys as unconfigured, so a
+  local OpenStreetMap-only installation works without any credential setup.
+
 ## v1.2.0 — Interactive Terminal UI
 
 - Add the keyboard-driven `marketlens` terminal dashboard, also available with

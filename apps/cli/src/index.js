@@ -175,7 +175,7 @@ function formatStatus(status) {
     }`,
     `Provider     ${config.provider}`,
     `AI           ${config.ai.enabled ? config.ai.provider : "Disabled"}`,
-    `Version      1.2.0`,
+    `Version      1.3.0`,
     `URL          http://${config.web.host}:${config.web.port}`,
   ].join("\n");
 }

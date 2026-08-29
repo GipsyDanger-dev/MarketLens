@@ -2,7 +2,7 @@ import { createInterface } from "node:readline/promises";
 
 import { defaultConfig } from "./config.js";
 
-const VERSION = "1.2.0";
+const VERSION = "1.3.0";
 
 export const TUI_ACTIONS = Object.freeze({
   1: "initialize",
