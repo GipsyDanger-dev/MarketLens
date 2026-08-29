@@ -7,20 +7,16 @@ export default function ResearchError({
   reset: () => void;
 }) {
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-10 text-slate-100">
-      <section className="mx-auto max-w-lg rounded-2xl border border-rose-400/30 bg-slate-900 p-6">
-        <p className="text-sm font-semibold tracking-[0.2em] text-rose-200 uppercase">
-          Research error
-        </p>
-        <h1 className="mt-2 text-2xl font-semibold">
-          This research could not be displayed.
-        </h1>
-        <p className="mt-2 text-slate-300">
+    <main className="app-shell px-4 py-10 sm:py-20">
+      <section className="paper-panel mx-auto max-w-xl p-6 sm:p-8">
+        <p className="eyebrow text-[var(--danger)]">Research error</p>
+        <h1 className="type-display mt-4 text-4xl leading-none tracking-[-0.045em]">This research could not be displayed.</h1>
+        <p className="mt-5 leading-7 text-[var(--ink-soft)]">
           The dataset remains stored. Retry the page, or return to the dashboard
           and try the action again.
         </p>
         <button
-          className="mt-5 rounded-md bg-cyan-300 px-4 py-2 font-medium text-slate-950 hover:bg-cyan-200"
+          className="mt-7 min-h-11 border border-[var(--accent)] bg-[var(--accent)] px-4 text-sm font-semibold text-[#fffcf5] transition-colors hover:bg-[var(--accent-hover)]"
           onClick={reset}
         >
           Retry research

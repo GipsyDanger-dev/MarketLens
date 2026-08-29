@@ -48,13 +48,13 @@ export function ResearchMap({
           id: "research-radius-fill",
           type: "fill",
           source: "research-radius",
-          paint: { "fill-color": "#22d3ee", "fill-opacity": 0.1 },
+          paint: { "fill-color": "#476b50", "fill-opacity": 0.13 },
         });
         mapInstance.addLayer({
           id: "research-radius-line",
           type: "line",
           source: "research-radius",
-          paint: { "line-color": "#67e8f9", "line-width": 2 },
+          paint: { "line-color": "#476b50", "line-width": 2 },
         });
         mapInstance.addSource("places", {
           type: "geojson",
@@ -78,7 +78,7 @@ export function ResearchMap({
           source: "places",
           filter: ["has", "point_count"],
           paint: {
-            "circle-color": "#0891b2",
+            "circle-color": "#476b50",
             "circle-radius": [
               "step",
               ["get", "point_count"],
@@ -107,10 +107,10 @@ export function ResearchMap({
           source: "places",
           filter: ["!", ["has", "point_count"]],
           paint: {
-            "circle-color": "#67e8f9",
+            "circle-color": "#d5e0bf",
             "circle-radius": 8,
             "circle-stroke-width": 2,
-            "circle-stroke-color": "#0f172a",
+            "circle-stroke-color": "#16201b",
           },
         });
         mapInstance.on("click", "unclustered-place", (event) => {
@@ -133,11 +133,12 @@ export function ResearchMap({
   }, [center, onPlaceSelect, places, radiusMeters, selectedPlaceId]);
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/70">
-      <div className="flex flex-wrap items-baseline justify-between gap-2 p-5">
+    <section className="paper-panel overflow-hidden">
+      <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-[var(--rule)] p-5">
         <div>
-          <h2 className="font-semibold text-slate-100">Business map</h2>
-          <p className="text-sm text-slate-400">
+          <p className="eyebrow">Spatial pattern</p>
+          <h2 className="mt-2 text-xl font-semibold tracking-[-0.025em] text-[var(--ink)]">Business map</h2>
+          <p className="mt-1 text-sm text-[var(--ink-soft)]">
             {places.length} markers ·{" "}
             {Math.round((radiusMeters / 1_000) * 10) / 10} km research radius
           </p>
@@ -145,7 +146,7 @@ export function ResearchMap({
       </div>
       <div
         aria-label="Interactive business map"
-        className="h-80 w-full sm:h-105"
+        className="h-80 w-full grayscale-[0.25] contrast-[0.95] sm:h-105"
         ref={mapElement}
       />
     </section>
