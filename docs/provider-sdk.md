@@ -87,17 +87,29 @@ than silently returning an inconsistent page. A 429 or 5xx response is exposed
 as a retryable `ProviderError`; invalid requests and invalid provider payloads
 are not retryable. `healthCheck()` returns a health result instead of throwing.
 
+Transient failures use bounded retries with exponential backoff. You may add
+approved, global-data interpreter endpoints through a comma-separated fallback
+list. MarketLens tries every retry on the primary endpoint before moving to the
+next fallback; non-retryable response and payload errors stop immediately.
+Attempts share the configured timeout budget, so adding fallbacks does not turn a
+single stalled request into an unbounded wait.
+
 Configure the endpoint and timeout only on the server:
 
 ```env
 OVERPASS_API_URL="https://overpass-api.de/api/interpreter"
 OVERPASS_TIMEOUT_SECONDS=25
+OVERPASS_FALLBACK_URLS=""
+OVERPASS_MAX_RETRIES=1
+OVERPASS_RETRY_DELAY_MILLISECONDS=750
 ```
 
 Point `OVERPASS_API_URL` at a self-hosted or otherwise approved Overpass
 instance for heavier workloads. The public endpoint receives an identifying
 MarketLens user agent, but it is still a shared community service: respect the
-instance policy and back off when it returns 429.
+instance policy and back off when it returns 429. Public instance availability
+changes, so choose fallback URLs from the current OpenStreetMap Overpass API
+instance list and verify each instance's coverage and usage policy before use.
 
 Server code obtains the default adapter through the registry:
 

@@ -18,6 +18,7 @@ describe("buildOverpassQuery", () => {
 
     expect(query).toContain("[out:json][timeout:25];");
     expect(query).toContain('["name"~"coffee \\(shop\\)",i]');
+    expect(query).toContain('["amenity"="cafe"]');
     expect(query).toContain("(around:1000,-6.2,106.8);");
     expect(query).toContain("out center 250;");
   });
