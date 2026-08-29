@@ -26,6 +26,7 @@
   "files": [
     "src/command-runner.js",
     "src/config.js",
+    "src/embedded-runtime.js",
     "src/index.js",
     "src/marketlens-cli.js",
     "src/tui.js",

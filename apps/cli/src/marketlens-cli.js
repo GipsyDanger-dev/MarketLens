@@ -15,6 +15,12 @@ import {
   commandExists,
   createCommandRunner,
 } from "./command-runner.js";
+import {
+  getEmbeddedRuntimeStatus,
+  readEmbeddedLogs,
+  startEmbeddedRuntime,
+  stopEmbeddedRuntime,
+} from "./embedded-runtime.js";
 
 const SOURCE_REPOSITORY = "https://github.com/GipsyDanger-dev/MarketLens.git";
 
@@ -22,6 +28,7 @@ export function createMarketLensCli(options = {}) {
   const runner = options.runner ?? createCommandRunner();
   const cwd = options.cwd ?? process.cwd();
   const sourceDirectory = options.sourceDirectory ?? getSourceDirectory();
+  const spawnProcess = options.spawnProcess;
   const print = options.print ?? (() => {});
   const openUrl = options.openUrl ?? defaultOpenUrl;
 
@@ -57,6 +64,15 @@ export function createMarketLensCli(options = {}) {
 
   async function up() {
     const { config, runtimeDirectory } = await loadInstallation();
+    if (config.database.mode === "embedded") {
+      return startEmbeddedRuntime({
+        config,
+        installationDirectory: cwd,
+        runner,
+        runtimeDirectory,
+        spawnProcess,
+      });
+    }
     await assertDockerAvailable(runner);
     if (config.database.mode === "external") {
       await assertExternalDatabaseConfigured(cwd);
@@ -91,6 +107,9 @@ export function createMarketLensCli(options = {}) {
 
   async function down() {
     const { config, runtimeDirectory } = await loadInstallation();
+    if (config.database.mode === "embedded") {
+      return stopEmbeddedRuntime({ installationDirectory: cwd, runner });
+    }
     await assertDockerAvailable(runner);
     const result = await runner("docker", [
       ...composeArguments(cwd, runtimeDirectory, config),
@@ -104,6 +123,15 @@ export function createMarketLensCli(options = {}) {
 
   async function status() {
     const { config, runtimeDirectory } = await loadInstallation();
+    if (config.database.mode === "embedded") {
+      const embedded = await getEmbeddedRuntimeStatus(cwd);
+      return {
+        composeStatus: embedded.running ? "RUNNING" : "STOPPED",
+        config,
+        dockerAvailable: false,
+        embedded,
+      };
+    }
     const dockerAvailable = await commandExists("docker", runner);
     let composeStatus = "UNAVAILABLE";
 
@@ -134,12 +162,17 @@ export function createMarketLensCli(options = {}) {
       cwd,
       sourceDirectory,
     );
+    const embedded =
+      config?.database.mode === "embedded"
+        ? await getEmbeddedRuntimeStatus(cwd)
+        : null;
 
     return {
       composeAvailable,
       config,
       dockerAvailable,
       nodeVersion: process.versions.node,
+      embedded,
       portAvailable,
       runtimeDirectory,
     };
@@ -165,6 +198,9 @@ export function createMarketLensCli(options = {}) {
 
   async function logs() {
     const { config, runtimeDirectory } = await loadInstallation();
+    if (config.database.mode === "embedded") {
+      return { exitCode: 0, stderr: "", stdout: await readEmbeddedLogs(cwd) };
+    }
     await assertDockerAvailable(runner);
     return runner("docker", [
       ...composeArguments(cwd, runtimeDirectory, config),
