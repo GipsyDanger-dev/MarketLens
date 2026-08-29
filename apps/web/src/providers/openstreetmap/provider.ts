@@ -35,18 +35,27 @@ export class OpenStreetMapProvider implements PlaceProvider {
   readonly name = "OpenStreetMap / Overpass";
   readonly capabilities = openStreetMapCapabilities;
 
-  private readonly endpoint: string;
+  private readonly endpoints: string[];
   private readonly fetchImplementation: typeof globalThis.fetch;
   private readonly now: () => Date;
+  private readonly maxRetries: number;
   private readonly requestTimeoutSeconds: number;
+  private readonly retryDelayMilliseconds: number;
+  private readonly sleep: (milliseconds: number) => Promise<void>;
   private readonly maxResults: number;
 
   constructor(options: OpenStreetMapProviderOptions = {}) {
-    this.endpoint = validateEndpoint(options.endpoint ?? defaultEndpoint);
+    this.endpoints = uniqueEndpoints([
+      options.endpoint ?? defaultEndpoint,
+      ...(options.fallbackEndpoints ?? []),
+    ]);
     this.fetchImplementation = options.fetch ?? globalThis.fetch;
     this.now = options.now ?? (() => new Date());
+    this.maxRetries = options.maxRetries ?? 1;
     this.requestTimeoutSeconds =
       options.requestTimeoutSeconds ?? defaultOverpassTimeoutSeconds;
+    this.retryDelayMilliseconds = options.retryDelayMilliseconds ?? 750;
+    this.sleep = options.sleep ?? defaultSleep;
     this.maxResults = options.maxResults ?? defaultOverpassResultLimit;
   }
 
@@ -91,14 +100,67 @@ export class OpenStreetMapProvider implements PlaceProvider {
   }
 
   private async requestOverpass(query: string): Promise<OverpassResponse> {
+    const attemptsPerEndpoint = this.maxRetries + 1;
+    const timeoutMilliseconds = Math.max(
+      1_000,
+      Math.floor(
+        (this.requestTimeoutSeconds * 1_000) /
+          (this.endpoints.length * attemptsPerEndpoint),
+      ),
+    );
+    let lastRetryableError: ProviderError | null = null;
+
+    for (const endpoint of this.endpoints) {
+      for (let attempt = 0; attempt < attemptsPerEndpoint; attempt += 1) {
+        try {
+          return await this.requestEndpoint({
+            endpoint,
+            query,
+            timeoutMilliseconds,
+          });
+        } catch (error) {
+          if (!(error instanceof ProviderError) || !error.retryable) {
+            throw error;
+          }
+
+          lastRetryableError = error;
+          if (attempt < attemptsPerEndpoint - 1) {
+            await this.sleep(
+              this.retryDelayMilliseconds * 2 ** attempt,
+            );
+          }
+        }
+      }
+    }
+
+    throw (
+      lastRetryableError ??
+      new ProviderError({
+        providerId: this.id,
+        code: "NETWORK",
+        message: "Unable to reach an Overpass endpoint.",
+        retryable: true,
+      })
+    );
+  }
+
+  private async requestEndpoint({
+    endpoint,
+    query,
+    timeoutMilliseconds,
+  }: {
+    endpoint: string;
+    query: string;
+    timeoutMilliseconds: number;
+  }): Promise<OverpassResponse> {
     const controller = new AbortController();
     const timeout = setTimeout(
       () => controller.abort(),
-      this.requestTimeoutSeconds * 1_000,
+      timeoutMilliseconds,
     );
 
     try {
-      const response = await this.fetchImplementation(this.endpoint, {
+      const response = await this.fetchImplementation(endpoint, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -144,6 +206,14 @@ export class OpenStreetMapProvider implements PlaceProvider {
       clearTimeout(timeout);
     }
   }
+}
+
+function uniqueEndpoints(endpoints: string[]): string[] {
+  return [...new Set(endpoints.map(validateEndpoint))];
+}
+
+function defaultSleep(milliseconds: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
 function validateEndpoint(endpoint: string): string {

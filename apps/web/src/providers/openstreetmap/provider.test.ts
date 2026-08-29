@@ -57,11 +57,13 @@ describe("OpenStreetMapProvider", () => {
   it("maps rate-limit and network failures to typed provider errors", async () => {
     const rateLimitedProvider = new OpenStreetMapProvider({
       fetch: (async () => new Response(null, { status: 429 })) as typeof fetch,
+      maxRetries: 0,
     });
     const unavailableProvider = new OpenStreetMapProvider({
       fetch: (async () => {
         throw new TypeError("network unavailable");
       }) as typeof fetch,
+      maxRetries: 0,
     });
 
     await expect(rateLimitedProvider.search(request)).rejects.toMatchObject({
@@ -74,11 +76,52 @@ describe("OpenStreetMapProvider", () => {
     } satisfies Partial<ProviderError>);
   });
 
+  it("retries a transient failure before accepting a response", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(null, { status: 503 }))
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ elements: [] }), { status: 200 }),
+      );
+    const sleep = vi.fn(async () => {});
+    const provider = new OpenStreetMapProvider({
+      endpoint: "https://overpass.example/api/interpreter",
+      fetch: fetchMock as typeof fetch,
+      sleep,
+    });
+
+    await expect(provider.search(request)).resolves.toMatchObject({ places: [] });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(sleep).toHaveBeenCalledWith(750);
+  });
+
+  it("continues with a configured fallback endpoint after a timeout", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockRejectedValueOnce(new DOMException("Timed out", "AbortError"))
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ elements: [] }), { status: 200 }),
+      );
+    const provider = new OpenStreetMapProvider({
+      endpoint: "https://primary.example/api/interpreter",
+      fallbackEndpoints: ["https://fallback.example/api/interpreter"],
+      fetch: fetchMock as typeof fetch,
+      maxRetries: 0,
+    });
+
+    await expect(provider.search(request)).resolves.toMatchObject({ places: [] });
+    expect(fetchMock.mock.calls.map(([endpoint]) => endpoint)).toEqual([
+      "https://primary.example/api/interpreter",
+      "https://fallback.example/api/interpreter",
+    ]);
+  });
+
   it("returns an unhealthy health result instead of throwing", async () => {
     const provider = new OpenStreetMapProvider({
       fetch: (async () => {
         throw new TypeError("network unavailable");
       }) as typeof fetch,
+      maxRetries: 0,
     });
 
     await expect(provider.healthCheck()).resolves.toMatchObject({

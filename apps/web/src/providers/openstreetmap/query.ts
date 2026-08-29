@@ -19,11 +19,7 @@ export function buildOverpassQuery(
   );
   const timeoutSeconds =
     options.timeoutSeconds ?? defaultOverpassTimeoutSeconds;
-  const categoryFilter = request.category
-    ? `[~"^(amenity|shop|tourism|leisure|office|craft)$"~"${escapeOverpassRegex(
-        request.category,
-      )}",i]`
-    : "";
+  const categoryFilter = buildCategoryFilter(request.category);
 
   return [
     `[out:json][timeout:${timeoutSeconds}];`,
@@ -32,6 +28,30 @@ export function buildOverpassQuery(
     ");",
     `out center ${maxResults};`,
   ].join("\n");
+}
+
+const categoryKeys: Record<string, string> = {
+  bar: "amenity",
+  cafe: "amenity",
+  clinic: "amenity",
+  hospital: "amenity",
+  pharmacy: "amenity",
+  restaurant: "amenity",
+  supermarket: "shop",
+};
+
+function buildCategoryFilter(category: string | undefined): string {
+  if (!category) return "";
+
+  const normalizedCategory = category.trim().toLowerCase();
+  const key = categoryKeys[normalizedCategory];
+  if (key) {
+    return `["${key}"="${escapeOverpassString(normalizedCategory)}"]`;
+  }
+
+  return `[~"^(amenity|shop|tourism|leisure|office|craft)$"~"${escapeOverpassRegex(
+    category,
+  )}",i]`;
 }
 
 function validateSearchRequest(request: PlaceSearchRequest): void {
@@ -70,6 +90,10 @@ function escapeOverpassRegex(value: string): string {
     .trim()
     .replace(/[\\^$.*+?()[\]{}|]/g, "\\$&")
     .replaceAll('"', '\\"');
+}
+
+function escapeOverpassString(value: string): string {
+  return value.trim().replace(/[\\"]/g, "\\$&");
 }
 
 function invalidRequest(message: string): ProviderError {
