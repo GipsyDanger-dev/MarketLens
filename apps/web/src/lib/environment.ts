@@ -5,13 +5,19 @@ const booleanFromEnvironment = z
   .transform((value) => value === "true")
   .default(false);
 
+const optionalSecret = z
+  .string()
+  .trim()
+  .transform((value) => value || undefined)
+  .pipe(z.string().min(1).optional());
+
 export const serverEnvironmentSchema = z.object({
   DATABASE_URL: z.url(),
   DEFAULT_PLACE_PROVIDER: z.string().min(1).default("openstreetmap"),
-  GOOGLE_MAPS_API_KEY: z.string().min(1).optional(),
+  GOOGLE_MAPS_API_KEY: optionalSecret,
   ENABLE_AI: booleanFromEnvironment,
   DEFAULT_AI_PROVIDER: z.literal("gemini").default("gemini"),
-  GEMINI_API_KEY: z.string().min(1).optional(),
+  GEMINI_API_KEY: optionalSecret,
   AI_TIMEOUT_MILLISECONDS: z.coerce
     .number()
     .int()

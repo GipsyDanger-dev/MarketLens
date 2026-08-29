@@ -33,6 +33,7 @@ export async function POST(request: Request) {
     });
     return NextResponse.json(project, { status: 201 });
   } catch (error) {
+    console.error("research.create.failed", error);
     return researchCollectionErrorResponse(error);
   }
 }

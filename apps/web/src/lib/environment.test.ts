@@ -39,4 +39,16 @@ describe("parseServerEnvironment", () => {
     });
     expect(environment.GEMINI_API_KEY).toBeUndefined();
   });
+
+  it("treats blank optional provider and AI keys as unconfigured", () => {
+    const environment = parseServerEnvironment({
+      DATABASE_URL:
+        "postgresql://marketlens:marketlens@localhost:5432/marketlens",
+      GEMINI_API_KEY: "",
+      GOOGLE_MAPS_API_KEY: "",
+    });
+
+    expect(environment.GEMINI_API_KEY).toBeUndefined();
+    expect(environment.GOOGLE_MAPS_API_KEY).toBeUndefined();
+  });
 });

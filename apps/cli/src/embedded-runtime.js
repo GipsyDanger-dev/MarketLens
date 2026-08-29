@@ -37,38 +37,35 @@ export async function startEmbeddedRuntime(options) {
 
   await ensureRuntimeDependencies(runtimeDirectory, runner);
   assertSuccessful(
-    await runner(
-      npmCommand(),
+    await runNpm(
+      runner,
       ["run", "db:embedded", "--workspace=@marketlens/web"],
       { cwd: runtimeDirectory, env: environment },
     ),
     "Inspect the local runtime log and run 'marketlens doctor'.",
   );
   assertSuccessful(
-    await runner(
-      npmCommand(),
-      ["run", "build", "--workspace=@marketlens/web"],
-      {
-        cwd: runtimeDirectory,
-        env: environment,
-      },
-    ),
+    await runNpm(runner, ["run", "build", "--workspace=@marketlens/web"], {
+      cwd: runtimeDirectory,
+      env: environment,
+    }),
     "Inspect the local runtime log and run 'marketlens doctor'.",
   );
 
   const log = await open(paths.log, "a");
   try {
-    const child = spawnProcess(
-      npmCommand(),
-      ["run", "start", "--workspace=@marketlens/web"],
-      {
-        cwd: runtimeDirectory,
-        detached: true,
-        env: environment,
-        stdio: ["ignore", log.fd, log.fd],
-        windowsHide: true,
-      },
-    );
+    const invocation = npmInvocation([
+      "run",
+      "start",
+      "--workspace=@marketlens/web",
+    ]);
+    const child = spawnProcess(invocation.command, invocation.argumentsList, {
+      cwd: runtimeDirectory,
+      detached: true,
+      env: environment,
+      stdio: ["ignore", log.fd, log.fd],
+      windowsHide: true,
+    });
     child.unref();
     if (!child.pid) {
       throw new Error("Unable to start the embedded MarketLens web process.");
@@ -133,7 +130,7 @@ async function ensureRuntimeDependencies(runtimeDirectory, runner) {
   }
 
   assertSuccessful(
-    await runner(npmCommand(), ["ci", "--ignore-scripts"], {
+    await runNpm(runner, ["ci", "--ignore-scripts"], {
       cwd: runtimeDirectory,
     }),
     "Check the internet connection and npm configuration, then retry.",
@@ -236,6 +233,29 @@ function getUrl(config) {
   return `http://${config.web.host}:${config.web.port}`;
 }
 
-function npmCommand() {
-  return process.platform === "win32" ? "npm.cmd" : "npm";
+async function runNpm(runner, argumentsList, options) {
+  const invocation = npmInvocation(argumentsList);
+  return runner(invocation.command, invocation.argumentsList, options);
+}
+
+function npmInvocation(argumentsList) {
+  if (process.platform !== "win32") {
+    return { argumentsList, command: "npm" };
+  }
+
+  return {
+    argumentsList: [
+      "/d",
+      "/s",
+      "/c",
+      ["npm", ...argumentsList].map(quoteForWindowsCommand).join(" "),
+    ],
+    command: process.env.ComSpec ?? "cmd.exe",
+  };
+}
+
+function quoteForWindowsCommand(value) {
+  return /^[a-zA-Z0-9_@./=:-]+$/u.test(value)
+    ? value
+    : `"${value.replaceAll('"', '\\"')}"`;
 }
