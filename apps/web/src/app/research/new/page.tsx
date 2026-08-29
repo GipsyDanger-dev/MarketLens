@@ -1,4 +1,5 @@
 import { ResearchCreationForm } from "@/components/research/research-creation-form";
+import { SiteHeader } from "@/components/site-header";
 import { createProviderRegistry } from "@/providers";
 
 export const dynamic = "force-dynamic";
@@ -9,8 +10,11 @@ export default function NewResearchPage() {
     .map((provider) => ({ id: provider.id, name: provider.name }));
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-10 text-slate-100 sm:px-6 sm:py-16">
-      <ResearchCreationForm providers={providers} />
+    <main className="app-shell">
+      <SiteHeader />
+      <div className="workspace-frame py-10 sm:py-16">
+        <ResearchCreationForm providers={providers} />
+      </div>
     </main>
   );
 }

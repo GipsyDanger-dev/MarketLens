@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SiteHeader } from "@/components/site-header";
 
 const capabilities = [
   {
@@ -30,198 +31,107 @@ const workflow = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen overflow-hidden bg-slate-950 text-slate-100">
-      <div className="absolute inset-x-0 top-0 -z-0 h-[32rem] bg-[radial-gradient(circle_at_top_right,_rgba(34,211,238,0.18),_transparent_42%),radial-gradient(circle_at_20%_10%,_rgba(99,102,241,0.16),_transparent_36%)]" />
-      <div className="relative z-10 mx-auto max-w-6xl px-5 sm:px-8">
-        <header className="flex items-center justify-between py-6">
-          <Link
-            className="flex items-center gap-2 font-semibold tracking-tight"
-            href="/"
-          >
-            <span className="grid size-8 place-items-center rounded-lg bg-cyan-300 font-black text-slate-950">
-              M
-            </span>
-            MarketLens
-          </Link>
-          <nav
-            aria-label="Primary navigation"
-            className="flex items-center gap-2"
-          >
-            <a
-              className="hidden rounded-md px-3 py-2 text-sm text-slate-300 transition hover:text-white sm:block"
-              href="https://github.com/GipsyDanger-dev/MarketLens"
-            >
-              GitHub
-            </a>
-            <Link
-              className="rounded-md bg-cyan-300 px-3 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-100"
-              href="/research/new"
-            >
-              New research
+    <main className="min-h-screen overflow-hidden bg-[#16201b] text-[#fffcf5]">
+      <SiteHeader tone="dark" />
+      <section className="workspace-frame relative grid gap-12 py-16 sm:py-22 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:py-28">
+        <div className="enter-reveal">
+          <p className="font-mono text-xs tracking-[0.12em] text-[#d5e0bf] uppercase">
+            Local market intelligence / 01
+          </p>
+          <h1 className="type-display mt-6 max-w-4xl text-5xl leading-[0.95] tracking-[-0.055em] text-balance sm:text-7xl lg:text-[5.75rem]">
+            Read the ground before you make a move.
+          </h1>
+          <p className="mt-7 max-w-xl text-lg leading-8 text-[#c9cdc1] sm:text-xl">
+            Collect place data, inspect the evidence, and arrive at an explainable view of your local market.
+          </p>
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Link className="inline-flex min-h-12 items-center justify-center border border-[#d5e0bf] bg-[#d5e0bf] px-5 font-semibold text-[#16201b] transition-colors hover:bg-[#e8efda]" href="/research/new">
+              Start a field study
             </Link>
-          </nav>
-        </header>
-
-        <section className="grid gap-12 py-16 sm:py-24 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-          <div>
-            <p className="mb-5 inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-3 py-1 text-xs font-semibold tracking-[0.16em] text-cyan-200 uppercase">
-              Open-source local market intelligence
-            </p>
-            <h1 className="max-w-3xl text-5xl font-semibold tracking-[-0.045em] text-balance sm:text-6xl lg:text-7xl">
-              See the local market before you enter it.
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">
-              MarketLens transforms place data into explainable competitor,
-              geography, and market signals—without making a paid provider or AI
-              account mandatory.
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link
-                className="rounded-md bg-cyan-300 px-5 py-3 text-center font-semibold text-slate-950 transition hover:bg-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-100"
-                href="/research/new"
-              >
-                Create your first research
-              </Link>
-              <a
-                className="rounded-md border border-slate-700 px-5 py-3 text-center font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-100"
-                href="https://github.com/GipsyDanger-dev/MarketLens"
-              >
-                View the source
-              </a>
-            </div>
-            <p className="mt-4 text-sm text-slate-400">
-              Self-hostable · Provider-agnostic · Useful without AI
-            </p>
+            <a className="inline-flex min-h-12 items-center justify-center px-3 text-sm font-medium text-[#d5e0bf] underline decoration-[#7d8b7e] underline-offset-5 transition-colors hover:text-[#fffcf5]" href="https://github.com/GipsyDanger-dev/MarketLens">
+              Inspect the source
+            </a>
           </div>
-
-          <div className="rounded-2xl border border-slate-700/80 bg-slate-900/80 p-5 shadow-2xl shadow-cyan-950/30 backdrop-blur sm:p-6">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <div>
-                <p className="text-xs font-semibold tracking-[0.15em] text-cyan-200 uppercase">
-                  Market snapshot
-                </p>
-                <p className="mt-1 font-semibold">Coffee shops in Malang</p>
-              </div>
-              <span className="rounded-full bg-emerald-400/10 px-2.5 py-1 text-xs font-medium text-emerald-300">
-                Ready
-              </span>
+        </div>
+        <aside className="border-y border-[#617066] py-5 sm:py-6 lg:ml-10" aria-label="Example market snapshot">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="font-mono text-[0.68rem] tracking-[0.11em] text-[#aeb9aa] uppercase">Example study</p>
+              <p className="mt-2 text-lg font-semibold">Coffee shops / Malang</p>
             </div>
-            <dl className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
-              <Metric label="Businesses" value="48" />
+            <span className="border border-[#739477] px-2 py-1 font-mono text-[0.66rem] tracking-[0.08em] text-[#d5e0bf] uppercase">Ready</span>
+          </div>
+          <div className="mt-10 grid grid-cols-[1.45fr_1fr] gap-4 border-b border-[#617066] pb-5">
+            <div>
+              <p className="font-mono text-[0.68rem] tracking-[0.1em] text-[#aeb9aa] uppercase">Observed businesses</p>
+              <p className="type-display mt-1 text-7xl leading-none text-[#d5e0bf]">48</p>
+            </div>
+            <dl className="space-y-4 pt-1">
               <Metric label="Avg. rating" value="4.3" />
               <Metric label="Median reviews" value="127" />
             </dl>
-            <div className="mt-5 rounded-xl border border-slate-800 bg-slate-950/70 p-4">
-              <div className="flex items-end justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-200">
-                    Competitive intensity
-                  </p>
-                  <p className="mt-1 text-sm text-slate-400">
-                    Strongest activity near the city center.
-                  </p>
-                </div>
-                <strong className="text-2xl text-cyan-200">72</strong>
-              </div>
-              <div
-                className="mt-5 flex h-24 items-end gap-1.5"
-                aria-hidden="true"
-              >
-                {[36, 52, 45, 72, 60, 88, 69, 96, 64, 77, 54, 42].map(
-                  (height, index) => (
-                    <span
-                      className="flex-1 rounded-t bg-gradient-to-t from-cyan-500/35 to-cyan-200"
-                      key={`${height}-${index}`}
-                      style={{ height: `${height}%` }}
-                    />
-                  ),
-                )}
-              </div>
-            </div>
           </div>
-        </section>
+          <div className="mt-5 grid grid-cols-12 items-end gap-1" aria-label="Example market activity distribution">
+            {[35, 48, 42, 66, 58, 84, 67, 92, 61, 72, 49, 38].map((height, index) => (
+              <span className="bg-[#d5e0bf]" key={`${height}-${index}`} style={{ height: `${height / 2}px`, opacity: 0.45 + index / 32 }} />
+            ))}
+          </div>
+          <p className="mt-3 text-sm text-[#aeb9aa]">Activity clusters near the city center. A signal, not a verdict.</p>
+        </aside>
+      </section>
 
-        <section className="border-y border-slate-800 py-14 sm:py-20">
-          <p className="text-center text-sm font-semibold tracking-[0.16em] text-slate-400 uppercase">
-            One reusable intelligence pipeline
-          </p>
-          <ol className="mx-auto mt-8 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="border-y border-[#617066] bg-[#1d2a23]">
+        <div className="workspace-frame grid gap-0 lg:grid-cols-[0.8fr_2.2fr]">
+          <div className="border-b border-[#617066] py-7 lg:border-r lg:border-b-0 lg:pr-8 lg:py-12">
+            <p className="font-mono text-xs tracking-[0.1em] text-[#d5e0bf] uppercase">Method</p>
+            <h2 className="type-display mt-3 text-4xl leading-none">A traceable path from places to perspective.</h2>
+          </div>
+          <ol className="divide-y divide-[#617066] lg:pl-10">
             {workflow.map((step, index) => (
-              <li
-                className="rounded-xl border border-slate-800 bg-slate-900/50 p-4"
-                key={step}
-              >
-                <span className="text-sm font-semibold text-cyan-200">
-                  0{index + 1}
-                </span>
-                <p className="mt-2 text-sm leading-6 text-slate-300">{step}</p>
+              <li className="grid grid-cols-[3rem_1fr] gap-4 py-5 sm:grid-cols-[5rem_1fr]" key={step}>
+                <span className="font-mono text-sm text-[#d5e0bf]">0{index + 1}</span>
+                <p className="max-w-xl text-base leading-7 text-[#e5e8df]">{step}</p>
               </li>
             ))}
           </ol>
-        </section>
+        </div>
+      </section>
 
-        <section className="py-16 sm:py-24">
-          <div className="max-w-2xl">
-            <p className="text-sm font-semibold tracking-[0.16em] text-cyan-200 uppercase">
-              Built for evidence
-            </p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-              A local-market toolkit that you can inspect, extend, and host.
-            </h2>
+      <section className="bg-[#f3f0e7] text-[var(--ink)]">
+        <div className="workspace-frame grid gap-12 py-16 sm:py-22 lg:grid-cols-[0.85fr_2fr]">
+          <div>
+            <p className="eyebrow">What changes</p>
+            <h2 className="type-display mt-4 text-4xl leading-[0.98] tracking-[-0.04em] sm:text-5xl">Evidence stays close to every claim.</h2>
           </div>
-          <div className="mt-10 grid gap-5 lg:grid-cols-3">
+          <div className="divide-y divide-[var(--rule-strong)] border-t border-[var(--rule-strong)]">
             {capabilities.map((capability) => (
-              <article
-                className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6"
-                key={capability.title}
-              >
-                <p className="text-xs font-semibold tracking-[0.14em] text-cyan-200 uppercase">
-                  {capability.eyebrow}
-                </p>
-                <h3 className="mt-4 text-xl font-semibold">
-                  {capability.title}
-                </h3>
-                <p className="mt-3 leading-7 text-slate-400">
-                  {capability.description}
-                </p>
+              <article className="grid gap-3 py-6 sm:grid-cols-[8rem_1fr] sm:gap-6" key={capability.title}>
+                <p className="font-mono text-xs tracking-[0.08em] text-[var(--accent)] uppercase">{capability.eyebrow}</p>
+                <div>
+                  <h3 className="text-xl font-semibold tracking-[-0.025em]">{capability.title}</h3>
+                  <p className="mt-2 max-w-2xl leading-7 text-[var(--ink-soft)]">{capability.description}</p>
+                </div>
               </article>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section className="mb-12 rounded-2xl border border-cyan-300/25 bg-cyan-300/10 px-6 py-10 text-center sm:mb-16 sm:px-12">
-          <h2 className="text-3xl font-semibold tracking-tight">
-            Start with the market you need to understand.
-          </h2>
-          <p className="mx-auto mt-3 max-w-2xl leading-7 text-slate-300">
-            Run MarketLens locally with PostgreSQL and OpenStreetMap, then add
-            providers or AI only when your research calls for them.
-          </p>
-          <Link
-            className="mt-6 inline-flex rounded-md bg-cyan-300 px-5 py-3 font-semibold text-slate-950 transition hover:bg-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-100"
-            href="/research/new"
-          >
-            Start a research project
-          </Link>
-        </section>
-
-        <footer className="flex flex-col gap-3 border-t border-slate-800 py-8 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between">
-          <p>MarketLens · Apache-2.0 · Build market knowledge in the open.</p>
-          <div className="flex gap-4">
-            <a href="https://github.com/GipsyDanger-dev/MarketLens">GitHub</a>
-            <Link href="/research/new">New research</Link>
-          </div>
-        </footer>
-      </div>
+      <footer className="bg-[#f3f0e7] text-[var(--ink)]">
+        <div className="workspace-frame flex flex-col gap-4 border-t border-[var(--rule-strong)] py-8 text-sm sm:flex-row sm:items-center sm:justify-between">
+          <p>MarketLens · MIT License · Local market intelligence in the open.</p>
+          <Link className="font-semibold text-[var(--accent)] underline underline-offset-4" href="/research/new">Create a study</Link>
+        </div>
+      </footer>
     </main>
   );
 }
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-slate-950/70 p-3">
-      <dt className="text-xs text-slate-400">{label}</dt>
-      <dd className="mt-1 text-xl font-semibold text-slate-100">{value}</dd>
+    <div>
+      <dt className="font-mono text-[0.66rem] tracking-[0.08em] text-[#aeb9aa] uppercase">{label}</dt>
+      <dd className="mt-1 text-xl font-semibold text-[#fffcf5]">{value}</dd>
     </div>
   );
 }
