@@ -119,7 +119,7 @@ export function ResearchResultsDashboard({
   if (error)
     return (
       <p
-        className="rounded-xl border border-rose-400/40 bg-rose-400/10 p-4 text-sm text-rose-100"
+        className="border border-[color:var(--danger)] bg-[#f7e6e2] p-4 text-sm text-[var(--danger)]"
         role="alert"
       >
         {error}
@@ -128,7 +128,7 @@ export function ResearchResultsDashboard({
   if (!data)
     return (
       <p
-        className="rounded-xl bg-slate-900 p-5 text-sm text-slate-300"
+        className="paper-panel p-5 text-sm text-[var(--ink-soft)]"
         aria-live="polite"
       >
         Loading research results…
@@ -136,24 +136,26 @@ export function ResearchResultsDashboard({
     );
   if (!data.marketMetrics || data.status !== "READY")
     return (
-      <p className="rounded-xl border border-amber-300/30 bg-amber-300/10 p-5 text-sm text-amber-100">
+      <p className="border border-[#c9954f] bg-[#f4ead8] p-5 text-sm text-[#7b4d18]">
         Results will appear when this research reaches READY.
       </p>
     );
 
   const metrics = data.marketMetrics;
   return (
-    <section className="mx-auto w-full max-w-6xl space-y-6">
-      <header className="space-y-2">
-        <p className="text-sm font-semibold tracking-[0.2em] text-cyan-300 uppercase">
-          Market results
-        </p>
-        <h1 className="text-3xl font-semibold text-slate-50">{data.name}</h1>
-        <p className="text-sm text-slate-400">
-          {data.query} · {data.locationQuery}
-        </p>
+    <section className="mx-auto w-full max-w-7xl space-y-7">
+      <header className="grid gap-5 border-b border-[var(--rule-strong)] pb-6 lg:grid-cols-[1fr_auto] lg:items-end">
+        <div>
+          <p className="eyebrow">Market report / ready</p>
+          <h1 className="type-display mt-3 text-4xl leading-none tracking-[-0.045em] text-balance sm:text-5xl">{data.name}</h1>
+          <p className="mt-4 text-base text-[var(--ink-soft)]">{data.query} <span className="px-1 text-[var(--ink-faint)]">/</span> {data.locationQuery}</p>
+        </div>
+        <dl className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm sm:flex sm:gap-8">
+          <div><dt className="data-label">Radius</dt><dd className="mt-1 font-semibold tabular-nums">{Math.round(data.radiusMeters / 1_000)} km</dd></div>
+          <div><dt className="data-label">Status</dt><dd className="mt-1 font-semibold text-[var(--success)]">Complete</dd></div>
+        </dl>
       </header>
-      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <dl className="grid divide-y divide-[var(--rule)] border-y border-[var(--rule)] sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
         <Metric label="Businesses" value={metrics.totalBusinesses} />
         <Metric
           label="Average rating"
@@ -168,7 +170,7 @@ export function ResearchResultsDashboard({
           value={formatNumber(metrics.densityScore)}
         />
       </dl>
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-5 lg:grid-cols-2">
         <Distribution
           title="Rating distribution"
           items={metrics.metricJson.ratingDistribution ?? []}
@@ -192,25 +194,26 @@ export function ResearchResultsDashboard({
       />
       <ResearchAiInsights researchId={researchId} />
       <ResearchExportControls researchId={researchId} />
-      <section className="space-y-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:p-6">
-        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+      <section className="paper-panel space-y-5 p-4 sm:p-6">
+        <div className="flex flex-col justify-between gap-4 border-b border-[var(--rule)] pb-5 sm:flex-row sm:items-end">
           <div>
-            <h2 className="text-lg font-semibold text-slate-100">Businesses</h2>
-            <p className="text-sm text-slate-400">
+            <p className="eyebrow">Observed places</p>
+            <h2 className="mt-2 text-xl font-semibold tracking-[-0.025em]">Businesses</h2>
+            <p className="mt-1 text-sm text-[var(--ink-soft)]">
               {places.length} shown from {data.places.length}
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <input
               aria-label="Filter businesses"
-              className="min-w-0 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
+              className="ui-input min-w-45 flex-1 py-2 text-sm sm:flex-none"
               placeholder="Search name or category"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
             <select
               aria-label="Sort businesses"
-              className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
+              className="ui-input w-auto py-2 text-sm"
               value={sortBy}
               onChange={(event) =>
                 setSortBy(event.target.value as typeof sortBy)
@@ -220,7 +223,7 @@ export function ResearchResultsDashboard({
               <option value="rating">Rating</option>
               <option value="name">Name</option>
             </select>
-            <label className="flex items-center gap-2 text-sm text-slate-300">
+            <label className="flex min-h-11 items-center gap-2 px-1 text-sm text-[var(--ink-soft)]">
               <input
                 checked={withinRadiusOnly}
                 onChange={(event) => setWithinRadiusOnly(event.target.checked)}
@@ -231,13 +234,13 @@ export function ResearchResultsDashboard({
           </div>
         </div>
         {places.length === 0 ? (
-          <p className="rounded-lg bg-slate-800/70 p-4 text-sm text-slate-300">
+          <p className="bg-[var(--paper-muted)] p-4 text-sm text-[var(--ink-soft)]">
             No businesses match this filter.
           </p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[640px] text-left text-sm">
-              <thead className="border-b border-slate-700 text-slate-400">
+              <thead className="border-b border-[var(--rule-strong)] text-[var(--ink-faint)]">
                 <tr>
                   <th className="p-3">Business</th>
                   <th className="p-3">Rating</th>
@@ -248,13 +251,13 @@ export function ResearchResultsDashboard({
               <tbody>
                 {places.map((place) => (
                   <tr
-                    className={`cursor-pointer border-b border-slate-800 text-slate-200 ${selectedPlaceId === place.id ? "bg-cyan-300/10" : ""}`}
+                    className={`cursor-pointer border-b border-[var(--rule)] text-[var(--ink-soft)] transition-colors hover:bg-[var(--accent-wash)] ${selectedPlaceId === place.id ? "bg-[var(--accent-soft)]" : ""}`}
                     key={place.id}
                     onClick={() => setSelectedPlaceId(place.id)}
                   >
                     <td className="p-3">
-                      <p className="font-medium text-slate-100">{place.name}</p>
-                      <p className="text-slate-400">
+                      <p className="font-medium text-[var(--ink)]">{place.name}</p>
+                      <p className="text-[var(--ink-faint)]">
                         {place.category ?? place.address ?? "Uncategorized"}
                       </p>
                     </td>
@@ -276,9 +279,9 @@ export function ResearchResultsDashboard({
 
 function Metric({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-4">
-      <dt className="text-sm text-slate-400">{label}</dt>
-      <dd className="mt-1 text-2xl font-semibold tabular-nums text-slate-50">
+    <div className="p-4 sm:p-5">
+      <dt className="data-label">{label}</dt>
+      <dd className="type-display mt-2 text-4xl leading-none tabular-nums text-[var(--ink)]">
         {value}
       </dd>
     </div>
@@ -293,18 +296,19 @@ function Distribution({
 }) {
   const maximum = Math.max(1, ...items.map((item) => item.count));
   return (
-    <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
-      <h2 className="font-semibold text-slate-100">{title}</h2>
+    <section className="paper-panel p-5">
+      <p className="eyebrow">Distribution</p>
+      <h2 className="mt-2 font-semibold text-[var(--ink)]">{title}</h2>
       <div className="mt-4 space-y-3">
         {items.map((item) => (
           <div key={item.label}>
-            <div className="mb-1 flex justify-between text-xs text-slate-400">
+            <div className="mb-1 flex justify-between text-xs text-[var(--ink-faint)]">
               <span>{item.label}</span>
               <span>{item.count}</span>
             </div>
-            <div className="h-2 rounded-full bg-slate-800">
+            <div className="h-2 bg-[var(--paper-muted)]">
               <div
-                className="h-full rounded-full bg-cyan-300"
+                className="h-full bg-[var(--accent)]"
                 style={{ width: `${(item.count / maximum) * 100}%` }}
               />
             </div>

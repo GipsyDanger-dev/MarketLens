@@ -1,5 +1,6 @@
 import { ResearchProgress } from "@/components/research/research-progress";
 import { ResearchResultsDashboard } from "@/components/research/research-results-dashboard";
+import { SiteHeader } from "@/components/site-header";
 
 export default async function ResearchProgressPage({
   params,
@@ -9,8 +10,9 @@ export default async function ResearchProgressPage({
   const { researchId } = await params;
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-10 text-slate-100 sm:px-6 sm:py-16">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8">
+    <main className="app-shell">
+      <SiteHeader />
+      <div className="workspace-frame flex w-full flex-col gap-10 py-8 sm:py-12">
         <ResearchProgress researchId={researchId} />
         <ResearchResultsDashboard researchId={researchId} />
       </div>
