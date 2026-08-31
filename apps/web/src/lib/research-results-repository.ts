@@ -28,6 +28,8 @@ export async function getResearchResults(projectId: string) {
           reviewCount: true,
           phone: true,
           website: true,
+          socialLinks: true,
+          sourceUrl: true,
           latitude: true,
           longitude: true,
           competitorScores: {

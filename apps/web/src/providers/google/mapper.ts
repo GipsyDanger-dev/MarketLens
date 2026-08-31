@@ -33,6 +33,7 @@ export function mapGooglePlace(
     reviewCount: validReviewCount(place.userRatingCount),
     phone: place.nationalPhoneNumber ?? null,
     website: place.websiteUri ?? null,
+    socialLinks: {},
     sourceUrl: place.googleMapsUri ?? null,
     businessStatus: place.businessStatus ?? null,
     collectedAt,
