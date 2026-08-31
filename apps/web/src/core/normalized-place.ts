@@ -20,6 +20,8 @@ export const normalizedPlaceSchema = z.object({
   reviewCount: z.number().int().nonnegative().nullable().optional(),
   phone: z.string().trim().min(1).max(80).nullable().optional(),
   website: optionalUrl,
+  socialLinks: z.record(z.string().trim().min(1).max(80), optionalUrl.unwrap())
+    .default({}),
   sourceUrl: optionalUrl,
   businessStatus: z.string().trim().min(1).max(120).nullable().optional(),
   collectedAt: z.coerce.date().default(() => new Date()),

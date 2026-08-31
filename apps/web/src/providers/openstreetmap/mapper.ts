@@ -41,12 +41,44 @@ export function mapOverpassElement(
     reviewCount: null,
     phone: tags["contact:phone"] ?? tags.phone ?? null,
     website: tags["contact:website"] ?? tags.website ?? null,
+    socialLinks: socialLinksFromTags(tags),
     sourceUrl: `https://www.openstreetmap.org/${element.type}/${element.id}`,
     businessStatus:
       tags.disused === "yes" || tags.closed === "yes" ? "CLOSED" : null,
     collectedAt,
     rawData: element,
   };
+}
+
+function socialLinksFromTags(tags: Record<string, string>): Record<string, string> {
+  return Object.fromEntries(
+    [
+      ["instagram", tags["contact:instagram"] ?? tags.instagram],
+      ["facebook", tags["contact:facebook"] ?? tags.facebook],
+      ["linkedin", tags["contact:linkedin"] ?? tags.linkedin],
+      ["x", tags["contact:twitter"] ?? tags.twitter],
+    ].flatMap(([network, value]) => {
+      if (!value) return [];
+      const url = socialUrl(network, value);
+      return url ? [[network, url]] : [];
+    }),
+  );
+}
+
+function socialUrl(network: string, value: string): string | null {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  if (/^https?:\/\//iu.test(trimmed)) return trimmed;
+
+  const handle = trimmed.replace(/^@/u, "").replace(/^\/+|\/+$/gu, "");
+  if (!handle) return null;
+  const baseUrls: Record<string, string> = {
+    instagram: "https://www.instagram.com/",
+    facebook: "https://www.facebook.com/",
+    linkedin: "https://www.linkedin.com/in/",
+    x: "https://x.com/",
+  };
+  return `${baseUrls[network]}${encodeURIComponent(handle)}`;
 }
 
 function coordinatesFor(

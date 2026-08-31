@@ -23,6 +23,7 @@ export interface PersistablePlaceCandidate {
   reviewCount?: number | null;
   phone: string | null;
   website: string | null;
+  socialLinks: Record<string, string>;
   sourceUrl: string | null;
   businessStatus: string | null;
   collectedAt: Date;
@@ -49,6 +50,7 @@ export function candidateToPersistablePlace(
     normalizedName,
     category: normalizeCategory(candidate.category, candidate.providerTypes),
     address: normalizeAddress(candidate.address),
+    socialLinks: candidate.socialLinks ?? {},
     ...coordinates,
   };
 }
