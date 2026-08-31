@@ -13,6 +13,11 @@ generated/
 .env.*.local
 .marketlens/
 
+# Local product-planning notes
+01_PRD.md
+02_BLUEPRINT.md
+03_SPRINT_PLAN.md
+
 # Tooling
 *.tsbuildinfo
 playwright-report/
