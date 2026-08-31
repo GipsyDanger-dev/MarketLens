@@ -35,6 +35,7 @@ export interface PlaceCandidate {
   reviewCount?: number | null;
   phone: string | null;
   website: string | null;
+  socialLinks?: Record<string, string>;
   sourceUrl: string | null;
   businessStatus: string | null;
   collectedAt: Date;

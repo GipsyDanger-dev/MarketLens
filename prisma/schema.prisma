@@ -97,6 +97,7 @@ model Place {
   reviewCount       Int?
   phone             String?
   website           String?
+  socialLinks       Json?
   sourceUrl         String?
   businessStatus    String?
   collectedAt       DateTime          @default(now())
