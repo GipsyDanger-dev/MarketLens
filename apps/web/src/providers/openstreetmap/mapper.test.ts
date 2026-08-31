@@ -17,6 +17,7 @@ describe("mapOverpassElement", () => {
           "addr:street": "Jalan Sudirman",
           "addr:city": "Jakarta",
           website: "https://example.com",
+          "contact:instagram": "kopikita.id",
         },
       },
       collectedAt,
@@ -29,6 +30,7 @@ describe("mapOverpassElement", () => {
       providerTypes: ["amenity:cafe"],
       city: "Jakarta",
       sourceUrl: "https://www.openstreetmap.org/node/42",
+      socialLinks: { instagram: "https://www.instagram.com/kopikita.id" },
       collectedAt,
     });
   });

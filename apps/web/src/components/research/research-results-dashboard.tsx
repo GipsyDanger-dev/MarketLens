@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { ResearchMap } from "./research-map";
+import { BusinessDetailPanel } from "./business-detail-panel";
 import { CompetitorPanel } from "./competitor-panel";
 import { ResearchAiInsights } from "./research-ai-insights";
 import { ResearchExportControls } from "./research-export-controls";
@@ -14,6 +15,10 @@ interface PlaceResult {
   address: string | null;
   rating: number | null;
   reviewCount: number | null;
+  phone: string | null;
+  website: string | null;
+  socialLinks: Record<string, string> | null;
+  sourceUrl: string | null;
   latitude: number;
   longitude: number;
   competitorScores: {
@@ -142,6 +147,7 @@ export function ResearchResultsDashboard({
     );
 
   const metrics = data.marketMetrics;
+  const selectedPlace = data.places.find((place) => place.id === selectedPlaceId) ?? null;
   return (
     <section className="mx-auto w-full max-w-7xl space-y-7">
       <header className="grid gap-5 border-b border-[var(--rule-strong)] pb-6 lg:grid-cols-[1fr_auto] lg:items-end">
@@ -187,6 +193,7 @@ export function ResearchResultsDashboard({
         selectedPlaceId={selectedPlaceId}
         onPlaceSelect={setSelectedPlaceId}
       />
+      <BusinessDetailPanel place={selectedPlace} />
       <CompetitorPanel
         onSelect={setSelectedPlaceId}
         places={places}
