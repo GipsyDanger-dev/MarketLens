@@ -32,6 +32,10 @@ const report: ResearchReport = {
       address: "Jl. Test",
       rating: 4.5,
       reviewCount: 8,
+      phone: "+62 341 123456",
+      website: "https://kopikita.example",
+      socialLinks: { instagram: "https://www.instagram.com/kopikita" },
+      sourceUrl: "https://www.openstreetmap.org/node/42",
       latitude: -7.9,
       longitude: 112.6,
     },
@@ -43,7 +47,7 @@ const report: ResearchReport = {
 describe("researchReportToCsv", () => {
   it("exports canonical place data with escaped CSV fields", () => {
     expect(researchReportToCsv(report)).toContain(
-      '"Kopi, Kita",cafe,Jl. Test,4.5,8,-7.9,112.6,',
+      '"Kopi, Kita",cafe,Jl. Test,4.5,8,+62 341 123456,https://kopikita.example,instagram: https://www.instagram.com/kopikita,https://www.openstreetmap.org/node/42,-7.9,112.6,',
     );
   });
 });

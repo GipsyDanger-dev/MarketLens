@@ -7,6 +7,10 @@ export function researchReportToCsv(report: ResearchReport): string {
     "address",
     "rating",
     "review_count",
+    "phone",
+    "website",
+    "social_links",
+    "source_url",
     "latitude",
     "longitude",
     "competition_score",
@@ -18,6 +22,12 @@ export function researchReportToCsv(report: ResearchReport): string {
     place.address ?? "",
     place.rating ?? "",
     place.reviewCount ?? "",
+    place.phone ?? "",
+    place.website ?? "",
+    Object.entries(place.socialLinks ?? {})
+      .map(([network, href]) => `${network}: ${href}`)
+      .join(" | "),
+    place.sourceUrl ?? "",
     place.latitude,
     place.longitude,
     scores.get(place.name)?.overallScore ?? "",

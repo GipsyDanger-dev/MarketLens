@@ -28,6 +28,10 @@ describe("buildResearchReport", () => {
             address: null,
             rating: 4.5,
             reviewCount: 8,
+            phone: "+62 341 123456",
+            website: "https://kopikita.example",
+            socialLinks: { instagram: "https://www.instagram.com/kopikita" },
+            sourceUrl: "https://www.openstreetmap.org/node/42",
             latitude: -7.9,
             longitude: 112.6,
             collectedAt: new Date("2026-08-28T00:00:00.000Z"),
@@ -44,6 +48,12 @@ describe("buildResearchReport", () => {
       metadata: { generatedAt: "2026-08-29T00:00:00.000Z" },
       metrics: { opportunitySignals: ["Validate gap."] },
       competitors: [{ name: "Kopi" }],
+      places: [
+        {
+          phone: "+62 341 123456",
+          socialLinks: { instagram: "https://www.instagram.com/kopikita" },
+        },
+      ],
     });
     expect(report.limitations).toContain(
       "No optional AI insight has been generated for this report.",
