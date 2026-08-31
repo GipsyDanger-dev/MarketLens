@@ -24,6 +24,10 @@ export function buildResearchReport(input: {
       address: string | null;
       rating: number | null;
       reviewCount: number | null;
+      phone?: string | null;
+      website?: string | null;
+      socialLinks?: unknown;
+      sourceUrl?: string | null;
       latitude: number;
       longitude: number;
       collectedAt: Date;
@@ -85,6 +89,10 @@ export function buildResearchReport(input: {
       address: place.address,
       rating: place.rating,
       reviewCount: place.reviewCount,
+      phone: place.phone ?? null,
+      website: place.website ?? null,
+      socialLinks: socialLinksFromUnknown(place.socialLinks),
+      sourceUrl: place.sourceUrl ?? null,
       latitude: place.latitude,
       longitude: place.longitude,
     })),
@@ -98,6 +106,18 @@ export function buildResearchReport(input: {
     ],
   };
   return researchReportSchema.parse(report);
+}
+
+function socialLinksFromUnknown(value: unknown): Record<string, string> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+
+  return Object.fromEntries(
+    Object.entries(value).flatMap(([network, href]) =>
+      typeof href === "string" && /^https?:\/\//iu.test(href)
+        ? [[network, href]]
+        : [],
+    ),
+  );
 }
 
 function messagesFromMetricJson(metricJson: unknown): string[] {
