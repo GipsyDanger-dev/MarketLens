@@ -138,6 +138,11 @@ when it is publicly used. Keep the source URL attached to candidates and render
 an attribution such as `© OpenStreetMap contributors` linked to
 https://www.openstreetmap.org/copyright in a relevant UI, report, or export.
 
+Provider-supplied address, phone, website, source URL, and social links are
+shown only when present in the collected record. MarketLens does not crawl a
+business website or social profile to manufacture missing contact data; CSV,
+JSON, and PDF exports preserve the collected contact fields for follow-up.
+
 ## Capability-aware analytics
 
 Some free providers do not expose ratings or review counts. Analytics must treat

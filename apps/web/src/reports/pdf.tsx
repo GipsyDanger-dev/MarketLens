@@ -77,6 +77,10 @@ function ReportDocument({ report }: { report: ResearchReport }) {
             )}
         />
         <Section
+          title="Business directory"
+          items={businessDirectoryLines(report)}
+        />
+        <Section
           title="Opportunity signals"
           items={report.metrics.opportunitySignals}
         />
@@ -98,6 +102,18 @@ function ReportDocument({ report }: { report: ResearchReport }) {
       </Page>
     </Document>
   );
+}
+
+export function businessDirectoryLines(report: ResearchReport): string[] {
+  return report.places.slice(0, 60).map((place) => {
+    const contact = [
+      place.address,
+      place.phone,
+      place.website,
+      ...Object.values(place.socialLinks ?? {}),
+    ].filter(Boolean);
+    return `${place.name}: ${contact.join(" · ") || "No contact data supplied by this provider."}`;
+  });
 }
 
 function Section({ title, items }: { title: string; items: string[] }) {
