@@ -24,10 +24,16 @@ export function buildOverpassQuery(
   return [
     `[out:json][timeout:${timeoutSeconds}];`,
     "(",
-    `  nwr["name"~"${escapeOverpassRegex(request.query)}",i]${categoryFilter}(around:${request.radiusMeters},${request.latitude},${request.longitude});`,
+    `  ${buildOverpassSelector(request.query, categoryFilter)}(around:${request.radiusMeters},${request.latitude},${request.longitude});`,
     ");",
     `out center ${maxResults};`,
   ].join("\n");
+}
+
+function buildOverpassSelector(query: string, categoryFilter: string): string {
+  if (categoryFilter) return `nwr${categoryFilter}`;
+
+  return `nwr["name"~"${escapeOverpassRegex(query)}",i]`;
 }
 
 const categoryKeys: Record<string, string> = {

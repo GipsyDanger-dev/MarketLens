@@ -87,6 +87,12 @@ than silently returning an inconsistent page. A 429 or 5xx response is exposed
 as a retryable `ProviderError`; invalid requests and invalid provider payloads
 are not retryable. `healthCheck()` returns a health result instead of throwing.
 
+When a user chooses a category, the adapter queries its exact OpenStreetMap tag
+within the requested radius (for example, `amenity=cafe`). The free-text query
+is retained as the research label but is not combined with a broad name-regex
+filter on the Overpass server. This keeps common local-category searches within
+the response budget; name-only searches continue to use an escaped name lookup.
+
 Transient failures use bounded retries with exponential backoff. You may add
 approved, global-data interpreter endpoints through a comma-separated fallback
 list. MarketLens tries every retry on the primary endpoint before moving to the

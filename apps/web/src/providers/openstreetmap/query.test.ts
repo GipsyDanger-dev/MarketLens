@@ -13,14 +13,23 @@ const request = {
 };
 
 describe("buildOverpassQuery", () => {
-  it("maps a search to a bounded, escaped Overpass query", () => {
+  it("uses an indexed category lookup when a category is selected", () => {
     const query = buildOverpassQuery(request, { maxResults: 250 });
 
     expect(query).toContain("[out:json][timeout:25];");
-    expect(query).toContain('["name"~"coffee \\(shop\\)",i]');
     expect(query).toContain('["amenity"="cafe"]');
+    expect(query).not.toContain('["name"~');
     expect(query).toContain("(around:1000,-6.2,106.8);");
     expect(query).toContain("out center 250;");
+  });
+
+  it("uses an escaped name lookup when no category is selected", () => {
+    const query = buildOverpassQuery(
+      { ...request, category: undefined },
+      { maxResults: 250 },
+    );
+
+    expect(query).toContain('["name"~"coffee \\(shop\\)",i]');
   });
 
   it("rejects unsupported pagination and invalid coordinates", () => {
