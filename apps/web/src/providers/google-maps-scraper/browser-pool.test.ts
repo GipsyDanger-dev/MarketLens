@@ -144,6 +144,7 @@ describe("BrowserPool", () => {
       ]);
 
       expect(pages).toHaveLength(3);
+      expect(pool.getStats().browsers).toBe(1);
 
       // Release all
       await Promise.all(pages.map((p) => pool.release(p)));

@@ -48,6 +48,7 @@ export class BrowserPool {
 
   private pools: PoolEntry[] = [];
   private isShuttingDown = false;
+  private allocationQueue: Promise<void> = Promise.resolve();
 
   constructor(options: BrowserPoolOptions = {}) {
     this.maxBrowsers = options.maxBrowsers ?? 2;
@@ -64,33 +65,18 @@ export class BrowserPool {
    * Waits for a page to become available if all are busy.
    */
   async acquire(): Promise<Page> {
-    if (this.isShuttingDown) {
-      throw new Error("Browser pool is shutting down");
-    }
-
-    // Try to get a free page from existing browsers
-    for (const entry of this.pools) {
-      const freePage = this.getFreePage(entry);
-      if (freePage) {
-        return freePage;
+    while (!this.isShuttingDown) {
+      const page = await this.withAllocationLock(() =>
+        this.reserveAvailablePage(),
+      );
+      if (page) {
+        return page;
       }
+
+      await this.waitForAvailablePage();
     }
 
-    // Try to create a new page in an existing browser
-    for (const entry of this.pools) {
-      if (this.canCreatePage(entry)) {
-        return this.createPage(entry);
-      }
-    }
-
-    // Try to create a new browser if under limit
-    if (this.pools.length < this.maxBrowsers) {
-      const entry = await this.createBrowser();
-      return this.createPage(entry);
-    }
-
-    // Wait for a page to become available
-    return this.waitForAvailablePage();
+    throw new Error("Browser pool is shutting down");
   }
 
   /**
@@ -100,13 +86,13 @@ export class BrowserPool {
   async release(page: Page): Promise<void> {
     for (const entry of this.pools) {
       if (entry.busyPages.has(page)) {
-        entry.busyPages.delete(page);
-
         // Navigate to blank page to reset state
         try {
           await page.goto("about:blank", { timeout: 5000 });
         } catch {
           // Ignore navigation errors during release
+        } finally {
+          entry.busyPages.delete(page);
         }
 
         return;
@@ -275,7 +261,7 @@ export class BrowserPool {
    * Wait for a page to become available.
    * Polls every 100ms until a page is released.
    */
-  private waitForAvailablePage(): Promise<Page> {
+  private waitForAvailablePage(): Promise<void> {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         reject(new Error("Timeout waiting for available browser page"));
@@ -288,10 +274,9 @@ export class BrowserPool {
           return;
         }
 
-        const page = this.findFreePage();
-        if (page) {
+        if (this.getAvailableCount() > 0) {
           clearTimeout(timeout);
-          resolve(page);
+          resolve();
         } else {
           setTimeout(check, 100);
         }
@@ -302,13 +287,41 @@ export class BrowserPool {
   }
 
   /**
-   * Find a free page across all pool entries.
+   * Reserve a page while holding the allocation lock so concurrent callers
+   * cannot over-create browsers or pages.
    */
-  private findFreePage(): Page | null {
+  private async reserveAvailablePage(): Promise<Page | null> {
     for (const entry of this.pools) {
       const page = this.getFreePage(entry);
       if (page) return page;
     }
+
+    for (const entry of this.pools) {
+      if (this.canCreatePage(entry)) {
+        return this.createPage(entry);
+      }
+    }
+
+    if (this.pools.length < this.maxBrowsers) {
+      const entry = await this.createBrowser();
+      return this.createPage(entry);
+    }
+
     return null;
+  }
+
+  private async withAllocationLock<T>(operation: () => Promise<T>): Promise<T> {
+    const previous = this.allocationQueue;
+    let releaseLock: () => void = () => {};
+    this.allocationQueue = new Promise<void>((resolve) => {
+      releaseLock = resolve;
+    });
+
+    await previous;
+    try {
+      return await operation();
+    } finally {
+      releaseLock();
+    }
   }
 }
