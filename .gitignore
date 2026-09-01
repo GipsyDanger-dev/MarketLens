@@ -3,6 +3,8 @@ node_modules/
 
 # Build output
 .next/
+.next-marketlens/
+.next-marketlens-*/
 dist/
 coverage/
 generated/
@@ -11,7 +13,19 @@ generated/
 .env
 .env.local
 .env.*.local
+.env.*
+!.env.example
 .marketlens/
+.npmrc
+*.sqlite
+*.sqlite3
+*.db
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
 
 # Local product-planning notes
 01_PRD.md
@@ -22,6 +36,9 @@ generated/
 *.tsbuildinfo
 playwright-report/
 test-results/
+screenshots/
+~/
+.gstack/
 
 # OS and editor files
 .DS_Store
