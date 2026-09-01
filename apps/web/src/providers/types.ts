@@ -16,6 +16,7 @@ export interface PlaceSearchRequest {
   longitude: number;
   radiusMeters: number;
   maxResults: number;
+  scrollDepth?: number;
   pageToken?: string;
 }
 
@@ -35,6 +36,7 @@ export interface PlaceCandidate {
   reviewCount?: number | null;
   phone: string | null;
   website: string | null;
+  emails?: string[];
   socialLinks?: Record<string, string>;
   sourceUrl: string | null;
   businessStatus: string | null;

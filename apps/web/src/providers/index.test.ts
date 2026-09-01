@@ -4,10 +4,11 @@ vi.mock("server-only", () => ({}));
 
 import { createProviderRegistry } from "./index";
 import { GooglePlacesProvider } from "./google/provider";
+import { GoogleMapsScraperProvider } from "./google-maps-scraper/provider";
 import { OpenStreetMapProvider } from "./openstreetmap/provider";
 
 describe("createProviderRegistry", () => {
-  it("registers OpenStreetMap from server environment configuration", () => {
+  it("registers OpenStreetMap and Google Maps Scraper from server environment configuration", () => {
     const registry = createProviderRegistry({
       DATABASE_URL:
         "postgresql://marketlens:marketlens@localhost:5432/marketlens",
@@ -16,7 +17,10 @@ describe("createProviderRegistry", () => {
     });
 
     expect(registry.get("openstreetmap")).toBeInstanceOf(OpenStreetMapProvider);
-    expect(registry.list()).toHaveLength(1);
+    expect(registry.get("google-maps-scraper")).toBeInstanceOf(
+      GoogleMapsScraperProvider,
+    );
+    expect(registry.list()).toHaveLength(2);
   });
 
   it("registers Google Places only when its server-side key is configured", () => {
@@ -27,6 +31,6 @@ describe("createProviderRegistry", () => {
     });
 
     expect(registry.get("google-places")).toBeInstanceOf(GooglePlacesProvider);
-    expect(registry.list()).toHaveLength(2);
+    expect(registry.list()).toHaveLength(3);
   });
 });

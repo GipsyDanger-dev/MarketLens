@@ -23,6 +23,7 @@ export interface PersistablePlaceCandidate {
   reviewCount?: number | null;
   phone: string | null;
   website: string | null;
+  emails?: string[];
   socialLinks: Record<string, string>;
   sourceUrl: string | null;
   businessStatus: string | null;

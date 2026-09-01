@@ -125,9 +125,7 @@ export class OpenStreetMapProvider implements PlaceProvider {
 
           lastRetryableError = error;
           if (attempt < attemptsPerEndpoint - 1) {
-            await this.sleep(
-              this.retryDelayMilliseconds * 2 ** attempt,
-            );
+            await this.sleep(this.retryDelayMilliseconds * 2 ** attempt);
           }
         }
       }
@@ -154,10 +152,7 @@ export class OpenStreetMapProvider implements PlaceProvider {
     timeoutMilliseconds: number;
   }): Promise<OverpassResponse> {
     const controller = new AbortController();
-    const timeout = setTimeout(
-      () => controller.abort(),
-      timeoutMilliseconds,
-    );
+    const timeout = setTimeout(() => controller.abort(), timeoutMilliseconds);
 
     try {
       const response = await this.fetchImplementation(endpoint, {

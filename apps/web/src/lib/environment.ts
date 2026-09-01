@@ -58,6 +58,39 @@ export const serverEnvironmentSchema = z.object({
     .positive()
     .max(1_000)
     .default(250),
+  SCRAPER_TIMEOUT_MILLISECONDS: z.coerce
+    .number()
+    .int()
+    .positive()
+    .max(120_000)
+    .default(30_000),
+  SCRAPER_MAX_DEPTH: z.coerce.number().int().min(1).max(50).default(10),
+  SCRAPER_LANG_CODE: z.string().min(2).max(5).default("en"),
+  SCRAPER_EXTRACT_EMAILS: booleanFromEnvironment,
+  SCRAPER_EXTRACT_EXTRA_REVIEWS: booleanFromEnvironment,
+  SCRAPER_PROXY_URL: z
+    .string()
+    .trim()
+    .transform((value) => value || undefined)
+    .pipe(z.string().min(1).optional()),
+  SCRAPER_PROXY_LIST: z
+    .string()
+    .default("")
+    .transform((value) =>
+      value
+        .split(",")
+        .map((proxy) => proxy.trim())
+        .filter(Boolean),
+    ),
+  SCRAPER_PROXY_ROTATION: booleanFromEnvironment,
+  SCRAPER_CONCURRENCY: z.coerce.number().int().min(1).max(20).default(5),
+  SCRAPER_POOL_SIZE: z.coerce.number().int().min(1).max(10).default(2),
+  SCRAPER_MAX_PAGES_PER_BROWSER: z.coerce
+    .number()
+    .int()
+    .min(1)
+    .max(20)
+    .default(5),
 });
 
 export type ServerEnvironment = z.infer<typeof serverEnvironmentSchema>;

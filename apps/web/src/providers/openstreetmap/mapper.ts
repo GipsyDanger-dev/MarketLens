@@ -50,7 +50,9 @@ export function mapOverpassElement(
   };
 }
 
-function socialLinksFromTags(tags: Record<string, string>): Record<string, string> {
+function socialLinksFromTags(
+  tags: Record<string, string>,
+): Record<string, string> {
   return Object.fromEntries(
     [
       ["instagram", tags["contact:instagram"] ?? tags.instagram],

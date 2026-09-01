@@ -90,7 +90,9 @@ describe("OpenStreetMapProvider", () => {
       sleep,
     });
 
-    await expect(provider.search(request)).resolves.toMatchObject({ places: [] });
+    await expect(provider.search(request)).resolves.toMatchObject({
+      places: [],
+    });
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(sleep).toHaveBeenCalledWith(750);
   });
@@ -109,7 +111,9 @@ describe("OpenStreetMapProvider", () => {
       maxRetries: 0,
     });
 
-    await expect(provider.search(request)).resolves.toMatchObject({ places: [] });
+    await expect(provider.search(request)).resolves.toMatchObject({
+      places: [],
+    });
     expect(fetchMock.mock.calls.map(([endpoint]) => endpoint)).toEqual([
       "https://primary.example/api/interpreter",
       "https://fallback.example/api/interpreter",
