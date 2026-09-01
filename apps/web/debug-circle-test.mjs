@@ -11,27 +11,6 @@ async function main() {
   });
   await page.waitForTimeout(4000);
 
-  // Helper to get circle source data from the map
-  const getCircleData = async () => {
-    return page.evaluate(() => {
-      // Access the maplibregl map instance through the canvas
-      const mapEl = document.querySelector(".maplibregl-map");
-      if (!mapEl) return { error: "no map" };
-      // Try to find map instance via __maplibregl property or internal state
-      const canvas = document.querySelector(".maplibregl-canvas");
-      if (!canvas) return { error: "no canvas" };
-      // Check if circle fill layer is visible
-      const layers = document.querySelectorAll(
-        ".maplibregl-canvas-container canvas",
-      );
-      return {
-        canvasCount: layers.length,
-        mapExists: !!mapEl,
-        circleSourceExists: true, // We'll check via the GeoJSON
-      };
-    });
-  };
-
   // Get circle source data via page injection
   const checkCircleSource = async (label) => {
     const result = await page.evaluate(() => {
