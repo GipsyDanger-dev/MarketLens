@@ -2,9 +2,13 @@ import { chromium } from "playwright";
 
 async function main() {
   const browser = await chromium.launch({ headless: true });
-  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const page = await browser.newPage({
+    viewport: { width: 1280, height: 900 },
+  });
 
-  await page.goto("http://localhost:3000/research/new", { waitUntil: "domcontentloaded" });
+  await page.goto("http://localhost:3000/research/new", {
+    waitUntil: "domcontentloaded",
+  });
   await page.waitForTimeout(4000);
 
   // Helper to get circle source data from the map
@@ -17,7 +21,9 @@ async function main() {
       const canvas = document.querySelector(".maplibregl-canvas");
       if (!canvas) return { error: "no canvas" };
       // Check if circle fill layer is visible
-      const layers = document.querySelectorAll(".maplibregl-canvas-container canvas");
+      const layers = document.querySelectorAll(
+        ".maplibregl-canvas-container canvas",
+      );
       return {
         canvasCount: layers.length,
         mapExists: !!mapEl,
@@ -32,19 +38,23 @@ async function main() {
       // Find map instance through the MapLibre internal registry
       const mapContainer = document.querySelector(".maplibregl-map");
       if (!mapContainer) return { found: false, reason: "no map container" };
-      
+
       // MapLibre stores map instance internally
       // Check if we can access it through the _mapId or similar
       const keys = Object.keys(mapContainer);
       for (const key of keys) {
-        if (mapContainer[key] && typeof mapContainer[key].getSource === "function") {
+        if (
+          mapContainer[key] &&
+          typeof mapContainer[key].getSource === "function"
+        ) {
           const map = mapContainer[key];
           const src = map.getSource("radius-circle");
           if (src) {
             const data = src._data;
             return {
               found: true,
-              type: typeof data === "string" ? JSON.parse(data).type : data?.type,
+              type:
+                typeof data === "string" ? JSON.parse(data).type : data?.type,
               coordsCount: data?.geometry?.coordinates?.[0]?.length ?? 0,
             };
           }
@@ -68,7 +78,9 @@ async function main() {
   let edgeBox = await edgeHandle.boundingBox();
   let centerBox = await centerHandle.boundingBox();
   console.log("Initial positions:");
-  console.log(`  Center: (${centerBox.x.toFixed(0)}, ${centerBox.y.toFixed(0)})`);
+  console.log(
+    `  Center: (${centerBox.x.toFixed(0)}, ${centerBox.y.toFixed(0)})`,
+  );
   console.log(`  Edge: (${edgeBox.x.toFixed(0)}, ${edgeBox.y.toFixed(0)})`);
 
   await checkCircleSource("BEFORE drag");
@@ -76,22 +88,24 @@ async function main() {
   // Simulate edge drag
   const startX = edgeBox.x + edgeBox.width / 2;
   const startY = edgeBox.y + edgeBox.height / 2;
-  
-  console.log(`\nDragging edge from (${startX.toFixed(0)}, ${startY.toFixed(0)}) to the right...`);
-  
+
+  console.log(
+    `\nDragging edge from (${startX.toFixed(0)}, ${startY.toFixed(0)}) to the right...`,
+  );
+
   await page.mouse.move(startX, startY);
   await page.waitForTimeout(100);
   await page.mouse.down();
 
   // Drag step by step and check circle at each step
   for (let step = 1; step <= 10; step++) {
-    const x = startX + (step * 10);
+    const x = startX + step * 10;
     await page.mouse.move(x, startY);
     await page.waitForTimeout(50);
-    
+
     if (step === 5 || step === 10) {
       await checkCircleSource(`DRAG step ${step}`);
-      
+
       // Also check if circle fill layer is rendering
       const circleVisible = await page.evaluate(() => {
         // Check the map canvas for green pixels
@@ -115,24 +129,28 @@ async function main() {
     const mapContainer = document.querySelector(".maplibregl-map");
     const keys = Object.keys(mapContainer || {});
     for (const key of keys) {
-      if (mapContainer[key] && typeof mapContainer[key].getSource === "function") {
+      if (
+        mapContainer[key] &&
+        typeof mapContainer[key].getSource === "function"
+      ) {
         const map = mapContainer[key];
         const src = map.getSource("radius-circle");
         if (src) {
-          const data = typeof src._data === "string" ? JSON.parse(src._data) : src._data;
+          const data =
+            typeof src._data === "string" ? JSON.parse(src._data) : src._data;
           const coords = data?.geometry?.coordinates?.[0] || [];
           // Get bounding box of the circle
-          const lngs = coords.map(c => c[0]);
-          const lats = coords.map(c => c[1]);
+          const lngs = coords.map((c) => c[0]);
+          const lats = coords.map((c) => c[1]);
           const minLng = Math.min(...lngs);
           const maxLng = Math.max(...lngs);
           const minLat = Math.min(...lats);
           const maxLat = Math.max(...lats);
-          
+
           // Project bounds to screen
           const topLeft = map.project([minLng, maxLat]);
           const bottomRight = map.project([maxLng, minLat]);
-          
+
           return {
             found: true,
             coordsCount: coords.length,
@@ -152,10 +170,15 @@ async function main() {
     }
     return { found: false };
   });
-  console.log("\nAfter drag circle info:", JSON.stringify(afterDragInfo, null, 2));
+  console.log(
+    "\nAfter drag circle info:",
+    JSON.stringify(afterDragInfo, null, 2),
+  );
 
   // Take screenshot
-  await page.screenshot({ path: "screenshots/map-picker/debug-circle-after-drag.png" });
+  await page.screenshot({
+    path: "screenshots/map-picker/debug-circle-after-drag.png",
+  });
   console.log("\n📸 Saved debug screenshot");
 
   await browser.close();

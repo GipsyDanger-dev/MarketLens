@@ -2,9 +2,13 @@ import { chromium } from "playwright";
 
 async function main() {
   const browser = await chromium.launch({ headless: true });
-  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const page = await browser.newPage({
+    viewport: { width: 1280, height: 900 },
+  });
 
-  await page.goto("http://localhost:3000/research/new", { waitUntil: "domcontentloaded" });
+  await page.goto("http://localhost:3000/research/new", {
+    waitUntil: "domcontentloaded",
+  });
   await page.waitForTimeout(5000);
 
   const centerHandle = await page.$(".handle-center");
@@ -34,8 +38,12 @@ async function main() {
     const x = startX + step * 8;
     await page.mouse.move(x, startY);
     await page.waitForTimeout(80);
-    await page.screenshot({ path: `screenshots/map-picker/debug-drag-${String(step).padStart(2, '0')}.png` });
-    console.log(`📸 debug-drag-${String(step).padStart(2, '0')}.png — mouse at (${x.toFixed(0)}, ${startY.toFixed(0)})`);
+    await page.screenshot({
+      path: `screenshots/map-picker/debug-drag-${String(step).padStart(2, "0")}.png`,
+    });
+    console.log(
+      `📸 debug-drag-${String(step).padStart(2, "0")}.png — mouse at (${x.toFixed(0)}, ${startY.toFixed(0)})`,
+    );
   }
 
   await page.mouse.up();
@@ -64,7 +72,9 @@ async function main() {
       canvasCount: canvases.length,
     };
   });
-  console.log(`SVG elements: ${circleInfo.svgCount}, Canvas elements: ${circleInfo.canvasCount}`);
+  console.log(
+    `SVG elements: ${circleInfo.svgCount}, Canvas elements: ${circleInfo.canvasCount}`,
+  );
 
   await browser.close();
   console.log("\nDone! Check screenshots/map-picker/debug-*.png");

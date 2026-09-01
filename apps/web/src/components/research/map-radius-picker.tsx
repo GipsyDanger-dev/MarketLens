@@ -50,7 +50,7 @@ export function MapRadiusPicker({
 
     const centerPt = map.project(center as [number, number]);
     const edgeLngLat: [number, number] = [
-      center[0] + (r / 111_320) / Math.cos((center[1] * Math.PI) / 180),
+      center[0] + r / 111_320 / Math.cos((center[1] * Math.PI) / 180),
       center[1],
     ];
     const edgePt = map.project(edgeLngLat);
@@ -99,22 +99,19 @@ export function MapRadiusPicker({
   }, []);
 
   // Fit map to show the entire circle
-  const fitMapToCircle = useCallback(
-    (center: [number, number], r: number) => {
-      const map = mapRef.current;
-      if (!map) return;
-      const latDelta = r / 111_320;
-      const lngDelta = latDelta / Math.cos((center[1] * Math.PI) / 180);
-      map.fitBounds(
-        [
-          [center[0] - lngDelta, center[1] - latDelta],
-          [center[0] + lngDelta, center[1] + latDelta],
-        ],
-        { padding: 80, maxZoom: 16, duration: 0 },
-      );
-    },
-    [],
-  );
+  const fitMapToCircle = useCallback((center: [number, number], r: number) => {
+    const map = mapRef.current;
+    if (!map) return;
+    const latDelta = r / 111_320;
+    const lngDelta = latDelta / Math.cos((center[1] * Math.PI) / 180);
+    map.fitBounds(
+      [
+        [center[0] - lngDelta, center[1] - latDelta],
+        [center[0] + lngDelta, center[1] + latDelta],
+      ],
+      { padding: 80, maxZoom: 16, duration: 0 },
+    );
+  }, []);
 
   // Initialize map
   useEffect(() => {
@@ -393,8 +390,8 @@ export function MapRadiusPicker({
         </span>
       </div>
       <p className="text-[11px] text-[var(--ink-faint)]">
-        🟢 Drag green = move &nbsp;|&nbsp; ⚪ Drag white = resize
-        &nbsp;|&nbsp; Click map = set center
+        🟢 Drag green = move &nbsp;|&nbsp; ⚪ Drag white = resize &nbsp;|&nbsp;
+        Click map = set center
       </p>
     </div>
   );

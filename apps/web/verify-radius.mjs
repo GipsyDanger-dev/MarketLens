@@ -15,7 +15,9 @@ function haversine(lat1, lng1, lat2, lng2) {
 }
 
 async function main() {
-  const res = await fetch(`http://localhost:3000/api/research/${PROJECT_ID}/results`);
+  const res = await fetch(
+    `http://localhost:3000/api/research/${PROJECT_ID}/results`,
+  );
   const data = await res.json();
 
   console.log("=== RADIUS VERIFICATION ===");
