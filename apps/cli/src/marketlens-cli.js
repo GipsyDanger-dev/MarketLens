@@ -29,6 +29,7 @@ export function createMarketLensCli(options = {}) {
   const cwd = options.cwd ?? process.cwd();
   const sourceDirectory = options.sourceDirectory ?? getSourceDirectory();
   const spawnProcess = options.spawnProcess;
+  const nextDistDirectory = options.nextDistDirectory;
   const print = options.print ?? (() => {});
   const openUrl = options.openUrl ?? defaultOpenUrl;
 
@@ -68,6 +69,7 @@ export function createMarketLensCli(options = {}) {
       return startEmbeddedRuntime({
         config,
         installationDirectory: cwd,
+        nextDistDirectory,
         runner,
         runtimeDirectory,
         spawnProcess,

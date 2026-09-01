@@ -1,6 +1,7 @@
 import { createInterface } from "node:readline/promises";
+import { readFile, writeFile } from "node:fs/promises";
 
-import { defaultConfig } from "./config.js";
+import { defaultConfig, getLocalPaths } from "./config.js";
 
 const VERSION = "1.3.0";
 
@@ -65,6 +66,33 @@ export function renderTuiScreen({ config, notice, status }) {
     notice ? `  ${notice}` : "  Select an option or type /help.",
     "",
   ].join("\n");
+}
+
+async function updateEnvFile(updates) {
+  try {
+    const envPath = getLocalPaths(process.cwd()).environment;
+    let content = "";
+    try {
+      content = await readFile(envPath, "utf8");
+    } catch {
+      // File doesn't exist, will create
+    }
+
+    for (const [key, value] of Object.entries(updates)) {
+      const regex = new RegExp(`^${key}=.*$`, "m");
+      const line = `${key}=${value}`;
+      if (regex.test(content)) {
+        content = content.replace(regex, line);
+      } else {
+        content += `\n${line}`;
+      }
+    }
+
+    await writeFile(envPath, content, "utf8");
+  } catch (error) {
+    // Silently fail if env file update fails
+    console.error("Failed to update .env file:", error.message);
+  }
 }
 
 export async function runTui(options) {
@@ -154,7 +182,7 @@ async function initializeWorkspace(cli, config, ask) {
 
 async function createInitialConfig(ask) {
   const providerChoice = await ask(
-    "\n  Provider: [1] OpenStreetMap (default)  [2] Google Places\n  › ",
+    "\n  Provider: [1] OpenStreetMap (default)  [2] Google Places  [3] Google Maps Scraper (free)\n  › ",
   );
   const aiChoice = await ask(
     "  Optional AI: [1] Disabled (default)  [2] Gemini  [3] Ollama  [4] OpenAI-compatible\n  › ",
@@ -170,8 +198,8 @@ export function createTuiConfig({
   providerChoice = "",
 }) {
   const config = structuredClone(defaultConfig);
-  config.provider =
-    providerChoice.trim() === "2" ? "google-places" : "openstreetmap";
+  const providerMap = { 2: "google-places", 3: "google-maps-scraper" };
+  config.provider = providerMap[providerChoice.trim()] ?? "openstreetmap";
   config.ai = aiConfiguration(aiChoice);
 
   if (port.trim()) {
@@ -191,16 +219,17 @@ async function updateSettings(cli, config, output, ask) {
   }
 
   output.write(
-    "\n  Settings: [1] Data provider  [2] Optional AI  [3] Runtime mode  [4] Web port\n",
+    "\n  Settings: [1] Data provider  [2] Optional AI  [3] Runtime mode  [4] Web port  [5] Scraper proxy\n",
   );
   const category = await ask("  › ");
   const next = structuredClone(config);
 
   if (category === "1") {
     const selection = await ask(
-      "  Provider: [1] OpenStreetMap  [2] Google Places\n  › ",
+      "  Provider: [1] OpenStreetMap  [2] Google Places  [3] Google Maps Scraper (free)\n  › ",
     );
-    next.provider = selection === "2" ? "google-places" : "openstreetmap";
+    const providerMap = { 2: "google-places", 3: "google-maps-scraper" };
+    next.provider = providerMap[selection.trim()] ?? "openstreetmap";
   } else if (category === "2") {
     const selection = await ask(
       "  Optional AI: [1] Disabled  [2] Gemini  [3] Ollama  [4] OpenAI-compatible\n  › ",
@@ -231,6 +260,8 @@ async function updateSettings(cli, config, output, ask) {
       }
       next.web.port = parsedPort;
     }
+  } else if (category === "5") {
+    return await updateScraperProxy(cli, config, output, ask);
   } else {
     return "Settings unchanged.";
   }
@@ -252,6 +283,61 @@ function aiConfiguration(selection) {
   return provider
     ? { enabled: true, provider }
     : { enabled: false, provider: null };
+}
+
+async function updateScraperProxy(cli, config, output, ask) {
+  if (config?.provider !== "google-maps-scraper") {
+    return "Proxy settings are only available for Google Maps Scraper provider. Change provider first.";
+  }
+
+  output.write(
+    "\n  Scraper Proxy:\n" +
+      "  [1] No proxy (direct connection)\n" +
+      "  [2] Single proxy\n" +
+      "  [3] Multiple proxies (rotation)\n",
+  );
+  const proxyChoice = await ask("  › ");
+
+  if (proxyChoice === "1") {
+    // Clear proxy settings
+    await updateEnvFile({
+      SCRAPER_PROXY_URL: "",
+      SCRAPER_PROXY_LIST: "",
+      SCRAPER_PROXY_ROTATION: "false",
+    });
+    return "Proxy disabled. Direct connection will be used.";
+  }
+
+  if (proxyChoice === "2") {
+    const proxyUrl = await ask(
+      "  Proxy URL (e.g., http://user:pass@host:port): ",
+    );
+    if (!proxyUrl.trim()) {
+      return "No proxy URL provided. Settings unchanged.";
+    }
+    await updateEnvFile({
+      SCRAPER_PROXY_URL: proxyUrl.trim(),
+      SCRAPER_PROXY_LIST: "",
+      SCRAPER_PROXY_ROTATION: "false",
+    });
+    return `Single proxy configured: ${proxyUrl.trim()}`;
+  }
+
+  if (proxyChoice === "3") {
+    output.write("  Enter proxies separated by commas:\n");
+    const proxyList = await ask("  Proxies: ");
+    if (!proxyList.trim()) {
+      return "No proxies provided. Settings unchanged.";
+    }
+    await updateEnvFile({
+      SCRAPER_PROXY_URL: "",
+      SCRAPER_PROXY_LIST: proxyList.trim(),
+      SCRAPER_PROXY_ROTATION: "true",
+    });
+    return `Proxy rotation enabled with ${proxyList.trim().split(",").length} proxies.`;
+  }
+
+  return "Proxy settings unchanged.";
 }
 
 async function runDoctor(cli, output, ask) {

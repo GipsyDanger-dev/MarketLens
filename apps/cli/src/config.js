@@ -116,6 +116,10 @@ export function createEnvironment(config, options = {}) {
     "POSTGRES_DB=marketlens",
     "POSTGRES_USER=marketlens",
     `POSTGRES_PASSWORD=${databasePassword}`,
+    "# Google Maps Scraper proxy configuration (optional)",
+    `SCRAPER_PROXY_URL=${options.scraperProxyUrl ?? ""}`,
+    `SCRAPER_PROXY_LIST=${options.scraperProxyList ?? ""}`,
+    `SCRAPER_PROXY_ROTATION=${options.scraperProxyRotation ?? "false"}`,
   ];
 
   if (validated.database.mode === "external") {
@@ -160,8 +164,14 @@ export function validateConfig(config) {
       "Database mode must be 'embedded', 'docker', or 'external'.",
     );
   }
-  if (!["openstreetmap", "google-places"].includes(provider)) {
-    throw new Error("Provider must be 'openstreetmap' or 'google-places'.");
+  if (
+    !["openstreetmap", "google-places", "google-maps-scraper"].includes(
+      provider,
+    )
+  ) {
+    throw new Error(
+      "Provider must be 'openstreetmap', 'google-places', or 'google-maps-scraper'.",
+    );
   }
   if (!Number.isInteger(port) || port < 1 || port > 65535) {
     throw new Error("Web port must be an integer between 1 and 65535.");

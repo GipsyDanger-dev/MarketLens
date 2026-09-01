@@ -23,6 +23,7 @@ test(
         dirname(fileURLToPath(import.meta.url)),
         "../../..",
       ),
+      nextDistDirectory: ".next-marketlens-test",
     });
 
     t.after(async () => {

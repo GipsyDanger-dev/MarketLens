@@ -7,7 +7,7 @@ import { runTui } from "./tui.js";
 const HELP = `MarketLens local-first CLI
 
 Usage:
-  marketlens init [--port <number>] [--provider <openstreetmap|google-places>] [--ai <disabled|gemini|ollama|openai-compatible>]
+  marketlens init [--port <number>] [--provider <openstreetmap|google-places|google-maps-scraper>] [--ai <disabled|gemini|ollama|openai-compatible>]
   marketlens up | down | status | open | doctor | logs
   marketlens config [provider|ai|database|port] [value]
   marketlens tui

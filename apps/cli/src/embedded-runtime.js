@@ -20,6 +20,7 @@ export async function startEmbeddedRuntime(options) {
   const {
     config,
     installationDirectory,
+    nextDistDirectory,
     runner,
     runtimeDirectory,
     spawnProcess = spawn,
@@ -29,6 +30,7 @@ export async function startEmbeddedRuntime(options) {
     config,
     dataDirectory: paths.dataDirectory,
     installationDirectory,
+    nextDistDirectory,
   });
 
   if (await isEmbeddedRuntimeRunning(installationDirectory)) {
@@ -52,6 +54,8 @@ export async function startEmbeddedRuntime(options) {
     "Inspect the local runtime log and run 'marketlens doctor'.",
   );
 
+  // Clear previous log to avoid stale ^C^C or corrupted content
+  await writeFile(paths.log, "", "utf8");
   const log = await open(paths.log, "a");
   try {
     const invocation = npmInvocation([
@@ -138,7 +142,12 @@ async function ensureRuntimeDependencies(runtimeDirectory, runner) {
 }
 
 async function createEmbeddedEnvironment(options) {
-  const { config, dataDirectory, installationDirectory } = options;
+  const {
+    config,
+    dataDirectory,
+    installationDirectory,
+    nextDistDirectory = ".next-marketlens",
+  } = options;
   const fileValues = await readEnvironment(installationDirectory);
   return {
     ...process.env,
@@ -147,6 +156,7 @@ async function createEmbeddedEnvironment(options) {
       fileValues.DATABASE_URL ??
       "postgresql://marketlens:local@127.0.0.1:5432/marketlens?schema=public",
     MARKETLENS_DATA_DIRECTORY: dataDirectory,
+    MARKETLENS_NEXT_DIST_DIR: nextDistDirectory,
     MARKETLENS_RUNTIME: "embedded",
     NEXT_TELEMETRY_DISABLED: "1",
     PORT: String(config.web.port),
