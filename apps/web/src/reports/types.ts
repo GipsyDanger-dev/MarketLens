@@ -50,6 +50,7 @@ export const researchReportSchema = z.object({
       reviewCount: z.number().nullable(),
       phone: z.string().nullable().optional(),
       website: z.url().nullable().optional(),
+      emails: z.array(z.string()).optional(),
       socialLinks: z.record(z.string(), z.url()).optional(),
       sourceUrl: z.url().nullable().optional(),
       latitude: z.number(),

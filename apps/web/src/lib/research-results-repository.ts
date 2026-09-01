@@ -28,6 +28,7 @@ export async function getResearchResults(projectId: string) {
           reviewCount: true,
           phone: true,
           website: true,
+          emails: true,
           socialLinks: true,
           sourceUrl: true,
           latitude: true,

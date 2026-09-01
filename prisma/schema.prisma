@@ -47,6 +47,7 @@ model ResearchProject {
   longitude        Float
   radiusMeters     Int
   maxResults       Int               @default(250)
+  scrollDepth      Int               @default(10)
   status           ResearchStatus    @default(DRAFT)
   user             User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
   jobs             ResearchJob[]
@@ -97,6 +98,7 @@ model Place {
   reviewCount       Int?
   phone             String?
   website           String?
+  emails            String[]
   socialLinks       Json?
   sourceUrl         String?
   businessStatus    String?

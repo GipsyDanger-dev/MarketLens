@@ -45,6 +45,7 @@ export async function runResearchCollection(
       longitude: project.longitude,
       radiusMeters: project.radiusMeters,
       maxResults: project.maxResults,
+      scrollDepth: project.scrollDepth,
     });
     totalDiscovered = response.places.length;
 

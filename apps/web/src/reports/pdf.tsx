@@ -110,6 +110,7 @@ export function businessDirectoryLines(report: ResearchReport): string[] {
       place.address,
       place.phone,
       place.website,
+      ...(place.emails ?? []),
       ...Object.values(place.socialLinks ?? {}),
     ].filter(Boolean);
     return `${place.name}: ${contact.join(" · ") || "No contact data supplied by this provider."}`;

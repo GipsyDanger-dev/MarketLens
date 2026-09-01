@@ -26,6 +26,7 @@ export function buildResearchReport(input: {
       reviewCount: number | null;
       phone?: string | null;
       website?: string | null;
+      emails?: string[] | null;
       socialLinks?: unknown;
       sourceUrl?: string | null;
       latitude: number;
@@ -91,6 +92,10 @@ export function buildResearchReport(input: {
       reviewCount: place.reviewCount,
       phone: place.phone ?? null,
       website: place.website ?? null,
+      emails:
+        Array.isArray(place.emails) && place.emails.length > 0
+          ? place.emails
+          : undefined,
       socialLinks: socialLinksFromUnknown(place.socialLinks),
       sourceUrl: place.sourceUrl ?? null,
       latitude: place.latitude,

@@ -28,6 +28,7 @@ export type CollectableResearchProject = Pick<
   | "longitude"
   | "radiusMeters"
   | "maxResults"
+  | "scrollDepth"
 >;
 
 export async function queueResearchCollection(
@@ -138,6 +139,7 @@ export async function persistResearchPlace(options: {
       reviewCount: options.place.reviewCount ?? null,
       phone: options.place.phone,
       website: options.place.website,
+      emails: options.place.emails ?? [],
       socialLinks: options.place.socialLinks,
       sourceUrl: options.place.sourceUrl,
       businessStatus: options.place.businessStatus,
@@ -159,6 +161,7 @@ export async function persistResearchPlace(options: {
       reviewCount: options.place.reviewCount ?? null,
       phone: options.place.phone,
       website: options.place.website,
+      emails: options.place.emails ?? [],
       socialLinks: options.place.socialLinks,
       sourceUrl: options.place.sourceUrl,
       businessStatus: options.place.businessStatus,
@@ -310,6 +313,7 @@ function pickCollectableProject(
     longitude: project.longitude,
     radiusMeters: project.radiusMeters,
     maxResults: project.maxResults,
+    scrollDepth: project.scrollDepth,
   };
 }
 

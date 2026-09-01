@@ -9,6 +9,7 @@ export function researchReportToCsv(report: ResearchReport): string {
     "review_count",
     "phone",
     "website",
+    "emails",
     "social_links",
     "source_url",
     "latitude",
@@ -24,6 +25,7 @@ export function researchReportToCsv(report: ResearchReport): string {
     place.reviewCount ?? "",
     place.phone ?? "",
     place.website ?? "",
+    (place.emails ?? []).join(" | "),
     Object.entries(place.socialLinks ?? {})
       .map(([network, href]) => `${network}: ${href}`)
       .join(" | "),
