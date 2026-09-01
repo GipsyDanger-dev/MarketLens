@@ -34,14 +34,26 @@ export function BusinessDetailPanel({
           {place.name}
         </h2>
         {place.category ? (
-          <p className="mt-1 text-sm text-[var(--ink-soft)]">{place.category}</p>
+          <p className="mt-1 text-sm text-[var(--ink-soft)]">
+            {place.category}
+          </p>
         ) : null}
       </div>
       <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
         <Detail label="Address" value={place.address} />
-        <Detail label="Phone" value={place.phone} href={place.phone ? `tel:${place.phone.replaceAll(/[^+\d]/g, "")}` : null} />
+        <Detail
+          label="Phone"
+          value={place.phone}
+          href={
+            place.phone ? `tel:${place.phone.replaceAll(/[^+\d]/g, "")}` : null
+          }
+        />
         <Detail label="Website" value={place.website} href={place.website} />
-        <Detail label="Source record" value={place.sourceUrl ? "Open source record" : null} href={place.sourceUrl} />
+        <Detail
+          label="Source record"
+          value={place.sourceUrl ? "Open source record" : null}
+          href={place.sourceUrl}
+        />
       </dl>
       {links.length > 0 ? (
         <div className="mt-5 border-t border-[var(--rule)] pt-4">
@@ -80,10 +92,17 @@ function Detail({
       <dd className="mt-1 break-words text-[var(--ink-soft)]">
         {value ? (
           href ? (
-            <a className="text-[var(--accent)] underline underline-offset-3" href={href} rel={href.startsWith("http") ? "noreferrer" : undefined} target={href.startsWith("http") ? "_blank" : undefined}>
+            <a
+              className="text-[var(--accent)] underline underline-offset-3"
+              href={href}
+              rel={href.startsWith("http") ? "noreferrer" : undefined}
+              target={href.startsWith("http") ? "_blank" : undefined}
+            >
               {value}
             </a>
-          ) : value
+          ) : (
+            value
+          )
         ) : (
           "Not available from this source"
         )}

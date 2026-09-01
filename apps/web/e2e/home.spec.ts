@@ -7,12 +7,20 @@ test("renders a public landing page with a usable research CTA", async ({
 
   await expect(
     page.getByRole("heading", {
-      name: "See the local market before you enter it.",
+      name: "Read the ground before you make a move.",
     }),
   ).toBeVisible();
+  const researchCta = page.getByRole("link", { name: "Start a field study" });
+  await expect(researchCta).toHaveAttribute("href", "/research/new");
+  await researchCta.click();
+  await expect(page).toHaveURL(/\/research\/new$/u);
   await expect(
-    page.getByRole("link", { name: "Create your first research" }),
-  ).toHaveAttribute("href", "/research/new");
+    page.getByRole("textbox", { name: "What are you researching?" }),
+  ).toBeVisible();
+  await expect(page.getByLabel("Data provider")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Create & Run" }),
+  ).toBeVisible();
 });
 
 test("keeps the research CTA available on a mobile viewport", async ({
@@ -22,6 +30,6 @@ test("keeps the research CTA available on a mobile viewport", async ({
   await page.goto("/");
 
   await expect(
-    page.getByRole("link", { name: "Create your first research" }),
+    page.getByRole("link", { name: "Start a field study" }),
   ).toBeVisible();
 });

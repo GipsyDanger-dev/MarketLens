@@ -1,12 +1,10 @@
 import Link from "next/link";
 
-export function SiteHeader({
-  tone = "light",
-}: {
-  tone?: "light" | "dark";
-}) {
+export function SiteHeader({ tone = "light" }: { tone?: "light" | "dark" }) {
   const dark = tone === "dark";
-  const muted = dark ? "text-[#c9cdc1] hover:text-[#fffcf5]" : "text-[var(--ink-soft)] hover:text-[var(--ink)]";
+  const muted = dark
+    ? "text-[#c9cdc1] hover:text-[#fffcf5]"
+    : "text-[var(--ink-soft)] hover:text-[var(--ink)]";
   const rule = dark ? "border-[#617066]" : "border-[var(--rule)]";
 
   return (
@@ -19,14 +17,21 @@ export function SiteHeader({
           >
             ML
           </span>
-          <span className={`text-base font-semibold tracking-[-0.03em] ${dark ? "text-[#fffcf5]" : "text-[var(--ink)]"}`}>
+          <span
+            className={`text-base font-semibold tracking-[-0.03em] ${dark ? "text-[#fffcf5]" : "text-[var(--ink)]"}`}
+          >
             MarketLens
           </span>
-          <span className={`hidden border-l pl-3 font-mono text-[0.66rem] tracking-[0.09em] uppercase sm:inline ${dark ? "border-[#617066] text-[#b9c5b5]" : "border-[var(--rule-strong)] text-[var(--ink-faint)]"}`}>
+          <span
+            className={`hidden border-l pl-3 font-mono text-[0.66rem] tracking-[0.09em] uppercase sm:inline ${dark ? "border-[#617066] text-[#b9c5b5]" : "border-[var(--rule-strong)] text-[var(--ink-faint)]"}`}
+          >
             Local intelligence
           </span>
         </Link>
-        <nav aria-label="Primary navigation" className="flex items-center gap-1 sm:gap-3">
+        <nav
+          aria-label="Primary navigation"
+          className="flex items-center gap-1 sm:gap-3"
+        >
           <a
             className={`hidden min-h-11 items-center px-2 text-sm font-medium transition-colors sm:inline-flex ${muted}`}
             href="https://github.com/GipsyDanger-dev/MarketLens"

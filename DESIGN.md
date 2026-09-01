@@ -46,6 +46,6 @@
 
 ## Decisions Log
 
-| Date | Decision | Rationale |
-| --- | --- | --- |
+| Date       | Decision                              | Rationale                                                                                                                 |
+| ---------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | 2026-08-29 | Adopted editorial data desk direction | Market intelligence needs authority, scanning clarity, and a distinct point of view without decorative dashboard clutter. |

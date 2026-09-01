@@ -10,7 +10,9 @@ export default function ResearchError({
     <main className="app-shell px-4 py-10 sm:py-20">
       <section className="paper-panel mx-auto max-w-xl p-6 sm:p-8">
         <p className="eyebrow text-[var(--danger)]">Research error</p>
-        <h1 className="type-display mt-4 text-4xl leading-none tracking-[-0.045em]">This research could not be displayed.</h1>
+        <h1 className="type-display mt-4 text-4xl leading-none tracking-[-0.045em]">
+          This research could not be displayed.
+        </h1>
         <p className="mt-5 leading-7 text-[var(--ink-soft)]">
           The dataset remains stored. Retry the page, or return to the dashboard
           and try the action again.

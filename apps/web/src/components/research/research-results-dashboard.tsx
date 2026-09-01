@@ -17,6 +17,7 @@ interface PlaceResult {
   reviewCount: number | null;
   phone: string | null;
   website: string | null;
+  emails: string[] | null;
   socialLinks: Record<string, string> | null;
   sourceUrl: string | null;
   latitude: number;
@@ -147,18 +148,34 @@ export function ResearchResultsDashboard({
     );
 
   const metrics = data.marketMetrics;
-  const selectedPlace = data.places.find((place) => place.id === selectedPlaceId) ?? null;
+  const selectedPlace =
+    data.places.find((place) => place.id === selectedPlaceId) ?? null;
   return (
     <section className="mx-auto w-full max-w-7xl space-y-7">
       <header className="grid gap-5 border-b border-[var(--rule-strong)] pb-6 lg:grid-cols-[1fr_auto] lg:items-end">
         <div>
           <p className="eyebrow">Market report / ready</p>
-          <h1 className="type-display mt-3 text-4xl leading-none tracking-[-0.045em] text-balance sm:text-5xl">{data.name}</h1>
-          <p className="mt-4 text-base text-[var(--ink-soft)]">{data.query} <span className="px-1 text-[var(--ink-faint)]">/</span> {data.locationQuery}</p>
+          <h1 className="type-display mt-3 text-4xl leading-none tracking-[-0.045em] text-balance sm:text-5xl">
+            {data.name}
+          </h1>
+          <p className="mt-4 text-base text-[var(--ink-soft)]">
+            {data.query} <span className="px-1 text-[var(--ink-faint)]">/</span>{" "}
+            {data.locationQuery}
+          </p>
         </div>
         <dl className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm sm:flex sm:gap-8">
-          <div><dt className="data-label">Radius</dt><dd className="mt-1 font-semibold tabular-nums">{Math.round(data.radiusMeters / 1_000)} km</dd></div>
-          <div><dt className="data-label">Status</dt><dd className="mt-1 font-semibold text-[var(--success)]">Complete</dd></div>
+          <div>
+            <dt className="data-label">Radius</dt>
+            <dd className="mt-1 font-semibold tabular-nums">
+              {Math.round(data.radiusMeters / 1_000)} km
+            </dd>
+          </div>
+          <div>
+            <dt className="data-label">Status</dt>
+            <dd className="mt-1 font-semibold text-[var(--success)]">
+              Complete
+            </dd>
+          </div>
         </dl>
       </header>
       <dl className="grid divide-y divide-[var(--rule)] border-y border-[var(--rule)] sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
@@ -205,7 +222,9 @@ export function ResearchResultsDashboard({
         <div className="flex flex-col justify-between gap-4 border-b border-[var(--rule)] pb-5 sm:flex-row sm:items-end">
           <div>
             <p className="eyebrow">Observed places</p>
-            <h2 className="mt-2 text-xl font-semibold tracking-[-0.025em]">Businesses</h2>
+            <h2 className="mt-2 text-xl font-semibold tracking-[-0.025em]">
+              Businesses
+            </h2>
             <p className="mt-1 text-sm text-[var(--ink-soft)]">
               {places.length} shown from {data.places.length}
             </p>
@@ -246,13 +265,15 @@ export function ResearchResultsDashboard({
           </p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-left text-sm">
+            <table className="w-full min-w-[1000px] text-left text-sm">
               <thead className="border-b border-[var(--rule-strong)] text-[var(--ink-faint)]">
                 <tr>
                   <th className="p-3">Business</th>
                   <th className="p-3">Rating</th>
-                  <th className="p-3">Reviews</th>
-                  <th className="p-3">Competition</th>
+                  <th className="p-3">Phone</th>
+                  <th className="p-3">Website</th>
+                  <th className="p-3">Email</th>
+                  <th className="p-3">Score</th>
                 </tr>
               </thead>
               <tbody>
@@ -263,13 +284,43 @@ export function ResearchResultsDashboard({
                     onClick={() => setSelectedPlaceId(place.id)}
                   >
                     <td className="p-3">
-                      <p className="font-medium text-[var(--ink)]">{place.name}</p>
-                      <p className="text-[var(--ink-faint)]">
-                        {place.category ?? place.address ?? "Uncategorized"}
+                      <p className="font-medium text-[var(--ink)]">
+                        {place.name}
+                      </p>
+                      <p className="text-xs text-[var(--ink-faint)]">
+                        {place.category ?? place.address ?? "—"}
                       </p>
                     </td>
                     <td className="p-3">{formatNumber(place.rating)}</td>
-                    <td className="p-3">{formatNumber(place.reviewCount)}</td>
+                    <td className="p-3 text-xs">
+                      {place.phone || (
+                        <span className="text-[var(--ink-faint)]">—</span>
+                      )}
+                    </td>
+                    <td className="p-3 text-xs">
+                      {place.website ? (
+                        <a
+                          className="text-[var(--accent)] underline underline-offset-2 hover:text-[var(--ink)]"
+                          href={place.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {new URL(place.website).hostname.replace("www.", "")}
+                        </a>
+                      ) : (
+                        <span className="text-[var(--ink-faint)]">—</span>
+                      )}
+                    </td>
+                    <td className="p-3 text-xs">
+                      {place.emails && place.emails.length > 0 ? (
+                        <span className="text-[var(--accent)]">
+                          {place.emails[0]}
+                        </span>
+                      ) : (
+                        <span className="text-[var(--ink-faint)]">—</span>
+                      )}
+                    </td>
                     <td className="p-3">
                       {formatPercent(place.competitorScores[0]?.overallScore)}
                     </td>

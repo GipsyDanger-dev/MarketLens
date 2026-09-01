@@ -69,7 +69,9 @@ a:visited {
 
 .type-display {
   font-family: "Fraunces", Georgia, serif;
-  font-variation-settings: "SOFT" 30, "WONK" 0;
+  font-variation-settings:
+    "SOFT" 30,
+    "WONK" 0;
 }
 
 .app-shell {
@@ -120,7 +122,9 @@ a:visited {
   color: var(--ink);
   padding: 0.625rem 0.75rem;
   font-size: 0.9375rem;
-  transition: border-color 150ms ease, box-shadow 150ms ease;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
 }
 
 .ui-input:hover {

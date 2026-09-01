@@ -108,7 +108,9 @@ export function ResearchAiInsights({ researchId }: { researchId: string }) {
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
         <div>
           <p className="eyebrow">Optional interpretation</p>
-          <h2 className="type-display mt-3 text-3xl leading-none tracking-[-0.035em] text-[var(--ink)]">Evidence-bound interpretation</h2>
+          <h2 className="type-display mt-3 text-3xl leading-none tracking-[-0.035em] text-[var(--ink)]">
+            Evidence-bound interpretation
+          </h2>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--ink-soft)]">
             Uses only this research dataset. Validate all market signals before
             acting.

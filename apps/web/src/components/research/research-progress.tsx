@@ -117,9 +117,13 @@ export function ResearchProgress({ researchId }: { researchId: string }) {
       <div className="grid gap-4 border-b border-[var(--rule)] pb-5 sm:grid-cols-[1fr_auto] sm:items-end">
         <div>
           <p className="eyebrow">Collection control</p>
-          <h1 className="type-display mt-3 text-3xl leading-none tracking-[-0.04em] sm:text-4xl">Field collection</h1>
+          <h1 className="type-display mt-3 text-3xl leading-none tracking-[-0.04em] sm:text-4xl">
+            Field collection
+          </h1>
         </div>
-        <p className="max-w-55 break-all font-mono text-[0.65rem] leading-5 text-[var(--ink-faint)]">ID / {researchId}</p>
+        <p className="max-w-55 break-all font-mono text-[0.65rem] leading-5 text-[var(--ink-faint)]">
+          ID / {researchId}
+        </p>
       </div>
 
       {error ? (
@@ -187,9 +191,17 @@ export function ResearchProgress({ researchId }: { researchId: string }) {
       )}
 
       <div className="mt-6 flex flex-col gap-3 border-t border-[var(--rule)] pt-5 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-[var(--ink-soft)]">Collection normalizes and deduplicates source records before analysis.</p>
+        <p className="text-sm text-[var(--ink-soft)]">
+          Collection normalizes and deduplicates source records before analysis.
+        </p>
         <Button disabled={isRunning || isActive} onClick={runCollection}>
-          {isRunning ? "Running collection…" : isRetry ? "Retry collection" : progress?.jobId ? "Run collection again" : "Run collection"}
+          {isRunning
+            ? "Running collection…"
+            : isRetry
+              ? "Retry collection"
+              : progress?.jobId
+                ? "Run collection again"
+                : "Run collection"}
         </Button>
       </div>
     </section>

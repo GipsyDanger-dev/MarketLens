@@ -53,7 +53,9 @@ export function CompetitorPanel({
     <section className="paper-panel grid gap-6 p-5 lg:grid-cols-[0.88fr_1.12fr] sm:p-6">
       <div className="border-b border-[var(--rule)] pb-6 lg:border-r lg:border-b-0 lg:pr-6 lg:pb-0">
         <p className="eyebrow">Competitive field</p>
-        <h2 className="mt-2 text-xl font-semibold tracking-[-0.025em] text-[var(--ink)]">Competitor ranking</h2>
+        <h2 className="mt-2 text-xl font-semibold tracking-[-0.025em] text-[var(--ink)]">
+          Competitor ranking
+        </h2>
         <ol className="mt-4 divide-y divide-[var(--rule)] border-y border-[var(--rule)]">
           {ranked.map((place, index) => (
             <li key={place.id}>
@@ -62,7 +64,9 @@ export function CompetitorPanel({
                 onClick={() => onSelect(place.id)}
               >
                 <span className="flex min-w-0 items-center gap-3">
-                  <span className="font-mono text-xs text-[var(--ink-faint)]">{String(index + 1).padStart(2, "0")}</span>
+                  <span className="font-mono text-xs text-[var(--ink-faint)]">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
                   <span className="truncate">{place.name}</span>
                 </span>
                 <span className="font-mono text-xs tabular-nums">
@@ -86,7 +90,10 @@ export function CompetitorPanel({
         </p>
         <dl className="mt-5 space-y-0 border-y border-[var(--rule)]">
           {components.map(([name, value]) => (
-            <div className="flex justify-between gap-4 border-b border-[var(--rule)] py-2 text-sm last:border-b-0" key={name}>
+            <div
+              className="flex justify-between gap-4 border-b border-[var(--rule)] py-2 text-sm last:border-b-0"
+              key={name}
+            >
               <dt className="text-[var(--ink-soft)]">{name}</dt>
               <dd className="font-mono text-xs font-medium tabular-nums text-[var(--ink)]">
                 {Math.round(value * 100)}%
