@@ -7,6 +7,8 @@ interface MappablePlace {
   name: string;
   latitude: number;
   longitude: number;
+  rating?: number | null;
+  phone?: string | null;
 }
 
 export function ResearchMap({
@@ -23,112 +25,170 @@ export function ResearchMap({
   onPlaceSelect: (placeId: string) => void;
 }) {
   const mapElement = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<{ remove: () => void } | null>(null);
+  const markersRef = useRef<{ remove: () => void }[]>([]);
 
   useEffect(() => {
     if (!mapElement.current) return;
+
+    // Cleanup previous map
+    markersRef.current.forEach((m) => m.remove());
+    markersRef.current = [];
+    mapRef.current?.remove();
+    mapRef.current = null;
+
     let disposed = false;
-    let map: { remove: () => void } | null = null;
 
     void import("maplibre-gl").then((maplibregl) => {
       if (disposed || !mapElement.current) return;
+
+      // Simple OpenStreetMap raster tiles — no API key needed
       const mapInstance = new maplibregl.Map({
         container: mapElement.current,
-        style: "https://demotiles.maplibre.org/style.json",
+        style: {
+          version: 8,
+          sources: {
+            osm: {
+              type: "raster",
+              tiles: [
+                "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
+              ],
+              tileSize: 256,
+              attribution:
+                '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a>',
+            },
+          },
+          layers: [
+            {
+              id: "osm",
+              type: "raster",
+              source: "osm",
+            },
+          ],
+        },
         center: [center.longitude, center.latitude],
-        zoom: places.length > 1 ? 12 : 13,
+        zoom: 13,
       });
-      map = mapInstance;
+
+      mapRef.current = mapInstance;
+
       mapInstance.addControl(new maplibregl.NavigationControl(), "top-right");
+
+      // Add research radius circle after tiles load
       mapInstance.on("load", () => {
+        if (disposed) return;
+
+        // Radius circle
         mapInstance.addSource("research-radius", {
           type: "geojson",
           data: circleFeature(center, radiusMeters),
         });
         mapInstance.addLayer({
-          id: "research-radius-fill",
+          id: "radius-fill",
           type: "fill",
           source: "research-radius",
-          paint: { "fill-color": "#476b50", "fill-opacity": 0.13 },
+          paint: { "fill-color": "#476b50", "fill-opacity": 0.08 },
         });
         mapInstance.addLayer({
-          id: "research-radius-line",
+          id: "radius-line",
           type: "line",
           source: "research-radius",
-          paint: { "line-color": "#476b50", "line-width": 2 },
-        });
-        mapInstance.addSource("places", {
-          type: "geojson",
-          cluster: true,
-          clusterRadius: 50,
-          data: {
-            type: "FeatureCollection",
-            features: places.map((place) => ({
-              type: "Feature" as const,
-              properties: { id: place.id, name: place.name },
-              geometry: {
-                type: "Point" as const,
-                coordinates: [place.longitude, place.latitude],
-              },
-            })),
-          },
-        });
-        mapInstance.addLayer({
-          id: "clusters",
-          type: "circle",
-          source: "places",
-          filter: ["has", "point_count"],
           paint: {
-            "circle-color": "#476b50",
-            "circle-radius": [
-              "step",
-              ["get", "point_count"],
-              18,
-              10,
-              22,
-              30,
-              28,
-            ],
+            "line-color": "#476b50",
+            "line-width": 2,
+            "line-dasharray": [6, 3],
           },
         });
-        mapInstance.addLayer({
-          id: "cluster-count",
-          type: "symbol",
-          source: "places",
-          filter: ["has", "point_count"],
-          layout: {
-            "text-field": ["get", "point_count_abbreviated"],
-            "text-font": ["Open Sans Bold"],
-            "text-size": 12,
-          },
-        });
-        mapInstance.addLayer({
-          id: "unclustered-place",
-          type: "circle",
-          source: "places",
-          filter: ["!", ["has", "point_count"]],
-          paint: {
-            "circle-color": "#d5e0bf",
-            "circle-radius": 8,
-            "circle-stroke-width": 2,
-            "circle-stroke-color": "#16201b",
-          },
-        });
-        mapInstance.on("click", "unclustered-place", (event) => {
-          const id = event.features?.[0]?.properties?.id;
-          if (typeof id === "string") onPlaceSelect(id);
-        });
+
+        // Center marker (research point)
+        const centerEl = document.createElement("div");
+        centerEl.style.cssText = `
+          width: 20px; height: 20px;
+          background: #476b50;
+          border: 3px solid white;
+          border-radius: 50%;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+        `;
+        const centerMarker = new maplibregl.Marker({ element: centerEl })
+          .setLngLat([center.longitude, center.latitude])
+          .setPopup(
+            new maplibregl.Popup({ offset: 15 }).setDOMContent(
+              createCenterPopupContent(),
+            ),
+          )
+          .addTo(mapInstance);
+        markersRef.current.push(centerMarker);
+
+        // Business markers
+        for (const place of places) {
+          const rating = place.rating ?? 0;
+          const isSelected = place.id === selectedPlaceId;
+
+          // Color by rating
+          let bgColor = "#8B9A8E";
+          if (rating >= 4.8) bgColor = "#1a6b3c";
+          else if (rating >= 4.5) bgColor = "#2d7a4f";
+          else if (rating >= 4.0) bgColor = "#d97706";
+          else if (rating > 0) bgColor = "#be123c";
+
+          const el = document.createElement("div");
+          el.style.cssText = `
+            width: 30px; height: 30px;
+            background: ${bgColor};
+            color: white;
+            border: 2.5px solid ${isSelected ? "#16201b" : "white"};
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            box-shadow: 0 2px 8px rgba(0,0,0,${isSelected ? "0.5" : "0.3"});
+            cursor: pointer;
+            transform: scale(${isSelected ? 1.35 : 1});
+            transition: transform 0.15s;
+            z-index: ${isSelected ? 10 : 1};
+          `;
+          el.textContent = rating > 0 ? String(rating) : "•";
+
+          const marker = new maplibregl.Marker({ element: el })
+            .setLngLat([place.longitude, place.latitude])
+            .setPopup(
+              new maplibregl.Popup({ offset: 20 }).setDOMContent(
+                createPlacePopupContent(place, rating),
+              ),
+            )
+            .addTo(mapInstance);
+
+          el.addEventListener("click", (e) => {
+            e.stopPropagation();
+            onPlaceSelect(place.id);
+          });
+
+          markersRef.current.push(marker);
+        }
+
+        // Fit bounds
+        if (places.length > 1) {
+          const bounds = new maplibregl.LngLatBounds();
+          bounds.extend([center.longitude, center.latitude]);
+          for (const place of places) {
+            bounds.extend([place.longitude, place.latitude]);
+          }
+          mapInstance.fitBounds(bounds, { padding: 60, maxZoom: 14 });
+        }
       });
-      const bounds = new maplibregl.LngLatBounds();
-      bounds.extend([center.longitude, center.latitude]);
-      for (const place of places) {
-        bounds.extend([place.longitude, place.latitude]);
-      }
-      if (places.length > 1)
-        mapInstance.fitBounds(bounds, { padding: 56, maxZoom: 14 });
     });
+
     return () => {
       disposed = true;
-      map?.remove();
+      markersRef.current.forEach((m) => m.remove());
+      markersRef.current = [];
+      mapRef.current?.remove();
+      mapRef.current = null;
     };
   }, [center, onPlaceSelect, places, radiusMeters, selectedPlaceId]);
 
@@ -137,20 +197,80 @@ export function ResearchMap({
       <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-[var(--rule)] p-5">
         <div>
           <p className="eyebrow">Spatial pattern</p>
-          <h2 className="mt-2 text-xl font-semibold tracking-[-0.025em] text-[var(--ink)]">Business map</h2>
+          <h2 className="mt-2 text-xl font-semibold tracking-[-0.025em] text-[var(--ink)]">
+            Business map
+          </h2>
           <p className="mt-1 text-sm text-[var(--ink-soft)]">
             {places.length} markers ·{" "}
             {Math.round((radiusMeters / 1_000) * 10) / 10} km research radius
           </p>
         </div>
+        <div className="flex gap-3 text-xs text-[var(--ink-faint)]">
+          <span className="flex items-center gap-1">
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#1a6b3c]"></span>{" "}
+            ≥4.8
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#2d7a4f]"></span>{" "}
+            ≥4.5
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#d97706]"></span>{" "}
+            ≥4.0
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#8B9A8E]"></span>{" "}
+            Other
+          </span>
+        </div>
       </div>
       <div
         aria-label="Interactive business map"
-        className="h-80 w-full grayscale-[0.25] contrast-[0.95] sm:h-105"
+        className="h-80 w-full sm:h-105"
         ref={mapElement}
       />
     </section>
   );
+}
+
+function createCenterPopupContent() {
+  const content = document.createElement("div");
+  content.style.cssText = "padding:6px 10px;font-weight:600;font-size:12px;";
+  content.textContent = "📍 Research Center";
+  return content;
+}
+
+function createPlacePopupContent(place: MappablePlace, rating: number) {
+  const content = document.createElement("div");
+  content.style.cssText =
+    "padding:8px 12px;min-width:180px;font-family:DM Sans,sans-serif;";
+
+  const name = document.createElement("div");
+  name.style.cssText = "font-weight:600;font-size:13px;margin-bottom:4px;";
+  name.textContent = place.name;
+  content.append(name);
+
+  if (rating > 0 || place.phone) {
+    const metadata = document.createElement("div");
+    metadata.style.cssText =
+      "display:flex;gap:10px;font-size:11px;color:#5a6b5f;flex-wrap:wrap;";
+
+    if (rating > 0) {
+      const ratingItem = document.createElement("span");
+      ratingItem.textContent = `⭐ ${rating}`;
+      metadata.append(ratingItem);
+    }
+
+    if (place.phone) {
+      const phoneItem = document.createElement("span");
+      phoneItem.textContent = `📞 ${place.phone}`;
+      metadata.append(phoneItem);
+    }
+
+    content.append(metadata);
+  }
+
+  return content;
 }
 
 function circleFeature(
