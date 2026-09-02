@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 
-import { AiProviderError } from "@/ai/errors";
-import { ResearchCollectionError } from "@/research/collection-error";
-import type { ResearchProgress } from "@/research/progress";
+import { AiProviderError } from "../../../ai/errors";
+import { ResearchCollectionError } from "../../../research/collection-error";
+import type { ResearchProgress } from "../../../research/progress";
 
 export interface ResearchProgressPayload extends Omit<
   ResearchProgress,
@@ -23,6 +24,13 @@ export function researchProgressResponse(
 }
 
 export function researchCollectionErrorResponse(error: unknown): NextResponse {
+  if (error instanceof z.ZodError) {
+    return NextResponse.json(
+      { error: "Invalid research request.", code: "INVALID_INPUT" },
+      { status: 400 },
+    );
+  }
+
   if (error instanceof ResearchCollectionError) {
     const status =
       error.code === "PROJECT_NOT_FOUND"

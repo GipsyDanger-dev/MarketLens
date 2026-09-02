@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { researchCollectionErrorResponse } from "@/app/api/research/response";
+import { researchProjectInputSchema } from "@/core/research-project";
 import {
   guardResearchMutation,
   logOperationalEvent,
@@ -23,7 +24,7 @@ export async function POST(request: Request) {
           headers: { "Retry-After": String(rateLimit.retryAfterSeconds) },
         },
       );
-    const input = await request.json();
+    const input = researchProjectInputSchema.parse(await request.json());
     const [{ createProviderRegistry }, { createResearchProject }] =
       await Promise.all([
         import("@/providers"),
