@@ -1,15 +1,19 @@
 import { NextResponse } from "next/server";
 
 import { researchInsightErrorResponse } from "@/app/api/research/response";
+import { requestHasAccess } from "@/lib/access-control";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ researchId: string }> },
 ) {
   try {
+    if (!requestHasAccess(request)) {
+      return NextResponse.json({ error: "Authentication required." }, { status: 401 });
+    }
     const { researchId } = await params;
     const { getLatestResearchInsight } =
       await import("@/lib/research-ai-repository");
@@ -22,10 +26,13 @@ export async function GET(
 }
 
 export async function POST(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ researchId: string }> },
 ) {
   try {
+    if (!requestHasAccess(request)) {
+      return NextResponse.json({ error: "Authentication required." }, { status: 401 });
+    }
     const { researchId } = await params;
     const [{ createAiProvider }, repository, { createResearchAiService }] =
       await Promise.all([
