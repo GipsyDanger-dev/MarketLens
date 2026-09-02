@@ -41,6 +41,11 @@ const researchRateLimiter = createRateLimiter({
   windowMilliseconds: 60_000,
 });
 
+const aiInsightRateLimiter = createRateLimiter({
+  limit: 5,
+  windowMilliseconds: 60_000,
+});
+
 export function guardResearchMutation(
   request: Request,
   scope: string,
@@ -50,6 +55,11 @@ export function guardResearchMutation(
     ?.split(",")[0]
     ?.trim();
   return researchRateLimiter.consume(`${scope}:${forwarded || "unknown"}`);
+}
+
+/** Limits billable AI generation across this local process. */
+export function guardAiInsightGeneration(): RateLimitResult {
+  return aiInsightRateLimiter.consume("ai-insight-generation");
 }
 
 export function logOperationalEvent(

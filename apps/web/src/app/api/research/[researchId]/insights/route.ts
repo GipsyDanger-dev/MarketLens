@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { researchInsightErrorResponse } from "@/app/api/research/response";
 import { requestHasAccess } from "@/lib/access-control";
+import { guardAiInsightGeneration } from "@/lib/operational-guard";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -13,6 +14,16 @@ export async function GET(
   try {
     if (!requestHasAccess(request)) {
       return NextResponse.json({ error: "Authentication required." }, { status: 401 });
+    }
+    const rateLimit = guardAiInsightGeneration();
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "AI insight generation is temporarily rate limited." },
+        {
+          status: 429,
+          headers: { "Retry-After": String(rateLimit.retryAfterSeconds) },
+        },
+      );
     }
     const { researchId } = await params;
     const { getLatestResearchInsight } =

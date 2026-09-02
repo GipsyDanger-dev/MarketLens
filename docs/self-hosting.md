@@ -57,6 +57,14 @@ Keep `ENABLE_AI=false` unless an AI provider is deliberately configured.
 Credentials for Google Places or any future provider belong only in server-side
 environment variables and must never be embedded in browser code.
 
+For any deployment reachable beyond a trusted local machine, set
+`ENABLE_AUTH=true` and assign a long random `MARKETLENS_ACCESS_TOKEN`. Visitors
+must enter that token at `/access` before research APIs, exports, and AI insight
+generation are available. The token is kept in an `HttpOnly`, `Secure` (in
+production), `SameSite=Strict` cookie. This is a single-tenant access control;
+put multi-user installations behind an identity-aware proxy until user accounts
+and per-project ownership are introduced.
+
 For external PostgreSQL under the CLI, set `DATABASE_URL` in the generated local
 `.env`, run `marketlens config database external`, then run `marketlens up`.
 The external Compose override prevents the bundled PostgreSQL service from
@@ -104,6 +112,9 @@ decision. Retain backups according to your privacy and provider-data policies.
 - The create-research endpoint applies a per-client fixed-window rate limit and
   returns `429` with `Retry-After` when exceeded. Use a shared reverse-proxy or
   platform limiter for multi-instance deployments.
+- AI insight generation is capped at five requests per minute per application
+  process to limit accidental provider spend. Use a shared limiter for a
+  multi-instance production deployment.
 - Production events are emitted as JSON without API keys or request bodies.
 - Global and research error boundaries show a retry action without exposing
   server error messages or secrets.
