@@ -35,4 +35,22 @@ describe("candidateToPersistablePlace", () => {
       candidateToPersistablePlace({ ...candidate, name: null }),
     ).toBeNull();
   });
+
+  it("drops unsafe provider URLs before persistence", () => {
+    expect(
+      candidateToPersistablePlace({
+        ...candidate,
+        website: "javascript:alert(1)",
+        sourceUrl: "data:text/html,unsafe",
+        socialLinks: {
+          instagram: "https://www.instagram.com/kopikita",
+          unsafe: "javascript:alert(1)",
+        },
+      }),
+    ).toMatchObject({
+      website: null,
+      sourceUrl: null,
+      socialLinks: { instagram: "https://www.instagram.com/kopikita" },
+    });
+  });
 });

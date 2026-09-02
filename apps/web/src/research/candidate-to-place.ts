@@ -5,6 +5,7 @@ import {
   normalizeCategory,
   normalizeCoordinates,
 } from "./normalization";
+import { sanitizeExternalLinks, toSafeExternalUrl } from "../lib/external-url";
 
 export interface PersistablePlaceCandidate {
   providerId: string;
@@ -51,7 +52,9 @@ export function candidateToPersistablePlace(
     normalizedName,
     category: normalizeCategory(candidate.category, candidate.providerTypes),
     address: normalizeAddress(candidate.address),
-    socialLinks: candidate.socialLinks ?? {},
+    website: toSafeExternalUrl(candidate.website),
+    sourceUrl: toSafeExternalUrl(candidate.sourceUrl),
+    socialLinks: sanitizeExternalLinks(candidate.socialLinks),
     ...coordinates,
   };
 }
