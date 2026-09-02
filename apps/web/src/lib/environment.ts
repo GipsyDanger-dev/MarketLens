@@ -37,6 +37,7 @@ export const serverEnvironmentSchema = z.object({
     .default(20_000),
   AI_MAX_RETRIES: z.coerce.number().int().min(0).max(3).default(1),
   ENABLE_AUTH: booleanFromEnvironment,
+  MARKETLENS_ACCESS_TOKEN: optionalSecret,
   OVERPASS_API_URL: z.url().default("https://overpass-api.de/api/interpreter"),
   OVERPASS_FALLBACK_URLS: urlListFromEnvironment,
   OVERPASS_TIMEOUT_SECONDS: z.coerce
@@ -91,6 +92,15 @@ export const serverEnvironmentSchema = z.object({
     .min(1)
     .max(20)
     .default(5),
+}).superRefine((environment, context) => {
+  if (environment.ENABLE_AUTH && !environment.MARKETLENS_ACCESS_TOKEN) {
+    context.addIssue({
+      code: "custom",
+      message:
+        "MARKETLENS_ACCESS_TOKEN is required when ENABLE_AUTH is enabled.",
+      path: ["MARKETLENS_ACCESS_TOKEN"],
+    });
+  }
 });
 
 export type ServerEnvironment = z.infer<typeof serverEnvironmentSchema>;
