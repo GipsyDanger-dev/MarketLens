@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -12,6 +12,7 @@ import {
   composeArguments,
   createMarketLensCli,
 } from "./marketlens-cli.js";
+import { defaultConfig, getLocalPaths } from "./config.js";
 
 test("init writes a local configuration without credentials", async (t) => {
   const installationDirectory = await mkdtemp(
@@ -102,6 +103,35 @@ test("external database mode uses an explicit runtime override", async (t) => {
   );
 });
 
+test("update fast-forwards only the CLI-managed runtime", async (t) => {
+  const installationDirectory = await mkdtemp(
+    join(tmpdir(), "marketlens-cli-"),
+  );
+  t.after(() => rm(installationDirectory, { force: true, recursive: true }));
+  const runtimeDirectory = join(
+    getLocalPaths(installationDirectory).localDirectory,
+    "runtime",
+  );
+  await mkdir(runtimeDirectory, { recursive: true });
+  await writeFile(join(runtimeDirectory, "docker-compose.yml"), "services: {}\n");
+
+  const invocations = [];
+  const cli = createMarketLensCli({
+    cwd: installationDirectory,
+    runner: async (command, argumentsList) => {
+      invocations.push([command, argumentsList]);
+      return { exitCode: 0, stderr: "", stdout: "Already up to date.\n" };
+    },
+  });
+  await cli.init(defaultConfig);
+
+  await expectUpdate(cli, runtimeDirectory);
+  assert.deepEqual(invocations.at(-1), [
+    "git",
+    ["-C", runtimeDirectory, "pull", "--ff-only"],
+  ]);
+});
+
 test("command parsing and help remain non-interactive", async () => {
   const config = configFromArguments([
     "--provider",
@@ -134,3 +164,10 @@ test("the executable entrypoint runs when invoked by Node", () => {
   assert.equal(result.status, 0);
   assert.match(result.stdout, /MarketLens local-first CLI/);
 });
+
+async function expectUpdate(cli, runtimeDirectory) {
+  const result = await cli.update();
+  assert.equal(result.updated, true);
+  assert.equal(result.restartRequired, true);
+  assert.equal(result.runtimeDirectory, runtimeDirectory);
+}

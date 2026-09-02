@@ -7,6 +7,7 @@ test("TUI maps menu choices and slash commands", () => {
   assert.equal(parseTuiAction("1"), "initialize");
   assert.equal(parseTuiAction(" /help "), "help");
   assert.equal(parseTuiAction("/doctor"), "doctor");
+  assert.equal(parseTuiAction("9"), "update");
   assert.equal(parseTuiAction("0"), "exit");
   assert.equal(parseTuiAction("invalid"), null);
 });
@@ -27,6 +28,7 @@ test("TUI renders runtime and optional AI state", () => {
   assert.match(screen, /AI        Disabled \(optional\)/);
   assert.match(screen, /Storage   Embedded local/);
   assert.match(screen, /Run doctor/);
+  assert.match(screen, /Update local runtime/);
 });
 
 test("TUI onboarding creates a local-first configuration without credentials", () => {
