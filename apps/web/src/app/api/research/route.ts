@@ -5,11 +5,15 @@ import {
   guardResearchMutation,
   logOperationalEvent,
 } from "@/lib/operational-guard";
+import { requestHasAccess } from "@/lib/access-control";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
+    if (!requestHasAccess(request)) {
+      return NextResponse.json({ error: "Authentication required." }, { status: 401 });
+    }
     const rateLimit = guardResearchMutation(request, "research-create");
     if (!rateLimit.allowed)
       return NextResponse.json(
