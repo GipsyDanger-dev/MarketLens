@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { toSafeExternalUrl } from "@/lib/external-url";
+
 import { ResearchMap } from "./research-map";
 import { BusinessDetailPanel } from "./business-detail-panel";
 import { CompetitorPanel } from "./competitor-panel";
@@ -277,7 +279,9 @@ export function ResearchResultsDashboard({
                 </tr>
               </thead>
               <tbody>
-                {places.map((place) => (
+                {places.map((place) => {
+                  const website = toSafeExternalUrl(place.website);
+                  return (
                   <tr
                     className={`cursor-pointer border-b border-[var(--rule)] text-[var(--ink-soft)] transition-colors hover:bg-[var(--accent-wash)] ${selectedPlaceId === place.id ? "bg-[var(--accent-soft)]" : ""}`}
                     key={place.id}
@@ -298,15 +302,15 @@ export function ResearchResultsDashboard({
                       )}
                     </td>
                     <td className="p-3 text-xs">
-                      {place.website ? (
+                      {website ? (
                         <a
                           className="text-[var(--accent)] underline underline-offset-2 hover:text-[var(--ink)]"
-                          href={place.website}
+                          href={website}
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          {new URL(place.website).hostname.replace("www.", "")}
+                          {new URL(website).hostname.replace("www.", "")}
                         </a>
                       ) : (
                         <span className="text-[var(--ink-faint)]">—</span>
@@ -325,7 +329,8 @@ export function ResearchResultsDashboard({
                       {formatPercent(place.competitorScores[0]?.overallScore)}
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>

@@ -1,7 +1,16 @@
 import { z } from "zod";
 
+import { toSafeExternalUrl } from "../lib/external-url";
+
 const optionalText = z.string().trim().min(1).max(500).nullable().optional();
-const optionalUrl = z.url().max(2_000).nullable().optional();
+const optionalUrl = z
+  .string()
+  .max(2_000)
+  .refine((value) => Boolean(toSafeExternalUrl(value)), {
+    message: "Expected an HTTP or HTTPS URL.",
+  })
+  .nullable()
+  .optional();
 
 export const normalizedPlaceSchema = z.object({
   providerId: z.string().trim().min(1).max(80),

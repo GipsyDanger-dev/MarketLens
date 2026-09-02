@@ -9,6 +9,8 @@ interface BusinessDetail {
   sourceUrl: string | null;
 }
 
+import { toSafeExternalUrl } from "@/lib/external-url";
+
 export function BusinessDetailPanel({
   place,
 }: {
@@ -25,7 +27,14 @@ export function BusinessDetailPanel({
       </section>
     );
 
-  const links = Object.entries(place.socialLinks ?? {});
+  const links = Object.entries(place.socialLinks ?? {}).flatMap(
+    ([network, href]) => {
+      const safeHref = toSafeExternalUrl(href);
+      return safeHref ? [[network, safeHref]] : [];
+    },
+  );
+  const website = toSafeExternalUrl(place.website);
+  const sourceUrl = toSafeExternalUrl(place.sourceUrl);
   return (
     <section className="paper-panel p-5" id={`business-${place.id}`}>
       <div className="border-b border-[var(--rule)] pb-4">
@@ -48,11 +57,11 @@ export function BusinessDetailPanel({
             place.phone ? `tel:${place.phone.replaceAll(/[^+\d]/g, "")}` : null
           }
         />
-        <Detail label="Website" value={place.website} href={place.website} />
+        <Detail label="Website" value={website} href={website} />
         <Detail
           label="Source record"
-          value={place.sourceUrl ? "Open source record" : null}
-          href={place.sourceUrl}
+          value={sourceUrl ? "Open source record" : null}
+          href={sourceUrl}
         />
       </dl>
       {links.length > 0 ? (
