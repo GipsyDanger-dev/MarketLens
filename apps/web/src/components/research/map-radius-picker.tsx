@@ -25,7 +25,6 @@ export function MapRadiusPicker({
   const centerHandleRef = useRef<HTMLDivElement>(null);
   const edgeHandleRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MaplibreMap | null>(null);
-  const mapInitRef = useRef(false);
 
   const stateRef = useRef({
     center: [initialLongitude, initialLatitude] as [number, number],
@@ -115,9 +114,6 @@ export function MapRadiusPicker({
 
   // Initialize map
   useEffect(() => {
-    if (mapInitRef.current) return;
-    mapInitRef.current = true;
-
     const container = wrapperRef.current;
     if (!container) return;
     let disposed = false;
