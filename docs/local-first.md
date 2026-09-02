@@ -59,7 +59,7 @@ without configuring authentication, TLS, and a reverse proxy.
 
 ```text
 marketlens init [--port <number>] [--provider <openstreetmap|google-places>] [--ai <disabled|gemini|ollama|openai-compatible>]
-marketlens up | down | status | open | doctor | logs
+marketlens up | down | status | open | doctor | logs | update
 marketlens config [provider|ai|database|port] [value]
 marketlens tui
 ```
@@ -69,6 +69,10 @@ the local configuration, Docker Compose availability, runtime files, and web
 port. `logs` prints the latest container output. Direct commands remain
 non-interactive for use in local scripts; the optional `tui` command is intended
 for a person operating the local installation.
+
+Run `marketlens update` followed by `marketlens up` to pull the latest runtime
+into an existing CLI-managed installation and rebuild it. The update uses a
+fast-forward-only Git pull and leaves the local `.env` and research data intact.
 
 ## Configuration examples
 

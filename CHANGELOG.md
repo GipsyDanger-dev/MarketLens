@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.3.1 — Private Runtime Security Update
+
+- Add optional private-installation access control with a server-side token,
+  `HttpOnly` session cookie, protected research APIs, and a dedicated access
+  screen when `ENABLE_AUTH=true`.
+- Sanitize untrusted provider URLs before persistence and render, block private
+  network targets from optional email extraction, and cap AI insight generation
+  to reduce accidental provider spend.
+- Add `marketlens update` and a TUI update action so CLI-managed installations
+  can safely pull the latest runtime before rebuilding with `marketlens up`.
+
 ## v1.3.0 — TUI-Managed Lightweight Local Runtime
 
 - Make the TUI's default runtime Docker-free: it starts an embedded local,

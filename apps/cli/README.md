@@ -26,6 +26,16 @@ with no credentials. Google Places and Gemini remain opt-in; add their
 server-side keys directly to the generated local `.env` file. Use
 `marketlens tui` to explicitly open the same interface.
 
+To update the cloned runtime used by an existing global installation, run:
+
+```bash
+marketlens update
+marketlens up
+```
+
+`update` performs a fast-forward-only pull for the CLI-managed runtime; it does
+not alter local research data or the generated `.env` file.
+
 The CLI writes its configuration and generated local PostgreSQL password to the
 current working directory. It binds services to localhost and does not enable
 AI or paid providers by default.
