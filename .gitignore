@@ -16,6 +16,7 @@ generated/
 .env.*
 !.env.example
 .marketlens/
+.qa-runtime-*/
 .npmrc
 *.sqlite
 *.sqlite3
