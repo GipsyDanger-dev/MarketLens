@@ -9,6 +9,7 @@
 
 import type { GmapsEntry, ProxyConfig, SearchJobResult } from "./types";
 import { BrowserPool } from "./browser-pool";
+import { isSafeExternalNavigationUrl } from "../../lib/external-navigation-policy";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Page = any;
@@ -569,8 +570,25 @@ export class ScraperEngine {
   ): Promise<string[]> {
     // Skip social media URLs - they won't have business emails
     if (isSocialMediaUrl(websiteUrl)) return [];
+    if (!(await isSafeExternalNavigationUrl(websiteUrl))) return [];
+
+    const routeHandler = async (route: {
+      abort: (errorCode?: string) => Promise<void>;
+      continue: () => Promise<void>;
+      request: () => { url: () => string };
+    }) => {
+      const requestUrl = route.request().url();
+      if (await isSafeExternalNavigationUrl(requestUrl)) {
+        await route.continue();
+        return;
+      }
+      await route.abort("blockedbyclient");
+    };
+    const supportsRequestGuard =
+      typeof page.route === "function" && typeof page.unroute === "function";
 
     try {
+      if (supportsRequestGuard) await page.route("**/*", routeHandler);
       // Navigate to the website
       await page.goto(websiteUrl, {
         waitUntil: "domcontentloaded",
@@ -624,6 +642,8 @@ export class ScraperEngine {
     } catch {
       // If we can't visit the website, return empty
       return [];
+    } finally {
+      if (supportsRequestGuard) await page.unroute("**/*", routeHandler);
     }
   }
 }
