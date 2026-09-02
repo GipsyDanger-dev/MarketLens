@@ -68,8 +68,7 @@ export class OpenStreetMapProvider implements PlaceProvider {
     const collectedAt = this.now();
     const places = payload.elements
       .map((element) => mapOverpassElement(element, collectedAt))
-      .filter((place): place is NonNullable<typeof place> => place !== null)
-      .slice(0, Math.min(request.maxResults, this.maxResults));
+      .filter((place): place is NonNullable<typeof place> => place !== null); // No slice — return all results within radius
     const response = { places };
 
     validateSearchResponse(this, request, response);

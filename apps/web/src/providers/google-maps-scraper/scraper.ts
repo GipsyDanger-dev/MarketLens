@@ -34,9 +34,9 @@ interface ScraperEngineOptions {
 const DEFAULT_TIMEOUT = 30_000;
 const DEFAULT_MAX_DEPTH = 10;
 const DEFAULT_LANG = "en";
-const DEFAULT_CONCURRENCY = 5;
-const DEFAULT_POOL_SIZE = 2;
-const DEFAULT_MAX_PAGES = 5;
+const DEFAULT_CONCURRENCY = 8;
+const DEFAULT_POOL_SIZE = 3;
+const DEFAULT_MAX_PAGES = 10;
 
 export class ScraperEngine {
   private readonly timeoutMilliseconds: number;

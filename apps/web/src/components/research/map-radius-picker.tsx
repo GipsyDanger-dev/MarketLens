@@ -224,7 +224,7 @@ export function MapRadiusPicker({
       const deltaX = e.clientX - stateRef.current.startClientX;
       const newRadius = Math.max(
         100,
-        Math.min(50000, stateRef.current.startRadius + deltaX * 10),
+        Math.min(100_000, stateRef.current.startRadius + deltaX * 10),
       );
       stateRef.current.radius = newRadius;
       setRadius(newRadius);

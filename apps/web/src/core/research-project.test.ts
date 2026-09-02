@@ -15,7 +15,7 @@ const validProject = {
 describe("researchProjectInputSchema", () => {
   it("applies safe defaults for a new draft", () => {
     expect(researchProjectInputSchema.parse(validProject)).toMatchObject({
-      maxResults: 250,
+      maxResults: 999999,
       status: "DRAFT",
     });
   });

@@ -1,7 +1,7 @@
 import { ProviderError } from "../errors";
 import type { PlaceSearchRequest } from "../types";
 
-export const defaultOverpassResultLimit = 250;
+export const defaultOverpassResultLimit = 999_999; // No artificial limit
 export const defaultOverpassTimeoutSeconds = 25;
 
 export function buildOverpassQuery(
@@ -13,10 +13,7 @@ export function buildOverpassQuery(
 ): string {
   validateSearchRequest(request);
 
-  const maxResults = Math.min(
-    request.maxResults,
-    options.maxResults ?? defaultOverpassResultLimit,
-  );
+  const maxResults = options.maxResults ?? defaultOverpassResultLimit;
   const timeoutSeconds =
     options.timeoutSeconds ?? defaultOverpassTimeoutSeconds;
   const categoryFilter = buildCategoryFilter(request.category);

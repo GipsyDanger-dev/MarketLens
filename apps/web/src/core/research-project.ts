@@ -17,8 +17,8 @@ export const researchProjectInputSchema = z.object({
   latitude: z.number().finite().gte(-90).lte(90),
   longitude: z.number().finite().gte(-180).lte(180),
   radiusMeters: z.number().int().positive().max(100_000),
-  maxResults: z.number().int().positive().max(1_000).default(250),
-  scrollDepth: z.number().int().min(1).max(50).default(10),
+  maxResults: z.number().int().positive().max(999_999).default(999_999),
+  scrollDepth: z.number().int().min(1).max(200).default(10),
   status: z.enum(researchStatuses).default("DRAFT"),
 });
 

@@ -59,7 +59,7 @@ export class GoogleMapsScraperProvider implements PlaceProvider {
       maxPagesPerBrowser: options.maxPagesPerBrowser,
     });
     this.now = options.now ?? (() => new Date());
-    this.maxResults = 250;
+    this.maxResults = 999_999; // No artificial limit — return all results within radius
   }
 
   async search(request: PlaceSearchRequest): Promise<PlaceSearchResponse> {
@@ -105,8 +105,7 @@ export class GoogleMapsScraperProvider implements PlaceProvider {
             return dist <= request.radiusMeters;
           }
           return true;
-        })
-        .slice(0, Math.min(request.maxResults, this.maxResults));
+        }); // No slice — return ALL results within radius
 
       const response = { places };
       validateSearchResponse(this, request, response);

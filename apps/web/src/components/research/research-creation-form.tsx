@@ -10,44 +10,38 @@ import { MapRadiusPicker } from "./map-radius-picker";
 const COVERAGE_PRESETS = [
   {
     label: "Nearby",
-    description: "1 km • ~20 places",
+    description: "1 km • All places",
     radius: 1000,
-    maxResults: 20,
     scrollDepth: 3,
   },
   {
     label: "Neighborhood",
-    description: "3 km • ~50 places",
+    description: "3 km • All places",
     radius: 3000,
-    maxResults: 50,
-    scrollDepth: 5,
-  },
-  {
-    label: "City Center",
-    description: "5 km • ~100 places",
-    radius: 5000,
-    maxResults: 100,
     scrollDepth: 8,
   },
   {
+    label: "City Center",
+    description: "5 km • All places",
+    radius: 5000,
+    scrollDepth: 12,
+  },
+  {
     label: "Metro Area",
-    description: "15 km • ~250 places",
+    description: "15 km • All places",
     radius: 15000,
-    maxResults: 250,
-    scrollDepth: 15,
+    scrollDepth: 25,
   },
   {
     label: "Regional",
-    description: "30 km • ~500 places",
+    description: "30 km • All places",
     radius: 30000,
-    maxResults: 500,
-    scrollDepth: 25,
+    scrollDepth: 50,
   },
   {
     label: "Custom",
     description: "Drag circle on map",
     radius: 0,
-    maxResults: 0,
     scrollDepth: 0,
   },
 ] as const;
@@ -74,8 +68,8 @@ export function ResearchCreationForm({
   const [selectedPreset, setSelectedPreset] =
     useState<CoveragePreset>("City Center");
   const [radius, setRadius] = useState(5000);
-  const [maxResults, setMaxResults] = useState(100);
-  const [scrollDepth, setScrollDepth] = useState(8);
+  const maxResults = 999_999; // Unlimited — scrape everything in radius
+  const [scrollDepth, setScrollDepth] = useState(12);
   const [latitude, setLatitude] = useState(-7.977);
   const [longitude, setLongitude] = useState(112.634);
 
@@ -84,7 +78,6 @@ export function ResearchCreationForm({
     const p = COVERAGE_PRESETS.find((cp) => cp.label === preset);
     if (p && p.radius > 0) {
       setRadius(p.radius);
-      setMaxResults(p.maxResults);
       setScrollDepth(p.scrollDepth);
     }
   }
@@ -104,14 +97,11 @@ export function ResearchCreationForm({
     );
     if (closest.radius > 0 && Math.abs(closest.radius - newRadius) < 500) {
       setSelectedPreset(closest.label);
-      setMaxResults(closest.maxResults);
       setScrollDepth(closest.scrollDepth);
     } else {
       setSelectedPreset("Custom");
-      // Estimate max results based on radius (rough: ~10 places per km²)
-      const km2 = Math.PI * (newRadius / 1000) ** 2;
-      setMaxResults(Math.min(1000, Math.max(10, Math.round(km2 * 10))));
-      setScrollDepth(Math.max(3, Math.min(50, Math.round(newRadius / 2000))));
+      // Estimate scroll depth based on radius — more scroll for larger areas
+      setScrollDepth(Math.max(5, Math.min(200, Math.round(newRadius / 150))));
     }
   }
 
@@ -150,7 +140,7 @@ export function ResearchCreationForm({
     }
   }
 
-  const estimatedTime = Math.ceil((maxResults * 1.5) / scrollDepth);
+  const estimatedTime = Math.ceil(scrollDepth * 3 + 30); // Rough estimate based on scroll depth
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -273,10 +263,8 @@ export function ResearchCreationForm({
                 <p className="text-xs text-[var(--ink-faint)]">km radius</p>
               </div>
               <div className="rounded-md bg-[var(--paper-subtle)] p-3">
-                <p className="text-2xl font-bold text-[var(--accent)]">
-                  {maxResults}
-                </p>
-                <p className="text-xs text-[var(--ink-faint)]">max places</p>
+                <p className="text-2xl font-bold text-[var(--accent)]">∞</p>
+                <p className="text-xs text-[var(--ink-faint)]">all places</p>
               </div>
               <div className="rounded-md bg-[var(--paper-subtle)] p-3">
                 <p className="text-2xl font-bold text-[var(--accent)]">
