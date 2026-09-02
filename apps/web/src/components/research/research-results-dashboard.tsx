@@ -67,30 +67,43 @@ export function ResearchResultsDashboard({
 
   useEffect(() => {
     let cancelled = false;
-    void fetch(`/api/research/${encodeURIComponent(researchId)}/results`, {
-      cache: "no-store",
-    })
-      .then(async (response) => {
-        const body = (await response.json()) as ResultsPayload & {
-          error?: string;
-        };
-        if (!response.ok)
-          throw new Error(body.error ?? "Unable to load results.");
-        if (!cancelled) setData(body);
+    const loadResults = () => {
+      void fetch(`/api/research/${encodeURIComponent(researchId)}/results`, {
+        cache: "no-store",
       })
-      .catch((loadError: unknown) => {
-        if (!cancelled) {
-          setError(
-            loadError instanceof Error
-              ? loadError.message
-              : "Unable to load results.",
-          );
-        }
-      });
-    return () => {
+        .then(async (response) => {
+          const body = (await response.json()) as ResultsPayload & {
+            error?: string;
+          };
+          if (!response.ok)
+            throw new Error(body.error ?? "Unable to load results.");
+          if (!cancelled) {
+            setData(body);
+            setError(null);
+          }
+        })
+        .catch((loadError: unknown) => {
+          if (!cancelled) {
+            setError(
+              loadError instanceof Error
+                ? loadError.message
+                : "Unable to load results.",
+            );
+          }
+        });
+    };
+
+    loadResults();
+    if (data?.status === "READY") return () => {
       cancelled = true;
     };
-  }, [researchId]);
+
+    const interval = window.setInterval(loadResults, 2_500);
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+    };
+  }, [data?.status, researchId]);
 
   const places = useMemo(() => {
     if (!data) return [];
