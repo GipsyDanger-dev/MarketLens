@@ -19,7 +19,7 @@ test("renders a public landing page with a usable research CTA", async ({
   ).toBeVisible();
   await expect(page.getByLabel("Data provider")).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Create & Run" }),
+    page.getByRole("button", { name: "Create study" }),
   ).toBeVisible();
 });
 

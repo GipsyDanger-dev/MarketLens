@@ -292,10 +292,10 @@ export function ResearchCreationForm({
           ) : null}
           <div className="mt-7 flex flex-col gap-3 border-t border-[var(--rule)] pt-5 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-[var(--ink-soft)]">
-              Collection starts immediately after creation.
+              Create the study, then start collection from the next screen.
             </p>
             <Button disabled={isSaving} type="button" onClick={createResearch}>
-              {isSaving ? "Creating study…" : "Create & Run"}
+              {isSaving ? "Creating study…" : "Create study"}
             </Button>
           </div>
         </div>
