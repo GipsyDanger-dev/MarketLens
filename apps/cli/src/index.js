@@ -8,7 +8,7 @@ const HELP = `MarketLens local-first CLI
 
 Usage:
   marketlens init [--port <number>] [--provider <openstreetmap|google-places|google-maps-scraper>] [--ai <disabled|gemini|ollama|openai-compatible>]
-  marketlens up | down | status | open | doctor | logs
+  marketlens up | down | status | open | doctor | logs | update
   marketlens config [provider|ai|database|port] [value]
   marketlens tui
 `;
@@ -51,6 +51,16 @@ export async function main(
       case "doctor":
         output(options, formatDoctor(await cli.doctor()));
         return 0;
+      case "update": {
+        const result = await cli.update();
+        output(
+          options,
+          result.updated
+            ? "MarketLens runtime updated. Run 'marketlens up' to rebuild and restart it."
+            : result.reason,
+        );
+        return 0;
+      }
       case "logs": {
         const result = await cli.logs();
         output(
@@ -175,7 +185,7 @@ function formatStatus(status) {
     }`,
     `Provider     ${config.provider}`,
     `AI           ${config.ai.enabled ? config.ai.provider : "Disabled"}`,
-    `Version      1.3.0`,
+    `Version      1.3.1`,
     `URL          http://${config.web.host}:${config.web.port}`,
   ].join("\n");
 }

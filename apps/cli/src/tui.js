@@ -3,7 +3,7 @@ import { readFile, writeFile } from "node:fs/promises";
 
 import { defaultConfig, getLocalPaths } from "./config.js";
 
-const VERSION = "1.3.0";
+const VERSION = "1.3.1";
 
 export const TUI_ACTIONS = Object.freeze({
   1: "initialize",
@@ -14,6 +14,7 @@ export const TUI_ACTIONS = Object.freeze({
   6: "logs",
   7: "settings",
   8: "doctor",
+  9: "update",
   "/help": "help",
   "/doctor": "doctor",
   "/settings": "settings",
@@ -61,6 +62,7 @@ export function renderTuiScreen({ config, notice, status }) {
     "  [3] Stop services                  [4] Check status",
     "  [5] Open dashboard                 [6] View logs",
     "  [7] Settings                       [8] Run doctor",
+    "  [9] Update local runtime",
     "  [?] Help                           [0] Exit",
     "",
     notice ? `  ${notice}` : "  Select an option or type /help.",
@@ -160,8 +162,14 @@ async function performTuiAction({ action, ask, cli, config, output }) {
         return await updateSettings(cli, config, output, ask);
       case "doctor":
         return await runDoctor(cli, output, ask);
+      case "update": {
+        const result = await cli.update();
+        return result.updated
+          ? "Runtime updated. Start services to rebuild with the latest version."
+          : result.reason;
+      }
       case "help":
-        return "Use 1–8 for actions. Provider and AI are optional settings; API keys stay in .env.";
+        return "Use 1–9 for actions. Provider and AI are optional settings; API keys stay in .env.";
       default:
         return "Unknown option. Type ? for help or 0 to exit.";
     }

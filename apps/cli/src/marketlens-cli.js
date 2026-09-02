@@ -219,7 +219,30 @@ export function createMarketLensCli(options = {}) {
     return url;
   }
 
-  return { config, doctor, down, init, logs, open, print, status, up };
+  async function update() {
+    const { config, runtimeDirectory } = await loadInstallation();
+    const managedRuntime = resolve(
+      join(getLocalPaths(cwd).localDirectory, "runtime"),
+    );
+
+    if (resolve(runtimeDirectory) !== managedRuntime) {
+      return {
+        restartRequired: false,
+        updated: false,
+        reason:
+          "This installation uses a source checkout. Update that checkout with Git, then run 'marketlens up'.",
+      };
+    }
+
+    assertSuccessful(
+      await runner("git", ["-C", runtimeDirectory, "pull", "--ff-only"]),
+      "The local runtime has uncommitted changes or cannot reach GitHub. Resolve it, then run 'marketlens update' again.",
+    );
+
+    return { config, restartRequired: true, runtimeDirectory, updated: true };
+  }
+
+  return { config, doctor, down, init, logs, open, print, status, update, up };
 }
 
 export async function resolveRuntimeDirectory(
