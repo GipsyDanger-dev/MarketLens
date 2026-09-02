@@ -51,4 +51,14 @@ describe("parseServerEnvironment", () => {
     expect(environment.GEMINI_API_KEY).toBeUndefined();
     expect(environment.GOOGLE_MAPS_API_KEY).toBeUndefined();
   });
+
+  it("requires an access token when private access is enabled", () => {
+    expect(() =>
+      parseServerEnvironment({
+        DATABASE_URL:
+          "postgresql://marketlens:marketlens@localhost:5432/marketlens",
+        ENABLE_AUTH: "true",
+      }),
+    ).toThrow(/MARKETLENS_ACCESS_TOKEN/);
+  });
 });
