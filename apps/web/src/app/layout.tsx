@@ -1,7 +1,27 @@
 import type { Metadata } from "next";
+import { JetBrains_Mono, Manrope, Newsreader } from "next/font/google";
 import type { ReactNode } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
+
+const manrope = Manrope({
+  display: "swap",
+  subsets: ["latin"],
+  variable: "--font-manrope",
+});
+
+const newsreader = Newsreader({
+  axes: ["opsz"],
+  display: "swap",
+  subsets: ["latin"],
+  variable: "--font-newsreader",
+});
+
+const jetBrainsMono = JetBrains_Mono({
+  display: "swap",
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -30,7 +50,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="en" className="h-full antialiased">
+    <html
+      lang="en"
+      className={`${manrope.variable} ${newsreader.variable} ${jetBrainsMono.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col bg-[var(--canvas)]">
         {children}
       </body>
