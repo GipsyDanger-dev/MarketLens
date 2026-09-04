@@ -18,81 +18,126 @@ export default function GlobalError({
       }),
     );
   }, [error]);
+
   return (
     <html lang="en">
       <body
         style={{
-          background: "#f3f0e7",
-          color: "#16201b",
-          fontFamily: "DM Sans, sans-serif",
+          background: "#0b1220",
+          color: "#f7f9fc",
+          fontFamily: 'Manrope, "Segoe UI", sans-serif',
           margin: 0,
         }}
       >
         <main
           style={{
-            borderTop: "1px solid #9aa398",
-            borderBottom: "1px solid #9aa398",
-            maxWidth: 640,
-            margin: "15vh auto",
-            padding: "32px 24px",
+            alignItems: "center",
+            backgroundImage:
+              "linear-gradient(rgba(129,151,200,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(129,151,200,.08) 1px, transparent 1px)",
+            backgroundSize: "40px 40px",
+            display: "flex",
+            minHeight: "100vh",
+            padding: "clamp(20px, 5vw, 72px)",
           }}
         >
-          <p
+          <section
             style={{
-              color: "#476b50",
-              fontFamily: "IBM Plex Mono, monospace",
-              fontSize: 12,
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
+              border: "1px solid #34415a",
+              boxShadow: "0 28px 80px rgba(0,0,0,.32)",
+              margin: "0 auto",
+              maxWidth: 720,
+              overflow: "hidden",
+              width: "100%",
             }}
           >
-            MarketLens / recovery
-          </p>
-          <h1
-            style={{
-              fontFamily: "Fraunces, Georgia, serif",
-              fontSize: "clamp(2.5rem, 7vw, 4rem)",
-              letterSpacing: "-0.05em",
-              lineHeight: 0.96,
-              margin: "18px 0",
-            }}
-          >
-            We could not load this page.
-          </h1>
-          <p style={{ color: "#445149", lineHeight: 1.6, maxWidth: 520 }}>
-            Try again. If the problem continues, use the error reference when
-            contacting the operator.
-          </p>
-          {error.digest ? (
-            <p
+            <div
               style={{
-                borderTop: "1px solid #c9cdc1",
-                color: "#718076",
-                fontFamily: "IBM Plex Mono, monospace",
-                fontSize: 12,
-                marginTop: 24,
-                paddingTop: 16,
+                alignItems: "center",
+                borderBottom: "1px solid #34415a",
+                display: "flex",
+                justifyContent: "space-between",
+                padding: "16px 20px",
               }}
             >
-              Error reference / {error.digest}
-            </p>
-          ) : null}
-          <button
-            onClick={reset}
-            style={{
-              background: "#476b50",
-              border: "1px solid #476b50",
-              borderRadius: 0,
-              color: "#fffcf5",
-              cursor: "pointer",
-              fontWeight: 600,
-              marginTop: 16,
-              minHeight: 44,
-              padding: "10px 16px",
-            }}
-          >
-            Try again
-          </button>
+              <strong style={{ fontSize: 14, letterSpacing: "-.02em" }}>
+                MarketLens
+              </strong>
+              <span
+                style={{
+                  color: "#9aa9c1",
+                  fontFamily: '"JetBrains Mono", Consolas, monospace',
+                  fontSize: 10,
+                  letterSpacing: ".12em",
+                  textTransform: "uppercase",
+                }}
+              >
+                Recovery console
+              </span>
+            </div>
+            <div style={{ padding: "clamp(28px, 7vw, 64px)" }}>
+              <p
+                style={{
+                  color: "#8eabff",
+                  fontFamily: '"JetBrains Mono", Consolas, monospace',
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: ".12em",
+                  margin: 0,
+                  textTransform: "uppercase",
+                }}
+              >
+                Application interruption / 500
+              </p>
+              <h1
+                style={{
+                  color: "#f7f9fc",
+                  fontFamily: "Newsreader, Georgia, serif",
+                  fontSize: "clamp(3rem, 9vw, 5.6rem)",
+                  fontWeight: 500,
+                  letterSpacing: "-.055em",
+                  lineHeight: 0.9,
+                  margin: "24px 0",
+                  maxWidth: 600,
+                }}
+              >
+                The workspace lost its place.
+              </h1>
+              <p style={{ color: "#b5c0d2", lineHeight: 1.7, margin: 0, maxWidth: 520 }}>
+                Retry the request. Your persisted research data is kept
+                separate from this page error and should remain available.
+              </p>
+              {error.digest ? (
+                <p
+                  style={{
+                    borderLeft: "2px solid #b7642a",
+                    color: "#9aa9c1",
+                    fontFamily: '"JetBrains Mono", Consolas, monospace',
+                    fontSize: 11,
+                    margin: "28px 0 0",
+                    padding: "4px 0 4px 12px",
+                  }}
+                >
+                  Error reference / {error.digest}
+                </p>
+              ) : null}
+              <button
+                onClick={reset}
+                style={{
+                  background: "#315ef5",
+                  border: "1px solid #7090ff",
+                  borderRadius: 6,
+                  color: "#ffffff",
+                  cursor: "pointer",
+                  fontWeight: 700,
+                  marginTop: 30,
+                  minHeight: 48,
+                  padding: "11px 20px",
+                }}
+              >
+                Retry workspace
+              </button>
+            </div>
+          </section>
         </main>
       </body>
     </html>
