@@ -71,8 +71,22 @@ body {
 }
 
 a {
-  color: inherit;
   text-underline-offset: 0.2em;
+}
+
+.text-link {
+  color: var(--accent);
+  text-decoration-color: color-mix(in srgb, var(--accent) 42%, transparent);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  transition:
+    color 160ms ease,
+    text-decoration-color 160ms ease;
+}
+
+.text-link:hover {
+  color: var(--accent-hover);
+  text-decoration-color: currentColor;
 }
 
 .text-link:visited {

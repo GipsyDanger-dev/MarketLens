@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Manrope, Newsreader } from "next/font/google";
 import type { ReactNode } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -31,6 +31,10 @@ export const metadata: Metadata = {
   description:
     "Open-source, self-hostable local market intelligence for explainable competitor and geographic research.",
   applicationName: "MarketLens",
+  authors: [{ name: "MarketLens contributors" }],
+  category: "business intelligence",
+  creator: "MarketLens",
+  referrer: "origin-when-cross-origin",
   keywords: [
     "local market intelligence",
     "competitor analysis",
@@ -44,6 +48,16 @@ export const metadata: Metadata = {
       "Transform place data into explainable market analytics, competitor intelligence, and exportable insights.",
     type: "website",
   },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
+export const viewport: Viewport = {
+  colorScheme: "light",
+  themeColor: "#0b1220",
+  width: "device-width",
 };
 
 export default function RootLayout({
