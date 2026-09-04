@@ -13,7 +13,7 @@ test("presents a responsive private-workspace access gate", async ({ page }) => 
     page.getByRole("heading", { name: "Open the workspace." }),
   ).toBeVisible();
 
-  const token = page.locator('input[autocomplete="current-password"]');
+  const token = page.getByLabel("Access token", { exact: true });
   await expect(token).toHaveAttribute("type", "password");
   await token.fill("local-test-token");
   await page.getByRole("button", { name: "Show access token" }).click();

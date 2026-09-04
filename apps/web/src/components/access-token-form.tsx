@@ -53,13 +53,16 @@ export function AccessTokenForm({ nextPath }: { nextPath: string }) {
         MarketLens installation.
       </p>
 
-      <label className="mt-8 block text-sm font-bold text-[var(--ink)]">
-        Access token
+      <div className="mt-8">
+        <label className="block text-sm font-bold text-[var(--ink)]" htmlFor="access-token">
+          Access token
+        </label>
         <span className="relative mt-2 block">
           <input
             aria-describedby={error ? "access-error" : "access-help"}
             autoComplete="current-password"
             className="ui-input w-full pr-13 font-mono tracking-[0.08em]"
+            id="access-token"
             onChange={(event) => setToken(event.target.value)}
             required
             type={isVisible ? "text" : "password"}
@@ -74,7 +77,7 @@ export function AccessTokenForm({ nextPath }: { nextPath: string }) {
             {isVisible ? <EyeOff aria-hidden="true" size={18} /> : <Eye aria-hidden="true" size={18} />}
           </button>
         </span>
-      </label>
+      </div>
       <p className="mt-2 text-xs leading-5 text-[var(--ink-faint)]" id="access-help">
         Token comparison happens on the server over the current connection.
       </p>

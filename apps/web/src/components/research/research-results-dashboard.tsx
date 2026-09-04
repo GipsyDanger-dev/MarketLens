@@ -13,6 +13,7 @@ import {
   Trophy,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import type { KeyboardEvent } from "react";
 
 import { toSafeExternalUrl } from "@/lib/external-url";
 
@@ -187,6 +188,25 @@ export function ResearchResultsDashboard({ researchId }: { researchId: string })
     setSelectedPlaceId(placeId);
     setActiveView("map");
   };
+  const handleTabKeyDown = (
+    event: KeyboardEvent<HTMLButtonElement>,
+    view: WorkspaceView,
+  ) => {
+    const currentIndex = WORKSPACE_VIEWS.findIndex((item) => item.id === view);
+    let nextIndex = currentIndex;
+    if (event.key === "ArrowRight") nextIndex = (currentIndex + 1) % WORKSPACE_VIEWS.length;
+    else if (event.key === "ArrowLeft") nextIndex = (currentIndex - 1 + WORKSPACE_VIEWS.length) % WORKSPACE_VIEWS.length;
+    else if (event.key === "Home") nextIndex = 0;
+    else if (event.key === "End") nextIndex = WORKSPACE_VIEWS.length - 1;
+    else return;
+
+    event.preventDefault();
+    const nextView = WORKSPACE_VIEWS[nextIndex].id;
+    setActiveView(nextView);
+    window.requestAnimationFrame(() => {
+      document.getElementById(`workspace-tab-${nextView}`)?.focus();
+    });
+  };
 
   return (
     <section className="min-w-0">
@@ -236,7 +256,9 @@ export function ResearchResultsDashboard({ researchId }: { researchId: string })
               id={`workspace-tab-${id}`}
               key={id}
               onClick={() => setActiveView(id)}
+              onKeyDown={(event) => handleTabKeyDown(event, id)}
               role="tab"
+              tabIndex={activeView === id ? 0 : -1}
               type="button"
             >
               <Icon aria-hidden="true" size={15} strokeWidth={1.9} />
