@@ -1,60 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import {
+  ArrowLeft,
+  Clock3,
+  Database,
+  Infinity as InfinityIcon,
+  LoaderCircle,
+  MapPin,
+  MoveRight,
+  Radar,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
 import { MapRadiusPicker } from "./map-radius-picker";
+import { Button } from "@/components/ui/button";
 
 const COVERAGE_PRESETS = [
-  {
-    label: "Nearby",
-    description: "1 km • All places",
-    radius: 1000,
-    scrollDepth: 3,
-  },
-  {
-    label: "Neighborhood",
-    description: "3 km • All places",
-    radius: 3000,
-    scrollDepth: 8,
-  },
-  {
-    label: "City Center",
-    description: "5 km • All places",
-    radius: 5000,
-    scrollDepth: 12,
-  },
-  {
-    label: "Metro Area",
-    description: "15 km • All places",
-    radius: 15000,
-    scrollDepth: 25,
-  },
-  {
-    label: "Regional",
-    description: "30 km • All places",
-    radius: 30000,
-    scrollDepth: 50,
-  },
-  {
-    label: "Custom",
-    description: "Drag circle on map",
-    radius: 0,
-    scrollDepth: 0,
-  },
+  { label: "Nearby", description: "1 km", radius: 1000, scrollDepth: 3 },
+  { label: "Neighborhood", description: "3 km", radius: 3000, scrollDepth: 8 },
+  { label: "City Center", description: "5 km", radius: 5000, scrollDepth: 12 },
+  { label: "Metro Area", description: "15 km", radius: 15000, scrollDepth: 25 },
+  { label: "Regional", description: "30 km", radius: 30000, scrollDepth: 50 },
+  { label: "Custom", description: "Set on map", radius: 0, scrollDepth: 0 },
 ] as const;
 
 type CoveragePreset = (typeof COVERAGE_PRESETS)[number]["label"];
-
 type ResearchProvider = { id: string; name: string };
 
-export function ResearchCreationForm({
-  providers,
-}: {
-  providers: ResearchProvider[];
-}) {
+export function ResearchCreationForm({ providers }: { providers: ResearchProvider[] }) {
   const router = useRouter();
   const supportedProviders = providers.filter(
     (provider) => provider.id !== "google-maps-scraper",
@@ -65,20 +40,19 @@ export function ResearchCreationForm({
     supportedProviders[0]?.id ?? "openstreetmap",
   );
   const [query, setQuery] = useState("businesses");
-  const [selectedPreset, setSelectedPreset] =
-    useState<CoveragePreset>("City Center");
+  const [selectedPreset, setSelectedPreset] = useState<CoveragePreset>("City Center");
   const [radius, setRadius] = useState(5000);
-  const maxResults = 999_999; // Unlimited — scrape everything in radius
+  const maxResults = 999_999;
   const [scrollDepth, setScrollDepth] = useState(12);
   const [latitude, setLatitude] = useState(-7.977);
   const [longitude, setLongitude] = useState(112.634);
 
   function handlePresetChange(preset: CoveragePreset) {
     setSelectedPreset(preset);
-    const p = COVERAGE_PRESETS.find((cp) => cp.label === preset);
-    if (p && p.radius > 0) {
-      setRadius(p.radius);
-      setScrollDepth(p.scrollDepth);
+    const selection = COVERAGE_PRESETS.find((item) => item.label === preset);
+    if (selection && selection.radius > 0) {
+      setRadius(selection.radius);
+      setScrollDepth(selection.scrollDepth);
     }
   }
 
@@ -89,18 +63,16 @@ export function ResearchCreationForm({
 
   function handleMapRadiusChange(newRadius: number) {
     setRadius(newRadius);
-    // Auto-select preset based on radius
-    const closest = COVERAGE_PRESETS.reduce((prev, curr) =>
-      Math.abs(curr.radius - newRadius) < Math.abs(prev.radius - newRadius)
-        ? curr
-        : prev,
+    const closest = COVERAGE_PRESETS.reduce((previous, current) =>
+      Math.abs(current.radius - newRadius) < Math.abs(previous.radius - newRadius)
+        ? current
+        : previous,
     );
     if (closest.radius > 0 && Math.abs(closest.radius - newRadius) < 500) {
       setSelectedPreset(closest.label);
       setScrollDepth(closest.scrollDepth);
     } else {
       setSelectedPreset("Custom");
-      // Estimate scroll depth based on radius — more scroll for larger areas
       setScrollDepth(Math.max(5, Math.min(200, Math.round(newRadius / 150))));
     }
   }
@@ -126,8 +98,9 @@ export function ResearchCreationForm({
         }),
       });
       const body = (await response.json()) as { id?: string; error?: string };
-      if (!response.ok || !body.id)
+      if (!response.ok || !body.id) {
         throw new Error(body.error ?? "Unable to create research.");
+      }
       router.push(`/research/${encodeURIComponent(body.id)}`);
     } catch (createError) {
       setError(
@@ -140,164 +113,171 @@ export function ResearchCreationForm({
     }
   }
 
-  const estimatedTime = Math.ceil(scrollDepth * 3 + 30); // Rough estimate based on scroll depth
+  const estimatedTime = Math.ceil(scrollDepth * 3 + 30);
+  const selectedProvider =
+    supportedProviders.find((provider) => provider.id === providerId)?.name ??
+    "OpenStreetMap";
 
   return (
-    <div className="mx-auto max-w-5xl">
-      <Link
-        className="text-sm font-medium text-[var(--accent)] underline underline-offset-4"
-        href="/"
-      >
-        ← Back to overview
-      </Link>
-      <div className="mt-8 grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
-        <aside className="lg:pr-8">
-          <p className="eyebrow">New field study / 01</p>
-          <h1 className="type-display mt-4 text-5xl leading-[0.96] tracking-[-0.05em] text-balance">
-            Define the market you want to inspect.
+    <div>
+      <div className="flex flex-col gap-7 border-b border-[var(--rule-strong)] pb-7 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <Link className="text-link inline-flex min-h-11 items-center gap-2 text-sm font-bold" href="/">
+            <ArrowLeft aria-hidden="true" size={16} />
+            Workspace overview
+          </Link>
+          <p className="eyebrow mt-5">New field study / 01</p>
+          <h1 className="type-display mt-3 max-w-4xl text-[clamp(3.2rem,7vw,6.7rem)] leading-[0.88] tracking-[-0.06em] text-[var(--ink)]">
+            Draw the market. Define the evidence.
           </h1>
-          <p className="mt-5 max-w-sm leading-7 text-[var(--ink-soft)]">
-            Drag the circle on the map to set your search area. Resize by
-            dragging the white handle on the edge.
-          </p>
-          <dl className="mt-9 space-y-4 border-t border-[var(--rule-strong)] pt-5 text-sm">
-            <div>
-              <dt className="data-label">Data source</dt>
-              <dd className="mt-1 font-medium">
-                {supportedProviders.find(
-                  (provider) => provider.id === providerId,
-                )?.name ?? "OpenStreetMap"}
-              </dd>
-            </div>
-            <div>
-              <dt className="data-label">Storage</dt>
-              <dd className="mt-1 font-medium">Local and embedded</dd>
-            </div>
-          </dl>
-        </aside>
-        <div className="paper-panel p-5 sm:p-8">
-          <div className="border-b border-[var(--rule)] pb-5">
-            <p className="data-label">Study definition</p>
-            <p className="mt-2 text-sm leading-6 text-[var(--ink-soft)]">
-              Drag the green circle to move, drag the white handle to resize.
-            </p>
-          </div>
+        </div>
 
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            <label className="grid gap-2 text-sm font-medium text-[var(--ink)]">
-              What are you researching?
-              <input
-                className="h-10 rounded-md border border-[var(--rule)] bg-white px-3 text-sm font-normal outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="e.g. coffee shops"
-                value={query}
-              />
-            </label>
-            <label className="grid gap-2 text-sm font-medium text-[var(--ink)]">
-              Data provider
-              <select
-                className="h-10 rounded-md border border-[var(--rule)] bg-white px-3 text-sm font-normal outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
-                onChange={(event) => setProviderId(event.target.value)}
-                value={providerId}
-              >
-                {supportedProviders.map((provider) => (
-                  <option key={provider.id} value={provider.id}>
-                    {provider.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          {/* Interactive Map Picker */}
-          <div className="mt-6">
-            <MapRadiusPicker
-              initialLatitude={latitude}
-              initialLongitude={longitude}
-              initialRadius={radius}
-              onCenterChange={handleMapCenterChange}
-              onRadiusChange={handleMapRadiusChange}
-            />
-          </div>
-
-          {/* Coverage Presets */}
-          <div className="mt-6 border-t border-[var(--rule)] pt-6">
-            <span className="data-label">Quick presets</span>
-            <p className="mt-1 mb-3 text-xs leading-5 text-[var(--ink-faint)]">
-              Or choose a preset to set radius automatically.
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              {COVERAGE_PRESETS.map((preset) => (
-                <button
-                  key={preset.label}
-                  type="button"
-                  onClick={() => handlePresetChange(preset.label)}
-                  className={`rounded-md border px-3 py-2 text-left text-xs transition-colors ${
-                    selectedPreset === preset.label
-                      ? "border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]"
-                      : "border-[var(--rule)] hover:border-[var(--ink-soft)]"
-                  }`}
-                >
-                  <span className="block font-medium">{preset.label}</span>
-                  <span className="mt-0.5 block text-[10px] leading-4 text-[var(--ink-faint)]">
-                    {preset.description}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Summary */}
-          <div className="mt-6 border-t border-[var(--rule)] pt-6">
-            <div className="flex items-center justify-between">
-              <span className="data-label">Collection plan</span>
-              <span className="text-xs text-[var(--ink-faint)]">
-                ⏱ Est. ~{estimatedTime}s
-              </span>
-            </div>
-            <div className="mt-3 grid grid-cols-3 gap-4 text-center">
-              <div className="rounded-md bg-[var(--paper-subtle)] p-3">
-                <p className="text-2xl font-bold text-[var(--accent)]">
-                  {(radius / 1000).toFixed(1)}
-                </p>
-                <p className="text-xs text-[var(--ink-faint)]">km radius</p>
-              </div>
-              <div className="rounded-md bg-[var(--paper-subtle)] p-3">
-                <p className="text-2xl font-bold text-[var(--accent)]">∞</p>
-                <p className="text-xs text-[var(--ink-faint)]">all places</p>
-              </div>
-              <div className="rounded-md bg-[var(--paper-subtle)] p-3">
-                <p className="text-2xl font-bold text-[var(--accent)]">
-                  {scrollDepth}
-                </p>
-                <p className="text-xs text-[var(--ink-faint)]">scroll depth</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Hidden inputs for form submission */}
-          <input type="hidden" name="latitude" value={latitude} />
-          <input type="hidden" name="longitude" value={longitude} />
-          <input type="hidden" name="radiusMeters" value={radius} />
-          <input type="hidden" name="maxResults" value={maxResults} />
-          <input type="hidden" name="scrollDepth" value={scrollDepth} />
-
-          {error ? (
-            <p
-              className="mt-6 border border-[color:var(--danger)] bg-[#f7e6e2] p-3 text-sm text-[var(--danger)]"
-              role="alert"
+        <ol className="grid shrink-0 grid-cols-3 border border-[var(--rule)] bg-white" aria-label="Research workflow">
+          {[
+            ["01", "Define"],
+            ["02", "Collect"],
+            ["03", "Analyze"],
+          ].map(([number, label], index) => (
+            <li
+              className={`min-w-24 px-4 py-3 ${index < 2 ? "border-r border-[var(--rule)]" : ""} ${index === 0 ? "bg-[var(--accent-soft)]" : ""}`}
+              key={number}
             >
-              {error}
-            </p>
-          ) : null}
-          <div className="mt-7 flex flex-col gap-3 border-t border-[var(--rule)] pt-5 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-[var(--ink-soft)]">
-              Create the study, then start collection from the next screen.
-            </p>
-            <Button disabled={isSaving} type="button" onClick={createResearch}>
-              {isSaving ? "Creating study…" : "Create study"}
-            </Button>
-          </div>
+              <span className="block font-mono text-[0.62rem] font-bold tracking-[0.1em] text-[var(--accent)]">{number}</span>
+              <span className="mt-1 block text-xs font-bold text-[var(--ink)]">{label}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div className="mt-7 overflow-hidden rounded-xl border border-[var(--rule-strong)] bg-white shadow-[var(--shadow-soft)]">
+        <div className="grid lg:grid-cols-[22rem_minmax(0,1fr)] xl:grid-cols-[24rem_minmax(0,1fr)]">
+          <aside className="border-b border-[var(--rule)] p-5 sm:p-7 lg:border-r lg:border-b-0">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="data-label">Study definition</p>
+                <h2 className="mt-2 text-lg font-extrabold tracking-[-0.03em] text-[var(--ink)]">Collection controls</h2>
+              </div>
+              <span className="status-pill status-info">Draft</span>
+            </div>
+
+            <div className="mt-7 space-y-5 border-t border-[var(--rule)] pt-6">
+              <label className="grid gap-2 text-sm font-bold text-[var(--ink)]">
+                What are you researching?
+                <input
+                  className="ui-input font-normal"
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="e.g. coffee shops"
+                  value={query}
+                />
+              </label>
+              <label className="grid gap-2 text-sm font-bold text-[var(--ink)]">
+                Data provider
+                <select className="ui-input font-normal" onChange={(event) => setProviderId(event.target.value)} value={providerId}>
+                  {supportedProviders.map((provider) => (
+                    <option key={provider.id} value={provider.id}>{provider.name}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <fieldset className="mt-7 border-t border-[var(--rule)] pt-6">
+              <legend className="data-label float-left w-full">Coverage preset</legend>
+              <p className="clear-both pt-2 text-xs leading-5 text-[var(--ink-faint)]">
+                Select a starting scale, then refine it directly on the map.
+              </p>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {COVERAGE_PRESETS.map((preset) => (
+                  <button
+                    aria-pressed={selectedPreset === preset.label}
+                    className={`min-h-16 rounded-md border px-3 py-2.5 text-left transition-[background-color,border-color,box-shadow] ${
+                      selectedPreset === preset.label
+                        ? "border-[var(--accent)] bg-[var(--accent-soft)] shadow-[inset_3px_0_0_var(--accent)]"
+                        : "border-[var(--rule)] bg-white hover:border-[var(--rule-strong)] hover:bg-[var(--paper-muted)]"
+                    }`}
+                    key={preset.label}
+                    onClick={() => handlePresetChange(preset.label)}
+                    type="button"
+                  >
+                    <span className="block text-xs font-bold text-[var(--ink)]">{preset.label}</span>
+                    <span className="mt-1 block font-mono text-[0.62rem] text-[var(--ink-faint)]">{preset.description}</span>
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+
+            <div className="mt-7 rounded-lg bg-[var(--graphite)] p-5 text-white">
+              <div className="flex items-center justify-between gap-4">
+                <p className="font-mono text-[0.65rem] font-bold tracking-[0.12em] text-[#93a9da] uppercase">Collection plan</p>
+                <span className="flex items-center gap-1.5 text-xs text-[#aab7cc]">
+                  <Clock3 aria-hidden="true" size={14} />~{estimatedTime}s
+                </span>
+              </div>
+              <dl className="mt-5 grid grid-cols-3 divide-x divide-white/12">
+                <div className="pr-3">
+                  <dt className="text-[0.65rem] text-[#9fadc4]">Radius</dt>
+                  <dd className="mt-1 font-mono text-sm font-bold">{(radius / 1000).toFixed(1)} km</dd>
+                </div>
+                <div className="px-3">
+                  <dt className="text-[0.65rem] text-[#9fadc4]">Records</dt>
+                  <dd className="mt-1 flex items-center gap-1 font-mono text-sm font-bold"><InfinityIcon aria-hidden="true" size={15} />All</dd>
+                </div>
+                <div className="pl-3">
+                  <dt className="text-[0.65rem] text-[#9fadc4]">Depth</dt>
+                  <dd className="mt-1 font-mono text-sm font-bold">{scrollDepth}</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div className="mt-6 grid gap-3 border-t border-[var(--rule)] pt-5 text-xs text-[var(--ink-soft)]">
+              <span className="flex items-center gap-2"><Database aria-hidden="true" className="text-[var(--accent)]" size={15} />{selectedProvider}</span>
+              <span className="flex items-center gap-2"><MapPin aria-hidden="true" className="text-[var(--copper)]" size={15} />{latitude.toFixed(4)}, {longitude.toFixed(4)}</span>
+            </div>
+          </aside>
+
+          <section className="min-w-0 p-5 sm:p-7 lg:p-8">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="data-label">Geographic boundary</p>
+                <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.04em] text-[var(--ink)]">Position the collection area</h2>
+              </div>
+              <p className="max-w-sm text-xs leading-5 text-[var(--ink-faint)] sm:text-right">
+                Click to relocate. Drag the center to move the area or the edge handle to resize it.
+              </p>
+            </div>
+
+            <div className="mt-5">
+              <MapRadiusPicker
+                initialLatitude={latitude}
+                initialLongitude={longitude}
+                initialRadius={radius}
+                onCenterChange={handleMapCenterChange}
+                onRadiusChange={handleMapRadiusChange}
+              />
+            </div>
+
+            <input type="hidden" name="latitude" value={latitude} />
+            <input type="hidden" name="longitude" value={longitude} />
+            <input type="hidden" name="radiusMeters" value={radius} />
+            <input type="hidden" name="maxResults" value={maxResults} />
+            <input type="hidden" name="scrollDepth" value={scrollDepth} />
+
+            {error ? (
+              <p className="mt-5 rounded-md border border-[#e8b5ae] bg-[#fff1ef] px-4 py-3 text-sm font-semibold text-[var(--danger)]" role="alert">{error}</p>
+            ) : null}
+
+            <div className="mt-6 flex flex-col gap-4 border-t border-[var(--rule)] pt-5 sm:flex-row sm:items-center sm:justify-between">
+              <p className="max-w-lg text-sm leading-6 text-[var(--ink-soft)]">
+                Create the study, then start collection from the next screen.
+              </p>
+              <Button className="shrink-0" disabled={isSaving} onClick={createResearch} size="lg" type="button">
+                {isSaving ? (
+                  <><LoaderCircle aria-hidden="true" className="animate-spin" size={17} />Creating study</>
+                ) : (
+                  <><Radar aria-hidden="true" size={17} />Create study<MoveRight aria-hidden="true" size={17} /></>
+                )}
+              </Button>
+            </div>
+          </section>
         </div>
       </div>
     </div>

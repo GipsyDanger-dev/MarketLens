@@ -1,6 +1,8 @@
 "use client";
 
+import { CircleDot, LocateFixed, MousePointer2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { KeyboardEvent } from "react";
 import type { Map as MaplibreMap, MapMouseEvent } from "maplibre-gl";
 
 interface MapRadiusPickerProps {
@@ -22,8 +24,8 @@ export function MapRadiusPicker({
   const circleRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLDivElement>(null);
-  const centerHandleRef = useRef<HTMLDivElement>(null);
-  const edgeHandleRef = useRef<HTMLDivElement>(null);
+  const centerHandleRef = useRef<HTMLButtonElement>(null);
+  const edgeHandleRef = useRef<HTMLButtonElement>(null);
   const mapRef = useRef<MaplibreMap | null>(null);
 
   const stateRef = useRef({
@@ -117,6 +119,7 @@ export function MapRadiusPicker({
     const container = wrapperRef.current;
     if (!container) return;
     let disposed = false;
+    let readyTimer: ReturnType<typeof setTimeout> | null = null;
 
     const timer = setTimeout(() => {
       if (disposed || !container) return;
@@ -146,19 +149,17 @@ export function MapRadiusPicker({
 
         mapRef.current = map;
 
-        map.on("load", () => {
-          if (disposed) return;
+        let initialized = false;
+        const initializeInteractiveMap = () => {
+          if (disposed || initialized) return;
+          initialized = true;
 
-          // Fit map to circle bounds
           fitMapToCircle(stateRef.current.center, stateRef.current.radius);
-
-          // Set ready immediately — overlay will update on every move event
           setMapReady(true);
 
           map.on("move", updateOverlay);
           map.on("zoom", updateOverlay);
 
-          // Click map to set center
           map.on("click", (e: MapMouseEvent) => {
             if (stateRef.current.dragging) return;
             const ll = e.lngLat;
@@ -168,13 +169,18 @@ export function MapRadiusPicker({
             updateOverlay();
             onCenterChange?.(ll.lat, ll.lng);
           });
-        });
+        };
+
+        map.once("load", initializeInteractiveMap);
+        map.once("style.load", initializeInteractiveMap);
+        readyTimer = setTimeout(initializeInteractiveMap, 800);
       });
     }, 100);
 
     return () => {
       disposed = true;
       clearTimeout(timer);
+      if (readyTimer) clearTimeout(readyTimer);
       mapRef.current?.remove();
       mapRef.current = null;
     };
@@ -240,6 +246,45 @@ export function MapRadiusPicker({
     }
   }
 
+  function handleHandleKeyDown(
+    which: "center" | "edge",
+    event: KeyboardEvent<HTMLButtonElement>,
+  ) {
+    if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) {
+      return;
+    }
+    event.preventDefault();
+
+    if (which === "center") {
+      const coordinateStep = event.shiftKey ? 0.005 : 0.001;
+      const [currentLng, currentLat] = stateRef.current.center;
+      const nextLat =
+        currentLat +
+        (event.key === "ArrowUp" ? coordinateStep : event.key === "ArrowDown" ? -coordinateStep : 0);
+      const nextLng =
+        currentLng +
+        (event.key === "ArrowRight" ? coordinateStep : event.key === "ArrowLeft" ? -coordinateStep : 0);
+      stateRef.current.center = [nextLng, nextLat];
+      setLatitude(Math.round(nextLat * 1e6) / 1e6);
+      setLongitude(Math.round(nextLng * 1e6) / 1e6);
+      updateOverlay();
+      onCenterChange?.(nextLat, nextLng);
+      return;
+    }
+
+    const radiusStep = event.shiftKey ? 1000 : 250;
+    const direction = ["ArrowUp", "ArrowRight"].includes(event.key) ? 1 : -1;
+    const nextRadius = Math.max(
+      100,
+      Math.min(100_000, stateRef.current.radius + radiusStep * direction),
+    );
+    stateRef.current.radius = nextRadius;
+    setRadius(nextRadius);
+    updateOverlay();
+    onRadiusChange?.(nextRadius);
+    fitMapToCircle(stateRef.current.center, nextRadius);
+  }
+
   // Sync radius from parent (preset buttons)
   useEffect(() => {
     if (!mapReady || !mapRef.current) return;
@@ -256,14 +301,29 @@ export function MapRadiusPicker({
   const radiusKm = (radius / 1000).toFixed(1);
 
   return (
-    <div className="space-y-3">
-      <div className="relative h-[380px] w-full overflow-hidden rounded-lg border border-[var(--rule)] sm:h-[480px]">
+    <div>
+      <div className="relative h-[360px] w-full overflow-hidden rounded-lg border border-[var(--rule-strong)] bg-[var(--paper-muted)] shadow-[var(--shadow-inset)] sm:h-[480px] lg:h-[540px]">
         {/* Map canvas */}
         <div
           ref={wrapperRef}
-          className="absolute inset-0"
-          style={{ width: "100%", height: "100%" }}
+          className="absolute inset-0 [&_.maplibregl-canvas]:grayscale-[0.45] [&_.maplibregl-canvas]:saturate-[0.7]"
+          style={{ height: "100%", width: "100%" }}
         />
+
+        {!mapReady ? (
+          <div className="absolute inset-0 z-40 grid place-items-center bg-[var(--paper-muted)]">
+            <span className="font-mono text-[0.68rem] font-bold tracking-[0.12em] text-[var(--ink-faint)] uppercase">
+              Loading geographic canvas
+            </span>
+          </div>
+        ) : null}
+
+        <div className="pointer-events-none absolute top-3 left-3 z-30 flex items-center gap-2 rounded-md border border-white/80 bg-[rgb(255_255_255/0.9)] px-3 py-2 shadow-[0_8px_24px_rgb(11_18_32/0.14)] backdrop-blur-md">
+          <LocateFixed aria-hidden="true" className="text-[var(--accent)]" size={15} />
+          <span className="font-mono text-[0.63rem] font-bold tracking-[0.08em] text-[var(--ink)] uppercase">
+            Live boundary editor
+          </span>
+        </div>
 
         {/* Overlay container */}
         <div
@@ -272,58 +332,60 @@ export function MapRadiusPicker({
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
         >
-          {/* GREEN CIRCLE */}
           <div
             ref={circleRef}
             className="pointer-events-none absolute"
             style={{
               borderRadius: "50%",
-              background: "rgba(55, 140, 85, 0.25)",
-              border: "3px solid rgba(45, 107, 66, 0.8)",
+              background: "rgba(49, 94, 245, 0.2)",
+              border: "3px solid rgba(49, 94, 245, 0.9)",
               boxShadow:
-                "0 0 0 1px rgba(45, 107, 66, 0.15), inset 0 0 30px rgba(55, 140, 85, 0.1)",
+                "0 0 0 1px rgba(255, 255, 255, 0.65), inset 0 0 36px rgba(49, 94, 245, 0.14)",
               zIndex: 5,
               transform: "translate(-50%, -50%)",
               transition: "none",
             }}
           />
 
-          {/* DASHED LINE */}
           <div
             ref={lineRef}
             className="pointer-events-none absolute"
             style={{
               height: "2.5px",
               backgroundImage:
-                "repeating-linear-gradient(to right, #2d6b42 0, #2d6b42 8px, transparent 8px, transparent 14px)",
+                "repeating-linear-gradient(to right, #315ef5 0, #315ef5 8px, transparent 8px, transparent 14px)",
               transformOrigin: "0 0",
               zIndex: 6,
             }}
           />
 
-          {/* RADIUS LABEL */}
           <div
             ref={labelRef}
             className="pointer-events-none absolute z-30"
             style={{ transform: "translateX(-50%)" }}
           >
-            <span className="rounded-full bg-[var(--accent)] px-2.5 py-1 text-[11px] font-bold text-white shadow-md">
+            <span className="rounded-md border border-[#8da6ff] bg-[var(--graphite)] px-2.5 py-1 font-mono text-[10px] font-bold text-white shadow-[0_6px_18px_rgb(11_18_32/0.28)]">
               {radiusKm} km
             </span>
           </div>
 
-          {/* CENTER HANDLE */}
-          <div
+          <button
+            aria-label="Move research area center. Use arrow keys to reposition."
             ref={centerHandleRef}
-            className="handle-center pointer-events-auto absolute z-20"
+            className="handle-center pointer-events-auto absolute z-20 rounded-full focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[var(--accent)]"
+            onKeyDown={(event) => handleHandleKeyDown("center", event)}
             onPointerDown={(e) => handlePointerDown("center", e)}
+            type="button"
             style={{
               width: 48,
               height: 48,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              background: "transparent",
+              border: 0,
               cursor: "grab",
+              padding: 0,
               transform: "translate(-50%, -50%)",
             }}
           >
@@ -331,27 +393,32 @@ export function MapRadiusPicker({
               style={{
                 width: 22,
                 height: 22,
-                background: "#3d8b5a",
+                background: "#315ef5",
                 border: "3px solid white",
                 borderRadius: "50%",
                 boxShadow: "0 2px 12px rgba(0,0,0,0.5)",
                 pointerEvents: "none",
               }}
             />
-          </div>
+          </button>
 
-          {/* EDGE HANDLE */}
-          <div
+          <button
+            aria-label="Resize research area. Use arrow keys to change radius."
             ref={edgeHandleRef}
-            className="handle-edge pointer-events-auto absolute z-20"
+            className="handle-edge pointer-events-auto absolute z-20 rounded-full focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[var(--accent)]"
+            onKeyDown={(event) => handleHandleKeyDown("edge", event)}
             onPointerDown={(e) => handlePointerDown("edge", e)}
+            type="button"
             style={{
               width: 48,
               height: 48,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              background: "transparent",
+              border: 0,
               cursor: "ew-resize",
+              padding: 0,
               transform: "translate(-50%, -50%)",
             }}
           >
@@ -360,35 +427,30 @@ export function MapRadiusPicker({
                 width: 22,
                 height: 22,
                 background: "white",
-                border: "3px solid #2d6b42",
+                border: "3px solid #315ef5",
                 borderRadius: "50%",
                 boxShadow: "0 2px 10px rgba(0,0,0,0.4)",
                 pointerEvents: "none",
               }}
             />
-          </div>
+          </button>
         </div>
       </div>
 
-      {/* Info bar */}
-      <div className="flex flex-wrap items-center gap-4 text-xs text-[var(--ink-soft)]">
-        <span>
-          <strong>Center:</strong>{" "}
-          <span className="font-mono">
-            {latitude.toFixed(4)}, {longitude.toFixed(4)}
-          </span>
+      <div className="mt-3 grid gap-3 rounded-md border border-[var(--rule)] bg-[var(--paper-subtle)] px-4 py-3 text-xs text-[var(--ink-soft)] sm:grid-cols-[1fr_auto_auto] sm:items-center">
+        <span className="flex items-center gap-2">
+          <LocateFixed aria-hidden="true" className="text-[var(--accent)]" size={15} />
+          Center <strong className="font-mono text-[var(--ink)]">{latitude.toFixed(4)}, {longitude.toFixed(4)}</strong>
         </span>
-        <span>
-          <strong>Radius:</strong>{" "}
-          <span className="font-mono font-semibold text-[var(--accent)]">
-            {radiusKm} km
-          </span>
+        <span className="flex items-center gap-2">
+          <CircleDot aria-hidden="true" className="text-[var(--copper)]" size={15} />
+          Radius <strong className="font-mono text-[var(--ink)]">{radiusKm} km</strong>
+        </span>
+        <span className="flex items-center gap-2 text-[var(--ink-faint)]">
+          <MousePointer2 aria-hidden="true" size={14} />
+          Drag or use arrow keys
         </span>
       </div>
-      <p className="text-[11px] text-[var(--ink-faint)]">
-        🟢 Drag green = move &nbsp;|&nbsp; ⚪ Drag white = resize &nbsp;|&nbsp;
-        Click map = set center
-      </p>
     </div>
   );
 }

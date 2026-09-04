@@ -10,9 +10,9 @@ export default function NewResearchPage() {
     .map((provider) => ({ id: provider.id, name: provider.name }));
 
   return (
-    <main className="app-shell">
+    <main className="app-shell min-h-screen bg-[var(--paper-subtle)]">
       <SiteHeader />
-      <div className="workspace-frame py-10 sm:py-16">
+      <div className="workspace-frame py-7 sm:py-10 lg:py-12">
         <ResearchCreationForm providers={providers} />
       </div>
     </main>
