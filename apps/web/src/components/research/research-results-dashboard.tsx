@@ -278,7 +278,7 @@ export function ResearchResultsDashboard({ researchId }: { researchId: string })
         ) : null}
 
         {activeView === "competitors" ? (
-          <CompetitorPanel onSelect={openPlaceOnMap} places={places} selectedPlaceId={selectedPlaceId} />
+          <CompetitorPanel onSelect={setSelectedPlaceId} places={places} selectedPlaceId={selectedPlaceId} />
         ) : null}
 
         {activeView === "businesses" ? (
