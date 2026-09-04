@@ -10,9 +10,9 @@ export default async function ResearchProgressPage({
   const { researchId } = await params;
 
   return (
-    <main className="app-shell">
+    <main className="app-shell min-h-screen bg-[var(--paper-subtle)]">
       <SiteHeader />
-      <div className="workspace-frame flex w-full flex-col gap-10 py-8 sm:py-12">
+      <div className="workspace-frame flex w-full flex-col gap-6 py-7 sm:py-10">
         <ResearchProgress researchId={researchId} />
         <ResearchResultsDashboard researchId={researchId} />
       </div>
