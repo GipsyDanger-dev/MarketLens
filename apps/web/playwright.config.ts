@@ -10,6 +10,13 @@ export default defineConfig({
   },
   webServer: {
     command: "npm run dev -- --hostname 127.0.0.1",
+    env: {
+      DATABASE_URL:
+        process.env.DATABASE_URL ??
+        "postgresql://marketlens:marketlens@127.0.0.1:5432/marketlens",
+      ENABLE_AI: "false",
+      ENABLE_AUTH: "false",
+    },
     url: "http://127.0.0.1:3000",
     reuseExistingServer: !process.env.CI,
   },

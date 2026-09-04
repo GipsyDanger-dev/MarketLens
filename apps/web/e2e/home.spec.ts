@@ -32,4 +32,11 @@ test("keeps the research CTA available on a mobile viewport", async ({
   await expect(
     page.getByRole("link", { name: "Start a field study" }),
   ).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    )
+    .toBe(true);
 });
