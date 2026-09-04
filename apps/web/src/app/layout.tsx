@@ -67,6 +67,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${manrope.variable} ${newsreader.variable} ${jetBrainsMono.variable} h-full antialiased`}
+      data-scroll-behavior="smooth"
     >
       <body className="min-h-full flex flex-col bg-[var(--canvas)]">
         {children}
