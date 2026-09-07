@@ -54,7 +54,8 @@ export function ResearchMap({
               type: "raster",
               tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
               tileSize: 256,
-              attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a>',
+              attribution:
+                '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a>',
             },
           },
           layers: [{ id: "osm", type: "raster", source: "osm" }],
@@ -106,7 +107,9 @@ export function ResearchMap({
         const centerMarker = new maplibregl.Marker({ element: centerElement })
           .setLngLat([center.longitude, center.latitude])
           .setPopup(
-            new maplibregl.Popup({ offset: 15 }).setDOMContent(createCenterPopupContent()),
+            new maplibregl.Popup({ offset: 15 }).setDOMContent(
+              createCenterPopupContent(),
+            ),
           )
           .addTo(mapInstance);
         markersRef.current.push(centerMarker);
@@ -117,7 +120,10 @@ export function ResearchMap({
           const color = markerColor(rating);
           const element = document.createElement("button");
           element.type = "button";
-          element.setAttribute("aria-label", `Select ${place.name}${rating > 0 ? `, rated ${rating}` : ""}`);
+          element.setAttribute(
+            "aria-label",
+            `Select ${place.name}${rating > 0 ? `, rated ${rating}` : ""}`,
+          );
           element.style.cssText = `
             width: 32px; height: 32px; padding: 0; background: ${color}; color: white;
             border: 2.5px solid ${isSelected ? "#0b1220" : "white"}; border-radius: 50%;
@@ -147,7 +153,8 @@ export function ResearchMap({
         if (places.length > 1) {
           const bounds = new maplibregl.LngLatBounds();
           bounds.extend([center.longitude, center.latitude]);
-          for (const place of places) bounds.extend([place.longitude, place.latitude]);
+          for (const place of places)
+            bounds.extend([place.longitude, place.latitude]);
           mapInstance.fitBounds(bounds, { padding: 64, maxZoom: 14 });
         }
         setMapReady(true);
@@ -173,9 +180,12 @@ export function ResearchMap({
       <div className="grid gap-4 border-b border-[var(--rule)] p-5 sm:grid-cols-[1fr_auto] sm:items-end sm:p-6">
         <div>
           <p className="eyebrow">Spatial pattern</p>
-          <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.04em] text-[var(--ink)]">Business map</h2>
+          <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.04em] text-[var(--ink)]">
+            Business map
+          </h2>
           <p className="mt-1 text-sm text-[var(--ink-soft)]">
-            {places.length} markers · {Math.round((radiusMeters / 1_000) * 10) / 10} km research radius
+            {places.length} markers ·{" "}
+            {Math.round((radiusMeters / 1_000) * 10) / 10} km research radius
           </p>
         </div>
         <div className="flex flex-wrap gap-x-4 gap-y-2 font-mono text-[0.62rem] text-[var(--ink-faint)]">
@@ -194,11 +204,17 @@ export function ResearchMap({
         />
         {!mapReady ? (
           <div className="absolute inset-0 z-30 grid place-items-center bg-[var(--paper-muted)]">
-            <span className="font-mono text-[0.66rem] font-bold tracking-[0.12em] text-[var(--ink-faint)] uppercase">Loading market geography</span>
+            <span className="font-mono text-[0.66rem] font-bold tracking-[0.12em] text-[var(--ink-faint)] uppercase">
+              Loading market geography
+            </span>
           </div>
         ) : null}
         <div className="pointer-events-none absolute bottom-4 left-4 z-20 flex items-center gap-2 rounded-md border border-white/80 bg-[rgb(255_255_255/0.9)] px-3 py-2 text-xs font-bold text-[var(--ink)] shadow-[0_8px_24px_rgb(11_18_32/0.16)] backdrop-blur-md">
-          <LocateFixed aria-hidden="true" className="text-[var(--accent)]" size={15} />
+          <LocateFixed
+            aria-hidden="true"
+            className="text-[var(--accent)]"
+            size={15}
+          />
           Select a marker to inspect it
         </div>
       </div>
@@ -209,7 +225,10 @@ export function ResearchMap({
 function Legend({ color, label }: { color: string; label: string }) {
   return (
     <span className="flex items-center gap-1.5">
-      <span className="size-2.5 rounded-full border border-white shadow-[0_0_0_1px_rgb(11_18_32/0.12)]" style={{ background: color }} />
+      <span
+        className="size-2.5 rounded-full border border-white shadow-[0_0_0_1px_rgb(11_18_32/0.12)]"
+        style={{ background: color }}
+      />
       {label}
     </span>
   );
@@ -225,14 +244,16 @@ function markerColor(rating: number) {
 
 function createCenterPopupContent() {
   const content = document.createElement("div");
-  content.style.cssText = "padding:7px 10px;font-weight:700;font-size:12px;color:#121826;";
+  content.style.cssText =
+    "padding:7px 10px;font-weight:700;font-size:12px;color:#121826;";
   content.textContent = "Research center";
   return content;
 }
 
 function createPlacePopupContent(place: MappablePlace, rating: number) {
   const content = document.createElement("div");
-  content.style.cssText = "padding:9px 12px;min-width:180px;font-family:Manrope,sans-serif;color:#121826;";
+  content.style.cssText =
+    "padding:9px 12px;min-width:180px;font-family:Manrope,sans-serif;color:#121826;";
   const name = document.createElement("div");
   name.style.cssText = "font-weight:800;font-size:13px;margin-bottom:5px;";
   name.textContent = place.name;
@@ -240,7 +261,8 @@ function createPlacePopupContent(place: MappablePlace, rating: number) {
 
   if (rating > 0 || place.phone) {
     const metadata = document.createElement("div");
-    metadata.style.cssText = "display:grid;gap:3px;font-size:11px;color:#596579;";
+    metadata.style.cssText =
+      "display:grid;gap:3px;font-size:11px;color:#596579;";
     if (rating > 0) {
       const ratingItem = document.createElement("span");
       ratingItem.textContent = `Rating · ${rating}`;
@@ -265,7 +287,8 @@ function circleFeature(
     const angle = (index / 64) * Math.PI * 2;
     return [
       center.longitude +
-        (radius * Math.cos(angle)) / Math.cos((center.latitude * Math.PI) / 180),
+        (radius * Math.cos(angle)) /
+          Math.cos((center.latitude * Math.PI) / 180),
       center.latitude + radius * Math.sin(angle),
     ];
   });

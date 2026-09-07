@@ -87,7 +87,11 @@ const WORKSPACE_VIEWS: {
   { id: "export", label: "Export", icon: Download },
 ];
 
-export function ResearchResultsDashboard({ researchId }: { researchId: string }) {
+export function ResearchResultsDashboard({
+  researchId,
+}: {
+  researchId: string;
+}) {
   const [data, setData] = useState<ResultsPayload | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
@@ -103,8 +107,11 @@ export function ResearchResultsDashboard({ researchId }: { researchId: string })
         cache: "no-store",
       })
         .then(async (response) => {
-          const body = (await response.json()) as ResultsPayload & { error?: string };
-          if (!response.ok) throw new Error(body.error ?? "Unable to load results.");
+          const body = (await response.json()) as ResultsPayload & {
+            error?: string;
+          };
+          if (!response.ok)
+            throw new Error(body.error ?? "Unable to load results.");
           if (!cancelled) {
             setData(body);
             setError(null);
@@ -112,7 +119,11 @@ export function ResearchResultsDashboard({ researchId }: { researchId: string })
         })
         .catch((loadError: unknown) => {
           if (!cancelled) {
-            setError(loadError instanceof Error ? loadError.message : "Unable to load results.");
+            setError(
+              loadError instanceof Error
+                ? loadError.message
+                : "Unable to load results.",
+            );
           }
         });
     };
@@ -138,7 +149,9 @@ export function ResearchResultsDashboard({ researchId }: { researchId: string })
       .filter(
         (place) =>
           !search ||
-          `${place.name} ${place.category ?? ""}`.toLocaleLowerCase().includes(search),
+          `${place.name} ${place.category ?? ""}`
+            .toLocaleLowerCase()
+            .includes(search),
       )
       .filter(
         (place) =>
@@ -152,7 +165,8 @@ export function ResearchResultsDashboard({ researchId }: { researchId: string })
       )
       .sort((left, right) => {
         if (sortBy === "name") return left.name.localeCompare(right.name);
-        if (sortBy === "rating") return (right.rating ?? -1) - (left.rating ?? -1);
+        if (sortBy === "rating")
+          return (right.rating ?? -1) - (left.rating ?? -1);
         return (
           (right.competitorScores[0]?.overallScore ?? -1) -
           (left.competitorScores[0]?.overallScore ?? -1)
@@ -162,14 +176,20 @@ export function ResearchResultsDashboard({ researchId }: { researchId: string })
 
   if (error) {
     return (
-      <div className="rounded-lg border border-[#e8b5ae] bg-[#fff1ef] p-5 text-sm font-semibold text-[var(--danger)]" role="alert">
+      <div
+        className="rounded-lg border border-[#e8b5ae] bg-[#fff1ef] p-5 text-sm font-semibold text-[var(--danger)]"
+        role="alert"
+      >
         {error}
       </div>
     );
   }
   if (!data) {
     return (
-      <div className="rounded-xl border border-[var(--rule)] bg-white p-6 text-sm text-[var(--ink-soft)] shadow-[var(--shadow-soft)]" aria-live="polite">
+      <div
+        className="rounded-xl border border-[var(--rule)] bg-white p-6 text-sm text-[var(--ink-soft)] shadow-[var(--shadow-soft)]"
+        aria-live="polite"
+      >
         Loading research results…
       </div>
     );
@@ -183,7 +203,8 @@ export function ResearchResultsDashboard({ researchId }: { researchId: string })
   }
 
   const metrics = data.marketMetrics;
-  const selectedPlace = data.places.find((place) => place.id === selectedPlaceId) ?? null;
+  const selectedPlace =
+    data.places.find((place) => place.id === selectedPlaceId) ?? null;
   const openPlaceOnMap = (placeId: string) => {
     setSelectedPlaceId(placeId);
     setActiveView("map");
@@ -194,8 +215,11 @@ export function ResearchResultsDashboard({ researchId }: { researchId: string })
   ) => {
     const currentIndex = WORKSPACE_VIEWS.findIndex((item) => item.id === view);
     let nextIndex = currentIndex;
-    if (event.key === "ArrowRight") nextIndex = (currentIndex + 1) % WORKSPACE_VIEWS.length;
-    else if (event.key === "ArrowLeft") nextIndex = (currentIndex - 1 + WORKSPACE_VIEWS.length) % WORKSPACE_VIEWS.length;
+    if (event.key === "ArrowRight")
+      nextIndex = (currentIndex + 1) % WORKSPACE_VIEWS.length;
+    else if (event.key === "ArrowLeft")
+      nextIndex =
+        (currentIndex - 1 + WORKSPACE_VIEWS.length) % WORKSPACE_VIEWS.length;
     else if (event.key === "Home") nextIndex = 0;
     else if (event.key === "End") nextIndex = WORKSPACE_VIEWS.length - 1;
     else return;
@@ -222,31 +246,57 @@ export function ResearchResultsDashboard({ researchId }: { researchId: string })
             </h1>
             <p className="mt-5 flex flex-wrap items-center gap-2 text-sm text-[#bdc9dc]">
               <strong className="text-white">{data.query}</strong>
-              <span aria-hidden="true" className="text-[#627292]">/</span>
+              <span aria-hidden="true" className="text-[#627292]">
+                /
+              </span>
               {data.locationQuery}
             </p>
           </div>
           <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-md border border-white/14 bg-white/14 text-sm">
             <div className="min-w-28 bg-[#0d1728] px-4 py-3">
-              <dt className="font-mono text-[0.61rem] tracking-[0.1em] text-[#8fa1bd] uppercase">Radius</dt>
-              <dd className="mt-1 font-bold tabular-nums">{formatNumber(data.radiusMeters / 1_000)} km</dd>
+              <dt className="font-mono text-[0.61rem] tracking-[0.1em] text-[#8fa1bd] uppercase">
+                Radius
+              </dt>
+              <dd className="mt-1 font-bold tabular-nums">
+                {formatNumber(data.radiusMeters / 1_000)} km
+              </dd>
             </div>
             <div className="min-w-28 bg-[#0d1728] px-4 py-3">
-              <dt className="font-mono text-[0.61rem] tracking-[0.1em] text-[#8fa1bd] uppercase">Status</dt>
-              <dd className="mt-1 flex items-center gap-2 font-bold text-[#7ed59e]"><span className="size-1.5 rounded-full bg-current" />Complete</dd>
+              <dt className="font-mono text-[0.61rem] tracking-[0.1em] text-[#8fa1bd] uppercase">
+                Status
+              </dt>
+              <dd className="mt-1 flex items-center gap-2 font-bold text-[#7ed59e]">
+                <span className="size-1.5 rounded-full bg-current" />
+                Complete
+              </dd>
             </div>
           </dl>
         </div>
 
         <dl className="grid border-t border-white/14 sm:grid-cols-2 lg:grid-cols-4">
           <Metric dark label="Businesses" value={metrics.totalBusinesses} />
-          <Metric dark label="Average rating" value={formatNumber(metrics.averageRating)} />
-          <Metric dark label="Average reviews" value={formatNumber(metrics.averageReviewCount)} />
-          <Metric dark label="Density / km²" value={formatNumber(metrics.densityScore)} />
+          <Metric
+            dark
+            label="Average rating"
+            value={formatNumber(metrics.averageRating)}
+          />
+          <Metric
+            dark
+            label="Average reviews"
+            value={formatNumber(metrics.averageReviewCount)}
+          />
+          <Metric
+            dark
+            label="Density / km²"
+            value={formatNumber(metrics.densityScore)}
+          />
         </dl>
       </header>
 
-      <nav aria-label="Research result views" className="sticky top-18 z-30 mt-5 overflow-x-auto rounded-lg border border-[var(--rule-strong)] bg-[rgb(255_255_255/0.94)] p-1.5 shadow-[var(--shadow-soft)] backdrop-blur-xl">
+      <nav
+        aria-label="Research result views"
+        className="sticky top-18 z-30 mt-5 overflow-x-auto rounded-lg border border-[var(--rule-strong)] bg-[rgb(255_255_255/0.94)] p-1.5 shadow-[var(--shadow-soft)] backdrop-blur-xl"
+      >
         <div className="flex min-w-max gap-1" role="tablist">
           {WORKSPACE_VIEWS.map(({ id, label, icon: Icon }) => (
             <button
@@ -268,24 +318,47 @@ export function ResearchResultsDashboard({ researchId }: { researchId: string })
         </div>
       </nav>
 
-      <div className="mt-5" aria-labelledby={`workspace-tab-${activeView}`} id={`workspace-panel-${activeView}`} role="tabpanel">
+      <div
+        className="mt-5"
+        aria-labelledby={`workspace-tab-${activeView}`}
+        id={`workspace-panel-${activeView}`}
+        role="tabpanel"
+      >
         {activeView === "overview" ? (
           <div className="grid gap-5 xl:grid-cols-[minmax(0,1.45fr)_minmax(19rem,0.55fr)]">
             <div className="grid gap-5 md:grid-cols-2">
-              <Distribution title="Rating distribution" items={metrics.metricJson.ratingDistribution ?? []} />
-              <Distribution title="Review distribution" items={metrics.metricJson.reviewDistribution ?? []} />
+              <Distribution
+                title="Rating distribution"
+                items={metrics.metricJson.ratingDistribution ?? []}
+              />
+              <Distribution
+                title="Review distribution"
+                items={metrics.metricJson.reviewDistribution ?? []}
+              />
             </div>
             <aside className="rounded-xl border border-[var(--rule-strong)] bg-[var(--accent-soft)] p-6">
-              <Lightbulb aria-hidden="true" className="text-[var(--copper)]" size={23} strokeWidth={1.7} />
+              <Lightbulb
+                aria-hidden="true"
+                className="text-[var(--copper)]"
+                size={23}
+                strokeWidth={1.7}
+              />
               <p className="eyebrow mt-6">Market pulse</p>
               <p className="type-display mt-3 text-6xl leading-none tracking-[-0.06em] text-[var(--accent)]">
                 {formatNumber(metrics.competitionScore)}
               </p>
-              <p className="mt-2 text-sm font-bold text-[var(--ink)]">Competition index</p>
-              <p className="mt-4 text-sm leading-6 text-[var(--ink-soft)]">
-                This score summarizes the collected field. Open competitors to inspect every ranked business and its component signals.
+              <p className="mt-2 text-sm font-bold text-[var(--ink)]">
+                Competition index
               </p>
-              <button className="mt-6 inline-flex min-h-11 items-center gap-2 text-sm font-extrabold text-[var(--accent)] hover:text-[var(--accent-hover)]" onClick={() => setActiveView("competitors")} type="button">
+              <p className="mt-4 text-sm leading-6 text-[var(--ink-soft)]">
+                This score summarizes the collected field. Open competitors to
+                inspect every ranked business and its component signals.
+              </p>
+              <button
+                className="mt-6 inline-flex min-h-11 items-center gap-2 text-sm font-extrabold text-[var(--accent)] hover:text-[var(--accent-hover)]"
+                onClick={() => setActiveView("competitors")}
+                type="button"
+              >
                 Inspect the ranking <Trophy aria-hidden="true" size={16} />
               </button>
             </aside>
@@ -294,13 +367,23 @@ export function ResearchResultsDashboard({ researchId }: { researchId: string })
 
         {activeView === "map" ? (
           <div className="grid gap-5 xl:grid-cols-[minmax(0,1.55fr)_minmax(21rem,0.45fr)]">
-            <ResearchMap center={{ latitude: data.latitude, longitude: data.longitude }} places={places} radiusMeters={data.radiusMeters} selectedPlaceId={selectedPlaceId} onPlaceSelect={setSelectedPlaceId} />
+            <ResearchMap
+              center={{ latitude: data.latitude, longitude: data.longitude }}
+              places={places}
+              radiusMeters={data.radiusMeters}
+              selectedPlaceId={selectedPlaceId}
+              onPlaceSelect={setSelectedPlaceId}
+            />
             <BusinessDetailPanel place={selectedPlace} />
           </div>
         ) : null}
 
         {activeView === "competitors" ? (
-          <CompetitorPanel onSelect={setSelectedPlaceId} places={places} selectedPlaceId={selectedPlaceId} />
+          <CompetitorPanel
+            onSelect={setSelectedPlaceId}
+            places={places}
+            selectedPlaceId={selectedPlaceId}
+          />
         ) : null}
 
         {activeView === "businesses" ? (
@@ -318,8 +401,12 @@ export function ResearchResultsDashboard({ researchId }: { researchId: string })
           />
         ) : null}
 
-        {activeView === "insights" ? <ResearchAiInsights researchId={researchId} /> : null}
-        {activeView === "export" ? <ResearchExportControls researchId={researchId} /> : null}
+        {activeView === "insights" ? (
+          <ResearchAiInsights researchId={researchId} />
+        ) : null}
+        {activeView === "export" ? (
+          <ResearchExportControls researchId={researchId} />
+        ) : null}
       </div>
     </section>
   );
@@ -353,47 +440,103 @@ function BusinessDirectory({
       <div className="grid gap-5 border-b border-[var(--rule)] p-5 sm:p-6 lg:grid-cols-[1fr_auto] lg:items-end">
         <div>
           <p className="eyebrow">Observed places</p>
-          <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.04em] text-[var(--ink)]">Business directory</h2>
-          <p className="mt-1 text-sm text-[var(--ink-soft)]">{places.length} shown from {allPlacesCount} collected records</p>
+          <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.04em] text-[var(--ink)]">
+            Business directory
+          </h2>
+          <p className="mt-1 text-sm text-[var(--ink-soft)]">
+            {places.length} shown from {allPlacesCount} collected records
+          </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
           <label className="relative min-w-56 flex-1">
-            <Search aria-hidden="true" className="absolute top-1/2 left-3 -translate-y-1/2 text-[var(--ink-faint)]" size={16} />
+            <Search
+              aria-hidden="true"
+              className="absolute top-1/2 left-3 -translate-y-1/2 text-[var(--ink-faint)]"
+              size={16}
+            />
             <span className="sr-only">Filter businesses</span>
-            <input aria-label="Filter businesses" className="ui-input w-full pl-9" onChange={(event) => setQuery(event.target.value)} placeholder="Search name or category" value={query} />
+            <input
+              aria-label="Filter businesses"
+              className="ui-input w-full pl-9"
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search name or category"
+              value={query}
+            />
           </label>
-          <select aria-label="Sort businesses" className="ui-input w-auto" onChange={(event) => setSortBy(event.target.value as typeof sortBy)} value={sortBy}>
+          <select
+            aria-label="Sort businesses"
+            className="ui-input w-auto"
+            onChange={(event) => setSortBy(event.target.value as typeof sortBy)}
+            value={sortBy}
+          >
             <option value="score">Competition score</option>
             <option value="rating">Rating</option>
             <option value="name">Name</option>
           </select>
           <label className="flex min-h-11 items-center gap-2 rounded-md border border-[var(--rule)] px-3 text-sm font-semibold text-[var(--ink-soft)]">
-            <input checked={withinRadiusOnly} onChange={(event) => setWithinRadiusOnly(event.target.checked)} type="checkbox" />
-            <Filter aria-hidden="true" size={14} />In radius
+            <input
+              checked={withinRadiusOnly}
+              onChange={(event) => setWithinRadiusOnly(event.target.checked)}
+              type="checkbox"
+            />
+            <Filter aria-hidden="true" size={14} />
+            In radius
           </label>
         </div>
       </div>
 
       {places.length === 0 ? (
-        <p className="m-5 bg-[var(--paper-muted)] p-4 text-sm text-[var(--ink-soft)]">No businesses match this filter.</p>
+        <p className="m-5 bg-[var(--paper-muted)] p-4 text-sm text-[var(--ink-soft)]">
+          No businesses match this filter.
+        </p>
       ) : (
         <>
           <div className="grid gap-px bg-[var(--rule)] md:hidden">
             {places.map((place) => {
               const website = toSafeExternalUrl(place.website);
               return (
-                <article className={`bg-white p-5 ${selectedPlaceId === place.id ? "shadow-[inset_3px_0_0_var(--accent)]" : ""}`} key={place.id}>
-                  <button className="w-full text-left" onClick={() => onPlaceSelect(place.id)} type="button">
-                    <p className="font-extrabold text-[var(--ink)]">{place.name}</p>
-                    <p className="mt-1 text-xs text-[var(--ink-faint)]">{place.category ?? place.address ?? "Uncategorized"}</p>
+                <article
+                  className={`bg-white p-5 ${selectedPlaceId === place.id ? "shadow-[inset_3px_0_0_var(--accent)]" : ""}`}
+                  key={place.id}
+                >
+                  <button
+                    className="w-full text-left"
+                    onClick={() => onPlaceSelect(place.id)}
+                    type="button"
+                  >
+                    <p className="font-extrabold text-[var(--ink)]">
+                      {place.name}
+                    </p>
+                    <p className="mt-1 text-xs text-[var(--ink-faint)]">
+                      {place.category ?? place.address ?? "Uncategorized"}
+                    </p>
                     <dl className="mt-4 grid grid-cols-3 divide-x divide-[var(--rule)]">
-                      <SmallMetric label="Rating" value={formatNumber(place.rating)} />
-                      <SmallMetric label="Reviews" value={formatNumber(place.reviewCount)} />
-                      <SmallMetric label="Score" value={formatPercent(place.competitorScores[0]?.overallScore)} />
+                      <SmallMetric
+                        label="Rating"
+                        value={formatNumber(place.rating)}
+                      />
+                      <SmallMetric
+                        label="Reviews"
+                        value={formatNumber(place.reviewCount)}
+                      />
+                      <SmallMetric
+                        label="Score"
+                        value={formatPercent(
+                          place.competitorScores[0]?.overallScore,
+                        )}
+                      />
                     </dl>
                   </button>
                   {website ? (
-                    <a className="text-link mt-4 inline-flex min-h-11 items-center gap-2 text-xs font-bold" href={website} rel="noopener noreferrer" target="_blank">Visit website <ExternalLink aria-hidden="true" size={13} /></a>
+                    <a
+                      className="text-link mt-4 inline-flex min-h-11 items-center gap-2 text-xs font-bold"
+                      href={website}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      Visit website{" "}
+                      <ExternalLink aria-hidden="true" size={13} />
+                    </a>
                   ) : null}
                 </article>
               );
@@ -416,22 +559,51 @@ function BusinessDirectory({
                 {places.map((place) => {
                   const website = toSafeExternalUrl(place.website);
                   return (
-                    <tr className={`border-t border-[var(--rule)] text-[var(--ink-soft)] ${selectedPlaceId === place.id ? "bg-[var(--accent-soft)]" : "hover:bg-[var(--paper-subtle)]"}`} key={place.id}>
+                    <tr
+                      className={`border-t border-[var(--rule)] text-[var(--ink-soft)] ${selectedPlaceId === place.id ? "bg-[var(--accent-soft)]" : "hover:bg-[var(--paper-subtle)]"}`}
+                      key={place.id}
+                    >
                       <td className="px-5 py-4">
-                        <button className="text-left" onClick={() => onPlaceSelect(place.id)} type="button">
-                          <span className="block font-bold text-[var(--ink)] hover:text-[var(--accent)]">{place.name}</span>
-                          <span className="mt-1 block text-xs text-[var(--ink-faint)]">{place.category ?? place.address ?? "Uncategorized"}</span>
+                        <button
+                          className="text-left"
+                          onClick={() => onPlaceSelect(place.id)}
+                          type="button"
+                        >
+                          <span className="block font-bold text-[var(--ink)] hover:text-[var(--accent)]">
+                            {place.name}
+                          </span>
+                          <span className="mt-1 block text-xs text-[var(--ink-faint)]">
+                            {place.category ?? place.address ?? "Uncategorized"}
+                          </span>
                         </button>
                       </td>
-                      <td className="px-4 py-4 tabular-nums">{formatNumber(place.rating)}</td>
-                      <td className="px-4 py-4 tabular-nums">{formatNumber(place.reviewCount)}</td>
-                      <td className="px-4 py-4 text-xs">{place.phone || place.emails?.[0] || "—"}</td>
+                      <td className="px-4 py-4 tabular-nums">
+                        {formatNumber(place.rating)}
+                      </td>
+                      <td className="px-4 py-4 tabular-nums">
+                        {formatNumber(place.reviewCount)}
+                      </td>
+                      <td className="px-4 py-4 text-xs">
+                        {place.phone || place.emails?.[0] || "—"}
+                      </td>
                       <td className="px-4 py-4 text-xs">
                         {website ? (
-                          <a className="text-link inline-flex items-center gap-1.5 font-bold" href={website} rel="noopener noreferrer" target="_blank">{new URL(website).hostname.replace("www.", "")}<ExternalLink aria-hidden="true" size={12} /></a>
-                        ) : "—"}
+                          <a
+                            className="text-link inline-flex items-center gap-1.5 font-bold"
+                            href={website}
+                            rel="noopener noreferrer"
+                            target="_blank"
+                          >
+                            {new URL(website).hostname.replace("www.", "")}
+                            <ExternalLink aria-hidden="true" size={12} />
+                          </a>
+                        ) : (
+                          "—"
+                        )}
                       </td>
-                      <td className="px-5 py-4 text-right font-mono font-bold text-[var(--accent)]">{formatPercent(place.competitorScores[0]?.overallScore)}</td>
+                      <td className="px-5 py-4 text-right font-mono font-bold text-[var(--accent)]">
+                        {formatPercent(place.competitorScores[0]?.overallScore)}
+                      </td>
                     </tr>
                   );
                 })}
@@ -444,39 +616,85 @@ function BusinessDirectory({
   );
 }
 
-function Metric({ dark = false, label, value }: { dark?: boolean; label: string; value: string | number }) {
+function Metric({
+  dark = false,
+  label,
+  value,
+}: {
+  dark?: boolean;
+  label: string;
+  value: string | number;
+}) {
   return (
     <div className="border-b border-white/14 px-6 py-5 last:border-b-0 sm:[&:nth-child(odd)]:border-r sm:[&:nth-child(n+3)]:border-b-0 lg:border-r lg:border-b-0 lg:last:border-r-0">
-      <dt className={`font-mono text-[0.63rem] font-bold tracking-[0.1em] uppercase ${dark ? "text-[#8fa1bd]" : "text-[var(--ink-faint)]"}`}>{label}</dt>
-      <dd className={`type-display mt-2 text-4xl leading-none tabular-nums ${dark ? "text-white" : "text-[var(--ink)]"}`}>{value}</dd>
+      <dt
+        className={`font-mono text-[0.63rem] font-bold tracking-[0.1em] uppercase ${dark ? "text-[#8fa1bd]" : "text-[var(--ink-faint)]"}`}
+      >
+        {label}
+      </dt>
+      <dd
+        className={`type-display mt-2 text-4xl leading-none tabular-nums ${dark ? "text-white" : "text-[var(--ink)]"}`}
+      >
+        {value}
+      </dd>
     </div>
   );
 }
 
-function SmallMetric({ label, value }: { label: string; value: string | number }) {
+function SmallMetric({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | number;
+}) {
   return (
     <div className="px-3 first:pl-0 last:pr-0">
-      <dt className="font-mono text-[0.58rem] tracking-[0.08em] text-[var(--ink-faint)] uppercase">{label}</dt>
+      <dt className="font-mono text-[0.58rem] tracking-[0.08em] text-[var(--ink-faint)] uppercase">
+        {label}
+      </dt>
       <dd className="mt-1 font-bold tabular-nums text-[var(--ink)]">{value}</dd>
     </div>
   );
 }
 
-function Distribution({ title, items }: { title: string; items: { label: string; count: number }[] }) {
+function Distribution({
+  title,
+  items,
+}: {
+  title: string;
+  items: { label: string; count: number }[];
+}) {
   const maximum = Math.max(1, ...items.map((item) => item.count));
   return (
     <section className="rounded-xl border border-[var(--rule-strong)] bg-white p-5 shadow-[var(--shadow-soft)] sm:p-6">
       <p className="eyebrow">Distribution</p>
-      <h2 className="mt-2 text-xl font-extrabold tracking-[-0.03em] text-[var(--ink)]">{title}</h2>
+      <h2 className="mt-2 text-xl font-extrabold tracking-[-0.03em] text-[var(--ink)]">
+        {title}
+      </h2>
       <div className="mt-6 space-y-4">
-        {items.length === 0 ? <p className="text-sm text-[var(--ink-faint)]">No distribution data available.</p> : null}
+        {items.length === 0 ? (
+          <p className="text-sm text-[var(--ink-faint)]">
+            No distribution data available.
+          </p>
+        ) : null}
         {items.map((item) => (
-          <div className="grid grid-cols-[4.5rem_minmax(0,1fr)_2rem] items-center gap-3" key={item.label}>
-            <span className="truncate font-mono text-[0.65rem] text-[var(--ink-soft)]">{item.label}</span>
+          <div
+            className="grid grid-cols-[4.5rem_minmax(0,1fr)_2rem] items-center gap-3"
+            key={item.label}
+          >
+            <span className="truncate font-mono text-[0.65rem] text-[var(--ink-soft)]">
+              {item.label}
+            </span>
             <div className="h-2 overflow-hidden rounded-full bg-[var(--paper-muted)]">
-              <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${(item.count / maximum) * 100}%` }} />
+              <div
+                className="h-full rounded-full bg-[var(--accent)]"
+                style={{ width: `${(item.count / maximum) * 100}%` }}
+              />
             </div>
-            <span className="text-right font-mono text-[0.68rem] font-bold text-[var(--ink)]">{item.count}</span>
+            <span className="text-right font-mono text-[0.68rem] font-bold text-[var(--ink)]">
+              {item.count}
+            </span>
           </div>
         ))}
       </div>
@@ -487,7 +705,9 @@ function Distribution({ title, items }: { title: string; items: { label: string;
 function formatNumber(value: number | null | undefined) {
   return value === null || value === undefined
     ? "—"
-    : new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(value);
+    : new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(
+        value,
+      );
 }
 
 function formatPercent(value: number | undefined) {
