@@ -2,7 +2,9 @@
  * URLs from place-data providers are untrusted input. Only allow normal web
  * links before they are persisted or rendered as anchors in the application.
  */
-export function toSafeExternalUrl(value: string | null | undefined): string | null {
+export function toSafeExternalUrl(
+  value: string | null | undefined,
+): string | null {
   if (!value) return null;
 
   try {

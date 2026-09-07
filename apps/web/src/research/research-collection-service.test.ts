@@ -157,11 +157,9 @@ describeDatabase("research collection service", () => {
       data: { maxResults: 999999 },
     });
     vi.stubEnv("MAX_RESEARCH_RESULTS", "1");
-    const search = vi
-      .fn<PlaceProvider["search"]>()
-      .mockResolvedValue({
-        places: [candidate, { ...candidate, externalId: "node/43" }],
-      });
+    const search = vi.fn<PlaceProvider["search"]>().mockResolvedValue({
+      places: [candidate, { ...candidate, externalId: "node/43" }],
+    });
     await expect(
       runResearchCollection(project.id, { registry: registryFor({ search }) }),
     ).resolves.toMatchObject({

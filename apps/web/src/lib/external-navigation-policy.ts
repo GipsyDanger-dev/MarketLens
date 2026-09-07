@@ -27,7 +27,11 @@ export async function isSafeExternalNavigationUrl(
   if (url.protocol !== "https:" && url.protocol !== "http:") return false;
 
   const hostname = url.hostname.toLowerCase().replace(/\.$/u, "");
-  if (!hostname || hostname === "localhost" || hostname.endsWith(".localhost")) {
+  if (
+    !hostname ||
+    hostname === "localhost" ||
+    hostname.endsWith(".localhost")
+  ) {
     return false;
   }
 
@@ -36,7 +40,8 @@ export async function isSafeExternalNavigationUrl(
   try {
     const addresses = await resolver(hostname);
     return (
-      addresses.length > 0 && addresses.every((address) => isPublicIpAddress(address))
+      addresses.length > 0 &&
+      addresses.every((address) => isPublicIpAddress(address))
     );
   } catch {
     return false;
@@ -48,7 +53,10 @@ export function isPublicIpAddress(address: string): boolean {
   if (family === 4) {
     const octets = address.split(".").map(Number);
     const [first, second] = octets;
-    if (octets.length !== 4 || octets.some((octet) => !Number.isInteger(octet))) {
+    if (
+      octets.length !== 4 ||
+      octets.some((octet) => !Number.isInteger(octet))
+    ) {
       return false;
     }
     return !(
