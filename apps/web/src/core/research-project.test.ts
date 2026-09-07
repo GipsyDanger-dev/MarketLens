@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { researchProjectInputSchema } from "./research-project";
+import {
+  boundedResearchResults,
+  researchProjectInputSchema,
+} from "./research-project";
 
 const validProject = {
   name: "Coffee shops in Jakarta",
@@ -15,9 +18,24 @@ const validProject = {
 describe("researchProjectInputSchema", () => {
   it("applies safe defaults for a new draft", () => {
     expect(researchProjectInputSchema.parse(validProject)).toMatchObject({
-      maxResults: 999999,
+      maxResults: 250,
       status: "DRAFT",
     });
+  });
+
+  it("rejects oversized new projects and caps legacy requests", () => {
+    expect(
+      researchProjectInputSchema.safeParse({
+        ...validProject,
+        maxResults: 999999,
+      }).success,
+    ).toBe(false);
+    expect(boundedResearchResults(999999)).toBe(250);
+    expect(boundedResearchResults(500, 100)).toBe(100);
+    expect(boundedResearchResults(10, 500)).toBe(10);
+    expect(boundedResearchResults(999999, 999999)).toBe(1000);
+    expect(() => boundedResearchResults(NaN)).toThrow();
+    expect(() => boundedResearchResults(0)).toThrow();
   });
 
   it("rejects invalid provider ids and geographic bounds", () => {
