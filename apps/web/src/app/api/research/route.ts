@@ -13,7 +13,10 @@ export const runtime = "nodejs";
 export async function POST(request: Request) {
   try {
     if (!requestHasAccess(request)) {
-      return NextResponse.json({ error: "Authentication required." }, { status: 401 });
+      return NextResponse.json(
+        { error: "Authentication required." },
+        { status: 401 },
+      );
     }
     const rateLimit = guardResearchMutation(request, "research-create");
     if (!rateLimit.allowed)

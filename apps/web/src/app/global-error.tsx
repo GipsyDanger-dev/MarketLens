@@ -102,9 +102,16 @@ export default function GlobalError({
               >
                 The workspace lost its place.
               </h1>
-              <p style={{ color: "#b5c0d2", lineHeight: 1.7, margin: 0, maxWidth: 520 }}>
-                Retry the request. Your persisted research data is kept
-                separate from this page error and should remain available.
+              <p
+                style={{
+                  color: "#b5c0d2",
+                  lineHeight: 1.7,
+                  margin: 0,
+                  maxWidth: 520,
+                }}
+              >
+                Retry the request. Your persisted research data is kept separate
+                from this page error and should remain available.
               </p>
               {error.digest ? (
                 <p

@@ -15,7 +15,10 @@ export async function POST(
 ) {
   try {
     if (!requestHasAccess(request)) {
-      return NextResponse.json({ error: "Authentication required." }, { status: 401 });
+      return NextResponse.json(
+        { error: "Authentication required." },
+        { status: 401 },
+      );
     }
     const { researchId } = await params;
     const { runResearchCollection } =
