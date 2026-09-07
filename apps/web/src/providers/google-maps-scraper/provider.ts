@@ -9,6 +9,10 @@
  */
 
 import "server-only";
+import {
+  boundedResearchResults,
+  maximumResearchResultLimit,
+} from "../../core/research-project";
 
 import { ProviderError } from "../errors";
 import { validateSearchResponse } from "../test-kit";
@@ -59,7 +63,10 @@ export class GoogleMapsScraperProvider implements PlaceProvider {
       maxPagesPerBrowser: options.maxPagesPerBrowser,
     });
     this.now = options.now ?? (() => new Date());
-    this.maxResults = 999_999; // No artificial limit — return all results within radius
+    this.maxResults = boundedResearchResults(
+      options.maxResults ?? 250,
+      maximumResearchResultLimit,
+    );
   }
 
   async search(request: PlaceSearchRequest): Promise<PlaceSearchResponse> {
@@ -82,11 +89,16 @@ export class GoogleMapsScraperProvider implements PlaceProvider {
     }
 
     try {
+      const maxResults = boundedResearchResults(
+        request.maxResults,
+        this.maxResults,
+      );
       const result = await this.engine.search(request.query, {
         latitude: request.latitude,
         longitude: request.longitude,
         zoom: this.zoomFromRadius(request.radiusMeters),
         scrollDepth: request.scrollDepth,
+        maxResults,
       });
 
       const collectedAt = this.now();
@@ -95,7 +107,11 @@ export class GoogleMapsScraperProvider implements PlaceProvider {
         .filter((place): place is NonNullable<typeof place> => place !== null)
         .filter((place) => {
           // Filter by radius — Google Maps may return places beyond the search area
-          if (request.latitude && request.longitude && request.radiusMeters) {
+          if (
+            Number.isFinite(request.latitude) &&
+            Number.isFinite(request.longitude) &&
+            request.radiusMeters
+          ) {
             const dist = haversine(
               request.latitude,
               request.longitude,
@@ -105,7 +121,8 @@ export class GoogleMapsScraperProvider implements PlaceProvider {
             return dist <= request.radiusMeters;
           }
           return true;
-        }); // No slice — return ALL results within radius
+        })
+        .slice(0, maxResults);
 
       const response = { places };
       validateSearchResponse(this, request, response);
@@ -123,6 +140,8 @@ export class GoogleMapsScraperProvider implements PlaceProvider {
         retryable: true,
         cause: error,
       });
+    } finally {
+      await this.engine.cleanup();
     }
   }
 

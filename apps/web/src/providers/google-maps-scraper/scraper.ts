@@ -9,6 +9,10 @@
 
 import type { GmapsEntry, ProxyConfig, SearchJobResult } from "./types";
 import { BrowserPool } from "./browser-pool";
+import {
+  boundedResearchResults,
+  maximumResearchResultLimit,
+} from "../../core/research-project";
 import { isSafeExternalNavigationUrl } from "../../lib/external-navigation-policy";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -121,10 +125,18 @@ export class ScraperEngine {
       longitude?: number;
       zoom?: number;
       scrollDepth?: number;
+      maxResults?: number;
     } = {},
   ): Promise<SearchJobResult> {
     // Use provided scrollDepth or default
-    const maxDepth = options.scrollDepth ?? this.maxDepth;
+    const maxDepth = Math.min(
+      options.scrollDepth ?? this.maxDepth,
+      this.maxDepth,
+    );
+    const maxResults = boundedResearchResults(
+      options.maxResults ?? 250,
+      maximumResearchResultLimit,
+    );
 
     // Acquire a page from the pool
     const page = await this.pool.acquire();
@@ -144,10 +156,13 @@ export class ScraperEngine {
       await this.waitForResults(page);
 
       // Scroll to load more results using the specified scrollDepth
-      await this.scrollResults(page, maxDepth);
+      await this.scrollResults(page, maxDepth, maxResults);
 
       // Extract place URLs from the feed
-      const placeUrls = await this.extractPlaceUrls(page);
+      const placeUrls = (await this.extractPlaceUrls(page)).slice(
+        0,
+        maxResults,
+      );
 
       // Visit each place and extract data (with parallel extraction)
       const entries = await this.extractPlacesParallel(page, placeUrls);
@@ -296,13 +311,18 @@ export class ScraperEngine {
     }
   }
 
-  private async scrollResults(page: Page, maxDepth?: number): Promise<void> {
+  private async scrollResults(
+    page: Page,
+    maxDepth?: number,
+    maxResults = 250,
+  ): Promise<void> {
     const feedSelector = 'div[role="feed"]';
     let previousHeight = 0;
     const depth = maxDepth ?? this.maxDepth;
 
     for (let i = 0; i < depth; i++) {
       try {
+        if ((await this.extractPlaceUrls(page)).length >= maxResults) break;
         const height = await page.evaluate((sel: string) => {
           const el = document.querySelector(sel);
           if (!el) return 0;

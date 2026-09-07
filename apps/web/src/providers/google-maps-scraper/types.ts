@@ -109,6 +109,8 @@ export interface GmapsEntry {
 }
 
 export interface GoogleMapsScraperProviderOptions {
+  /** Maximum results per search. Default: 250; hard ceiling: 1000. */
+  maxResults?: number;
   /** Path to chromium binary. If not set, uses bundled Playwright browser. */
   executablePath?: string;
   /** Request timeout in milliseconds. Default: 30000 */
