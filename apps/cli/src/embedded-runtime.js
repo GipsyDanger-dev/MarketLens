@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
-import { access, open, readFile, unlink, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { open, readFile, unlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 import { assertSuccessful } from "./command-runner.js";
@@ -39,6 +40,13 @@ export async function startEmbeddedRuntime(options) {
 
   await ensureRuntimeDependencies(runtimeDirectory, runner);
   assertSuccessful(
+    await runNpm(runner, ["run", "db:generate"], {
+      cwd: runtimeDirectory,
+      env: environment,
+    }),
+    "Unable to generate the database client. Run 'marketlens doctor'.",
+  );
+  assertSuccessful(
     await runNpm(
       runner,
       ["run", "db:embedded", "--workspace=@marketlens/web"],
@@ -62,6 +70,9 @@ export async function startEmbeddedRuntime(options) {
       "run",
       "start",
       "--workspace=@marketlens/web",
+      "--",
+      "--hostname",
+      config.web.host,
     ]);
     const child = spawnProcess(invocation.command, invocation.argumentsList, {
       cwd: runtimeDirectory,
@@ -125,12 +136,21 @@ export async function isEmbeddedRuntimeRunning(installationDirectory) {
   return (await getEmbeddedRuntimeStatus(installationDirectory)).running;
 }
 
-async function ensureRuntimeDependencies(runtimeDirectory, runner) {
+export async function ensureRuntimeDependencies(runtimeDirectory, runner) {
+  const lockfile = await readFile(join(runtimeDirectory, "package-lock.json"));
+  const fingerprint = createHash("sha256")
+    .update(lockfile)
+    .update(process.versions.node)
+    .digest("hex");
+  const marker = join(
+    runtimeDirectory,
+    "node_modules",
+    ".marketlens-dependencies",
+  );
   try {
-    await access(join(runtimeDirectory, "node_modules"));
-    return;
+    if ((await readFile(marker, "utf8")) === fingerprint) return;
   } catch {
-    // The global CLI clones source files, but dependencies remain local to it.
+    // First use or an incomplete installation: install the locked dependencies.
   }
 
   assertSuccessful(
@@ -139,6 +159,7 @@ async function ensureRuntimeDependencies(runtimeDirectory, runner) {
     }),
     "Check the internet connection and npm configuration, then retry.",
   );
+  await writeFile(marker, fingerprint, "utf8");
 }
 
 async function createEmbeddedEnvironment(options) {

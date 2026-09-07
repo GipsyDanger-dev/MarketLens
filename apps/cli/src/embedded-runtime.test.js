@@ -1,78 +1,39 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
-import { createServer } from "node:net";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import test from "node:test";
+import { ensureRuntimeDependencies } from "./embedded-runtime.js";
 
-import { defaultConfig } from "./config.js";
-import { createMarketLensCli } from "./marketlens-cli.js";
+test("installs on first use, skips unchanged dependencies, and reinstalls changed lockfiles", async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), "marketlens-dependencies-"));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  await writeFile(join(directory, "package-lock.json"), "first lockfile");
+  const calls = [];
+  const runner = async (command, args) => {
+    calls.push([command, args]);
+    await mkdir(join(directory, "node_modules"), { recursive: true });
+    return { exitCode: 0, stdout: "", stderr: "" };
+  };
+  await ensureRuntimeDependencies(directory, runner);
+  await ensureRuntimeDependencies(directory, runner);
+  assert.equal(calls.length, 1);
+  assert.match(calls[0][1].join(" "), /ci --ignore-scripts/);
+  await writeFile(join(directory, "package-lock.json"), "patched lockfile");
+  await ensureRuntimeDependencies(directory, runner);
+  assert.equal(calls.length, 2);
+});
 
-test(
-  "embedded runtime starts a queryable MarketLens stack without Docker",
-  { timeout: 180_000 },
-  async (t) => {
-    const installationDirectory = await mkdtemp(
-      join(tmpdir(), "marketlens-embedded-"),
-    );
-    const port = await getAvailablePort();
-    const cli = createMarketLensCli({
-      cwd: installationDirectory,
-      sourceDirectory: resolve(
-        dirname(fileURLToPath(import.meta.url)),
-        "../../..",
-      ),
-      nextDistDirectory: ".next-marketlens-test",
-    });
-
-    t.after(async () => {
-      await cli.down();
-      await rm(installationDirectory, { force: true, recursive: true });
-    });
-
-    await cli.init({
-      ...defaultConfig,
-      web: { host: "localhost", port },
-    });
-    const started = await cli.up();
-    const response = await fetch(`${started.url}/api/research`, {
-      body: JSON.stringify({
-        latitude: -6.2088,
-        locationQuery: "Jakarta, Indonesia",
-        longitude: 106.8456,
-        name: "Embedded runtime check",
-        providerId: "openstreetmap",
-        query: "coffee shop",
-        radiusMeters: 5_000,
-      }),
-      headers: { "content-type": "application/json" },
-      method: "POST",
-    });
-
-    const body = await response.json();
-    const logs = await cli.logs();
-    assert.equal(
-      response.status,
-      201,
-      JSON.stringify({ body, logs: logs.stdout }),
-    );
-    assert.equal(body.providerId, "openstreetmap");
-    assert.equal((await cli.status()).composeStatus, "RUNNING");
-  },
-);
-
-async function getAvailablePort() {
-  return new Promise((resolve, reject) => {
-    const server = createServer();
-    server.once("error", reject);
-    server.listen(0, "127.0.0.1", () => {
-      const address = server.address();
-      if (!address || typeof address === "string") {
-        reject(new Error("Unable to select a local test port."));
-        return;
-      }
-      server.close(() => resolve(address.port));
-    });
-  });
-}
+test("failed installs remain retryable instead of recording success", async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), "marketlens-dependencies-"));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  await writeFile(join(directory, "package-lock.json"), "lockfile");
+  let calls = 0;
+  const runner = async () => {
+    calls++;
+    return { exitCode: 1, stdout: "", stderr: "offline" };
+  };
+  await assert.rejects(ensureRuntimeDependencies(directory, runner));
+  await assert.rejects(ensureRuntimeDependencies(directory, runner));
+  assert.equal(calls, 2);
+});

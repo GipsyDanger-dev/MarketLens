@@ -8,8 +8,8 @@ until explicitly configured.
 
 ## Start a local installation
 
-After the `marketlens` package is available from npm, run this from the
-directory where you want to keep local MarketLens data:
+Install Node.js 24+, npm 11+, and Git. From the directory where you want to keep
+local MarketLens data, run:
 
 ```bash
 npx @gipsydanger-dev/marketlens
@@ -18,7 +18,7 @@ npx @gipsydanger-dev/marketlens
 Choose **Initialize local workspace**, then **Start services**. The TUI creates
 `.marketlens/config.json`, `.marketlens/data`, `.marketlens/logs`, and a
 git-ignored `.env`. It starts the embedded database, runs Prisma migrations,
-builds the web app, and prints the local dashboard address. Provider and AI
+generates the Prisma client, builds the web app, and prints the local dashboard address. Provider and AI
 credentials remain optional.
 
 ## Interactive terminal UI
@@ -41,12 +41,12 @@ need credentials if you opt in. Keep those credentials server-side in the
 generated local `.env`; the TUI never asks for or displays API keys. Docker and
 external PostgreSQL are available only as Advanced runtime choices in Settings.
 
-Use a source checkout before the npm package is published:
+To develop or test the current source checkout:
 
 ```bash
 git clone https://github.com/GipsyDanger-dev/MarketLens.git
 cd MarketLens
-npm install
+npm ci
 node apps/cli/src/index.js init
 node apps/cli/src/index.js up
 ```
@@ -58,21 +58,33 @@ without configuring authentication, TLS, and a reverse proxy.
 ## Commands
 
 ```text
-marketlens init [--port <number>] [--provider <openstreetmap|google-places>] [--ai <disabled|gemini|ollama|openai-compatible>]
+marketlens init [--port <number>] [--provider <openstreetmap|google-places|google-maps-scraper>] [--ai <disabled|gemini|ollama|openai-compatible>]
 marketlens up | down | status | open | doctor | logs | update
 marketlens config [provider|ai|database|port] [value]
 marketlens tui
 ```
 
-`down` stops containers without deleting the PostgreSQL volume. `doctor` checks
+`down` stops the selected runtime while retaining the research database. `doctor` checks
 the local configuration, Docker Compose availability, runtime files, and web
-port. `logs` prints the latest container output. Direct commands remain
+port. `logs` prints embedded server logs or Docker container output. Direct commands remain
 non-interactive for use in local scripts; the optional `tui` command is intended
 for a person operating the local installation.
 
-Run `marketlens update` followed by `marketlens up` to pull the latest runtime
-into an existing CLI-managed installation and rebuild it. The update uses a
-fast-forward-only Git pull and leaves the local `.env` and research data intact.
+Update the global CLI and its separately cloned runtime with:
+
+```bash
+npm install --global @gipsydanger-dev/marketlens@latest
+marketlens down
+marketlens update
+marketlens up
+```
+
+The runtime update uses a fast-forward-only Git pull from `main`. On the next
+start the CLI reinstalls dependencies when the lockfile or Node.js version has
+changed, generates the Prisma client, migrates storage, and rebuilds. Stop the
+running server first: `up` otherwise reports it is already running. The local
+`.env` and research data remain in the installation directory. First startup
+requires an internet connection and may take several minutes to install/build.
 
 ## Configuration examples
 
@@ -91,8 +103,13 @@ marketlens config provider google-places
 marketlens up
 ```
 
-AI remains opt-in. Configure a supported provider and add its secret to `.env`;
-the rest of MarketLens continues working if AI is unavailable.
+AI remains opt-in. The shipped web adapter supports Gemini. The CLI accepts
+Ollama and OpenAI-compatible configuration names for future adapters, but they
+are not currently functional web integrations; keep AI disabled or choose Gemini.
+
+The experimental `google-maps-scraper` adapter requires a matching Playwright
+Chromium installation. See [browser collection](google-maps-scraper.md) for its
+setup, supported fields, limits, and availability constraints.
 
 ## External PostgreSQL
 
