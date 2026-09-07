@@ -15,7 +15,7 @@ platform.
 
 ```bash
 copy .env.example .env
-npm install
+npm ci
 docker compose up -d postgres
 npm run db:migrate
 npm run dev

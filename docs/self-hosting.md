@@ -7,7 +7,7 @@ application, and PostgreSQL.
 ## Requirements
 
 - Docker Desktop with Docker Compose
-- Node.js 22+ for the CLI; Node.js 24+ and npm 11+ for source development
+- Node.js 24+, npm 11+, and Git for the CLI and source development
 
 ## Recommended local-first workflow
 
@@ -29,7 +29,7 @@ is in the [local-first CLI guide](local-first.md).
 
 ```bash
 copy .env.example .env
-npm install
+npm ci
 docker compose up -d postgres
 npm run db:migrate
 npm run dev
