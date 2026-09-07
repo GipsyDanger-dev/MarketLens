@@ -172,7 +172,7 @@ try {
     return body;
   };
   assert.equal((await json("/api/health")).status, "ok");
-  for (const path of ["/", "/research/new", "/settings"]) {
+  for (const path of ["/", "/research/new", "/access"]) {
     assert.equal((await fetch(`${base}${path}`)).status, 200, path);
   }
   const project = await json("/api/research", {

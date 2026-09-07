@@ -5,8 +5,8 @@ platform.
 
 ## Before you start
 
-1. Read the [PRD](01_PRD.md), [Blueprint](02_BLUEPRINT.md), and
-   [Sprint Plan](03_SPRINT_PLAN.md).
+1. Read the [architecture](docs/architecture.md), [roadmap](docs/roadmap.md), and
+   [known limitations](docs/known-limitations.md).
 2. Open an issue before starting substantial work so maintainers and
    contributors can align on scope.
 3. Follow the [Code of Conduct](CODE_OF_CONDUCT.md).
@@ -24,6 +24,9 @@ npm run dev
 Run the required checks before opening a pull request:
 
 ```bash
+npm run format
+npm run release:check
+npm audit --audit-level=high
 npm run lint
 npm run typecheck
 npm run test
