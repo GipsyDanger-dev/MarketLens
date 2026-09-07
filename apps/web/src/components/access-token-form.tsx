@@ -25,7 +25,8 @@ export function AccessTokenForm({ nextPath }: { nextPath: string }) {
         method: "POST",
       });
       const body = (await response.json()) as { error?: string };
-      if (!response.ok) throw new Error(body.error ?? "Unable to verify access.");
+      if (!response.ok)
+        throw new Error(body.error ?? "Unable to verify access.");
       router.replace(nextPath);
       router.refresh();
     } catch (submitError) {
@@ -54,7 +55,10 @@ export function AccessTokenForm({ nextPath }: { nextPath: string }) {
       </p>
 
       <div className="mt-8">
-        <label className="block text-sm font-bold text-[var(--ink)]" htmlFor="access-token">
+        <label
+          className="block text-sm font-bold text-[var(--ink)]"
+          htmlFor="access-token"
+        >
           Access token
         </label>
         <span className="relative mt-2 block">
@@ -74,24 +78,44 @@ export function AccessTokenForm({ nextPath }: { nextPath: string }) {
             onClick={() => setIsVisible((visible) => !visible)}
             type="button"
           >
-            {isVisible ? <EyeOff aria-hidden="true" size={18} /> : <Eye aria-hidden="true" size={18} />}
+            {isVisible ? (
+              <EyeOff aria-hidden="true" size={18} />
+            ) : (
+              <Eye aria-hidden="true" size={18} />
+            )}
           </button>
         </span>
       </div>
-      <p className="mt-2 text-xs leading-5 text-[var(--ink-faint)]" id="access-help">
+      <p
+        className="mt-2 text-xs leading-5 text-[var(--ink-faint)]"
+        id="access-help"
+      >
         Token comparison happens on the server over the current connection.
       </p>
 
       {error ? (
-        <p className="mt-4 rounded-md border border-[#e8b5ae] bg-[#fff1ef] px-4 py-3 text-sm font-semibold text-[var(--danger)]" id="access-error" role="alert">
+        <p
+          className="mt-4 rounded-md border border-[#e8b5ae] bg-[#fff1ef] px-4 py-3 text-sm font-semibold text-[var(--danger)]"
+          id="access-error"
+          role="alert"
+        >
           {error}
         </p>
       ) : null}
 
-      <Button className="mt-6 w-full" disabled={isSubmitting} size="lg" type="submit">
+      <Button
+        className="mt-6 w-full"
+        disabled={isSubmitting}
+        size="lg"
+        type="submit"
+      >
         {isSubmitting ? (
           <>
-            <LoaderCircle aria-hidden="true" className="animate-spin" size={17} />
+            <LoaderCircle
+              aria-hidden="true"
+              className="animate-spin"
+              size={17}
+            />
             Verifying access
           </>
         ) : (
