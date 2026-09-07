@@ -9,7 +9,7 @@ Browser
   ▼
 Next.js pages and route handlers
   │
-  ├── Provider registry ──► OpenStreetMap / optional Google Places
+  ├── Provider registry ──► OpenStreetMap / Google Places / browser adapter
   │                              │ raw candidates
   ├── Research pipeline ◄────────┘
   │       │ normalize → deduplicate → persist
@@ -21,7 +21,7 @@ Next.js pages and route handlers
   │       └── Optional AI provider → guarded interpretation
   │
   ▼
-Prisma adapter → PostgreSQL
+Prisma adapter → PostgreSQL or embedded PGlite
 ```
 
 ## Code map
@@ -58,6 +58,15 @@ Prisma adapter → PostgreSQL
 - Low-confidence cross-provider matches cannot silently merge canonical records.
 
 ## Deployment shape
+
+The default local CLI runtime uses embedded PGlite storage and a loopback-bound
+web server. npm distributes the CLI; its managed web runtime is a separate Git
+checkout. A startup checks the lockfile fingerprint, installs dependencies when
+needed, generates Prisma, applies migrations, and builds the web app.
+
+The experimental Playwright Google Maps provider is separate from Google Places
+API access. Its browser pool lives for one collection and has bounded detail
+visits and scroll depth. See [browser collection](google-maps-scraper.md).
 
 The default Compose stack starts PostgreSQL and the standalone web runtime. The
 `migrate` profile uses the builder image only for Prisma operations and exits.

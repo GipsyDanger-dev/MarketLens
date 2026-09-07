@@ -1,5 +1,8 @@
 # MarketLens v1.0.0
 
+These are historical v1.0 notes. Consult the [current README](../README.md)
+and [known limitations](known-limitations.md) for today's supported providers.
+
 MarketLens v1.0.0 is the first stable release of the open-source local business
 intelligence platform.
 
@@ -21,7 +24,7 @@ intelligence platform.
 
 ## First run
 
-Follow the [quick start in the README](../README.md#quick-start), then create a
+Follow the [quick start in the README](../README.md#local-first-quick-start), then create a
 research project with the prefilled `coffee shop` / `Malang, Indonesia` example.
 OpenStreetMap requires no key.
 
@@ -34,7 +37,7 @@ before upgrading; exact Compose commands are in the
 
 ## What v1.0 does not claim
 
-MarketLens does not scrape Google Maps, bypass provider protections, estimate
+MarketLens v1.0 did not scrape Google Maps, bypass provider protections, estimate
 revenue, or guarantee commercial outcomes. Collection coverage and conclusions
 depend on the provider, query, radius, timestamp, and available fields. See
 [known limitations](known-limitations.md) before relying on a research result.
