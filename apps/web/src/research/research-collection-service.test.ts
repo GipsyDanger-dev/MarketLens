@@ -1,4 +1,12 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 
 import { researchProjectInputSchema } from "../core/research-project";
 import { ProviderRegistry } from "../providers/registry";
@@ -37,6 +45,7 @@ describeDatabase("research collection service", () => {
   let runResearchCollection: typeof import("./research-collection-service").runResearchCollection;
   let retryResearchCollection: typeof import("./research-collection-service").retryResearchCollection;
   const projectIds: string[] = [];
+  afterEach(() => vi.unstubAllEnvs());
 
   beforeAll(async () => {
     ({ createResearchProject, deleteResearchProject } =
@@ -138,6 +147,34 @@ describeDatabase("research collection service", () => {
       jobStatus: "READY",
       totalProcessed: 1,
     });
+  });
+
+  it("caps legacy jobs before provider calls and limits an over-returning adapter", async () => {
+    const project = await createProject(createResearchProject, "test-provider");
+    projectIds.push(project.id);
+    await prisma.researchProject.update({
+      where: { id: project.id },
+      data: { maxResults: 999999 },
+    });
+    vi.stubEnv("MAX_RESEARCH_RESULTS", "1");
+    const search = vi
+      .fn<PlaceProvider["search"]>()
+      .mockResolvedValue({
+        places: [candidate, { ...candidate, externalId: "node/43" }],
+      });
+    await expect(
+      runResearchCollection(project.id, { registry: registryFor({ search }) }),
+    ).resolves.toMatchObject({
+      projectStatus: "READY",
+      totalDiscovered: 1,
+      totalProcessed: 1,
+    });
+    expect(search).toHaveBeenCalledWith(
+      expect.objectContaining({ maxResults: 1 }),
+    );
+    expect(
+      await prisma.place.count({ where: { researchProjectId: project.id } }),
+    ).toBe(1);
   });
 });
 

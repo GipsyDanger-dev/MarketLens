@@ -1,4 +1,12 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 
 import { researchProjectInputSchema } from "../core/research-project";
 
@@ -13,6 +21,7 @@ describeDatabase("research project persistence", () => {
   let getResearchProject: typeof import("./research-project-repository").getResearchProject;
   let prisma: typeof import("./prisma").prisma;
   let projectId: string | undefined;
+  afterEach(() => vi.unstubAllEnvs());
 
   beforeAll(async () => {
     ({ createResearchProject, deleteResearchProject, getResearchProject } =
@@ -58,5 +67,25 @@ describeDatabase("research project persistence", () => {
     });
     projectId = undefined;
     await expect(getResearchProject(created.id)).resolves.toBeNull();
+  });
+
+  it("persists the operator cap even when a client requests more", async () => {
+    vi.stubEnv("MAX_RESEARCH_RESULTS", "7");
+    const created = await createResearchProject(
+      researchProjectInputSchema.parse({
+        name: "Bounded study",
+        providerId: "openstreetmap",
+        query: "cafe",
+        locationQuery: "Jakarta",
+        latitude: -6.2,
+        longitude: 106.8,
+        radiusMeters: 1000,
+        maxResults: 1000,
+      }),
+    );
+    projectId = created.id;
+    expect(created.maxResults).toBe(7);
+    await deleteResearchProject(created.id);
+    projectId = undefined;
   });
 });
