@@ -1,4 +1,5 @@
 import "server-only";
+import { boundedResearchResults } from "../../core/research-project";
 
 import { ProviderError } from "../errors";
 import { validateSearchResponse } from "../test-kit";
@@ -68,7 +69,8 @@ export class OpenStreetMapProvider implements PlaceProvider {
     const collectedAt = this.now();
     const places = payload.elements
       .map((element) => mapOverpassElement(element, collectedAt))
-      .filter((place): place is NonNullable<typeof place> => place !== null); // No slice — return all results within radius
+      .filter((place): place is NonNullable<typeof place> => place !== null)
+      .slice(0, boundedResearchResults(request.maxResults, this.maxResults));
     const response = { places };
 
     validateSearchResponse(this, request, response);

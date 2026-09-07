@@ -13,6 +13,18 @@ const request = {
 };
 
 describe("buildOverpassQuery", () => {
+  it("bounds the request before sending it to Overpass", () => {
+    expect(buildOverpassQuery(request)).toContain("out center 250;");
+    expect(
+      buildOverpassQuery({ ...request, maxResults: 3 }, { maxResults: 100 }),
+    ).toContain("out center 3;");
+    expect(
+      buildOverpassQuery(
+        { ...request, maxResults: 999999 },
+        { maxResults: 999999 },
+      ),
+    ).toContain("out center 1000;");
+  });
   it("uses an indexed category lookup when a category is selected", () => {
     const query = buildOverpassQuery(request, { maxResults: 250 });
 

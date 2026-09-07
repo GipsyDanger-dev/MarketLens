@@ -1,7 +1,11 @@
 import { ProviderError } from "../errors";
 import type { PlaceSearchRequest } from "../types";
+import {
+  boundedResearchResults,
+  defaultResearchResultLimit,
+} from "../../core/research-project";
 
-export const defaultOverpassResultLimit = 999_999; // No artificial limit
+export const defaultOverpassResultLimit = defaultResearchResultLimit;
 export const defaultOverpassTimeoutSeconds = 25;
 
 export function buildOverpassQuery(
@@ -13,7 +17,10 @@ export function buildOverpassQuery(
 ): string {
   validateSearchRequest(request);
 
-  const maxResults = options.maxResults ?? defaultOverpassResultLimit;
+  const maxResults = boundedResearchResults(
+    request.maxResults,
+    options.maxResults ?? defaultOverpassResultLimit,
+  );
   const timeoutSeconds =
     options.timeoutSeconds ?? defaultOverpassTimeoutSeconds;
   const categoryFilter = buildCategoryFilter(request.category);
