@@ -17,6 +17,7 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "test:release": "node scripts/smoke-release.mjs",
+    "release:check": "node scripts/check-release.mjs",
     "format": "prettier --check .",
     "format:write": "prettier --write .",
     "db:generate": "prisma generate",
