@@ -16,6 +16,9 @@ export default function NewResearchPage() {
       <div className="workspace-frame py-7 sm:py-10 lg:py-12">
         <ResearchCreationForm
           providers={providers}
+          defaultProviderId={
+            parseServerEnvironment(process.env).DEFAULT_PLACE_PROVIDER
+          }
           resultLimit={parseServerEnvironment(process.env).MAX_RESEARCH_RESULTS}
         />
       </div>

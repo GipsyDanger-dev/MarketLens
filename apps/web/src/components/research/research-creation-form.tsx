@@ -32,18 +32,21 @@ type ResearchProvider = { id: string; name: string };
 export function ResearchCreationForm({
   providers,
   resultLimit = defaultResearchResultLimit,
+  defaultProviderId = "openstreetmap",
 }: {
   providers: ResearchProvider[];
   resultLimit?: number;
+  defaultProviderId?: string;
 }) {
   const router = useRouter();
-  const supportedProviders = providers.filter(
-    (provider) => provider.id !== "google-maps-scraper",
-  );
+  const supportedProviders = providers;
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [providerId, setProviderId] = useState(
-    supportedProviders[0]?.id ?? "openstreetmap",
+    supportedProviders.find((provider) => provider.id === defaultProviderId)
+      ?.id ??
+      supportedProviders[0]?.id ??
+      "openstreetmap",
   );
   const [query, setQuery] = useState("businesses");
   const [selectedPreset, setSelectedPreset] =
@@ -204,6 +207,12 @@ export function ResearchCreationForm({
                   ))}
                 </select>
               </label>
+              {providerId === "google-maps-scraper" && (
+                <p className="text-xs leading-5 text-[var(--ink-soft)]">
+                  Experimental browser collection requires Chromium. Available
+                  fields and results can change with Google Maps.
+                </p>
+              )}
             </div>
 
             <fieldset className="mt-7 border-t border-[var(--rule)] pt-6">
