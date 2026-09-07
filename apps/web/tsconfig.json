@@ -32,7 +32,9 @@
     ".next-marketlens/types/**/*.ts",
     ".next-marketlens/dev/types/**/*.ts",
     ".next-marketlens-test/types/**/*.ts",
-    ".next-marketlens-test/dev/types/**/*.ts"
+    ".next-marketlens-test/dev/types/**/*.ts",
+    ".next-marketlens-e2e/types/**/*.ts",
+    ".next-marketlens-e2e/dev/types/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }

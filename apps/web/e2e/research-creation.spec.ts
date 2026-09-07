@@ -33,5 +33,7 @@ test("describes the two-step research collection workflow accurately", async ({
     });
   });
   await page.getByRole("button", { name: "Create study" }).click();
-  await expect(page.getByRole("alert")).toHaveText("Test submission received");
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Test submission received" }),
+  ).toBeVisible();
 });

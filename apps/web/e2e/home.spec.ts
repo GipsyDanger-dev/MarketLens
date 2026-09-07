@@ -13,7 +13,8 @@ test("renders a public landing page with a usable research CTA", async ({
   const researchCta = page.getByRole("link", { name: "Start a field study" });
   await expect(researchCta).toHaveAttribute("href", "/research/new");
   await researchCta.click();
-  await expect(page).toHaveURL(/\/research\/new$/u);
+  // A fresh development server compiles the map workspace on first navigation.
+  await expect(page).toHaveURL(/\/research\/new$/u, { timeout: 20_000 });
   await expect(
     page.getByRole("textbox", { name: "What are you researching?" }),
   ).toBeVisible();
