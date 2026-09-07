@@ -64,6 +64,6 @@
 
 ## Decisions log
 
-| Date | Decision | Rationale |
-| --- | --- | --- |
+| Date       | Decision                                        | Rationale                                                                                                                                        |
+| ---------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 2026-09-03 | Replaced Editorial Data Desk with Cobalt Ledger | The new direction removes the previous green identity, creates a stronger professional shell, and gives dense research pages a calmer hierarchy. |
