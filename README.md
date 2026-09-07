@@ -10,8 +10,10 @@ MarketLens collects place data, normalizes it into a reusable dataset, and turns
 it into explainable market analytics, geographic context, competitor rankings,
 optional AI interpretation, and portable reports.
 
-It is not a Google Maps scraper. OpenStreetMap/Overpass is the default provider,
-so the core workflow works without paid data APIs or AI credentials.
+OpenStreetMap/Overpass is the default provider, so the core workflow works
+without paid data APIs or AI credentials. Google Places API and an experimental
+Playwright Google Maps adapter are also included; see the
+[browser collection guide](docs/google-maps-scraper.md) for its constraints.
 
 ## What you can do
 
@@ -45,7 +47,7 @@ example. No API key is required.
 
 ## Local-first quick start
 
-Requirements: Node.js 24+ and npm 11+. Docker Desktop with Docker Compose is
+Requirements: Node.js 24+, npm 11+, and Git. Docker Desktop with Docker Compose is
 only needed for the Advanced Docker runtime.
 
 For a new local installation, run this from the directory where you want to
@@ -83,7 +85,7 @@ To run from a cloned checkout today:
 ```bash
 git clone https://github.com/GipsyDanger-dev/MarketLens.git
 cd MarketLens
-npm install
+npm ci
 node apps/cli/src/index.js init
 node apps/cli/src/index.js up
 ```
@@ -96,11 +98,12 @@ migration commands, follow the [self-hosting guide](docs/self-hosting.md).
 
 ## Providers and AI
 
-| Integration              | Included | Key required | Notes                                                                        |
-| ------------------------ | -------- | ------------ | ---------------------------------------------------------------------------- |
-| OpenStreetMap / Overpass | Yes      | No           | Default, free provider; respect instance limits and attribution.             |
-| Google Places (New)      | Optional | Yes          | Server-side key only; uses approved API access, never scraping.              |
-| Gemini                   | Optional | Yes          | Produces guarded interpretation; data and exports remain usable if it fails. |
+| Integration                 | Included     | Key required | Notes                                                                                        |
+| --------------------------- | ------------ | ------------ | -------------------------------------------------------------------------------------------- |
+| OpenStreetMap / Overpass    | Yes          | No           | Default, free provider; respect instance limits and attribution.                             |
+| Google Places (New)         | Optional     | Yes          | Server-side key only; uses approved API access, never scraping.                              |
+| Google Maps browser adapter | Experimental | No           | Requires Playwright Chromium; site changes and access restrictions can interrupt collection. |
+| Gemini                      | Optional     | Yes          | Produces guarded interpretation; data and exports remain usable if it fails.                 |
 
 Read the [provider development guide](docs/provider-sdk.md) before adding an
 adapter. The [AI guide](docs/ai-insights.md) documents inputs, guardrails,
@@ -121,14 +124,16 @@ timeouts, and retry behavior.
 - [Public roadmap](docs/roadmap.md)
 - [v1.0.0 release notes](docs/release-v1.0.md)
 
-The project direction is recorded in the [PRD](01_PRD.md),
-[Blueprint](02_BLUEPRINT.md), and [Sprint Plan](03_SPRINT_PLAN.md).
+Public project direction is recorded in the [roadmap](docs/roadmap.md) and
+[architecture](docs/architecture.md). Internal planning notes are not published.
 
 ## Development
 
 Run the quality gate before opening a pull request:
 
 ```bash
+npm run format
+npm audit --audit-level=high
 npm run lint
 npm run typecheck
 npm run test
@@ -154,4 +159,5 @@ request templates. Please report vulnerabilities privately according to
 MarketLens is dual-licensed under the [Apache License 2.0](LICENSE) or the
 [MIT License](LICENSE-MIT), at your option. The Apache license remains the
 repository's primary `LICENSE` file; retain the applicable copyright and
-license notices when redistributing the project.
+license notices when redistributing the project. Adapted third-party components
+retain their own notices in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

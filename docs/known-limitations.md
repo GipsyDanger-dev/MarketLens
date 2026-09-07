@@ -9,8 +9,14 @@ Use these limitations when interpreting a project, report, or AI insight.
   provider field coverage. They are not a census of every local business.
 - OpenStreetMap/Overpass may not provide ratings or review counts. Metrics that
   depend on unavailable fields are disclosed rather than inferred.
-- Google Places is optional and requires a separately configured, compliant API
-  key. MarketLens does not scrape Google Maps or bypass provider controls.
+- Google Places API is optional and requires a separately configured API key.
+- The separate experimental Google Maps browser adapter uses Playwright. Its
+  results depend on current page structure and accessible public fields; it
+  cannot promise complete coverage or continued availability. See
+  [browser collection](google-maps-scraper.md) before selecting it.
+- Collection is capped by `MAX_RESEARCH_RESULTS` (250 by default, maximum 1000),
+  request size, and provider limits. Google Places currently collects one page
+  (at most 20 records); returned pagination tokens are not followed by the job.
 - The included demo CSV contains fictional businesses and is only for product
   walkthroughs or development.
 
@@ -27,6 +33,8 @@ Use these limitations when interpreting a project, report, or AI insight.
 ## AI
 
 - AI is optional and never blocks collection, analytics, maps, or exports.
+- Gemini is the implemented web adapter. Ollama/OpenAI-compatible CLI settings
+  are reserved configuration choices, not shipped AI integrations.
 - AI output is constrained to supplied facts and computed metrics, but users
   must still review it as interpretation, not authoritative market advice.
 - If insight generation fails, retry it after confirming the provider key and
