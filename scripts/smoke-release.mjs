@@ -1,7 +1,14 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { createServer } from "node:http";
-import { access, appendFile, mkdir, mkdtemp, readFile } from "node:fs/promises";
+import {
+  access,
+  appendFile,
+  mkdir,
+  mkdtemp,
+  readFile,
+  writeFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -11,6 +18,12 @@ const root = fileURLToPath(new URL("../", import.meta.url));
 const workspace = await mkdtemp(join(tmpdir(), "marketlens-release-"));
 const npmCli = process.env.npm_execpath;
 assert(npmCli, "Run this check with npm run test:release");
+const npmConfig = join(workspace, "npmrc");
+await writeFile(npmConfig, "registry=https://registry.npmjs.org/\n");
+const smokeEnvironment = Object.fromEntries(
+  Object.entries(process.env).filter(([key]) => !/^npm_config_/i.test(key)),
+);
+smokeEnvironment.npm_config_userconfig = npmConfig;
 const installation = join(workspace, "installation");
 const tools = join(workspace, "tools");
 await mkdir(join(installation, ".marketlens"), { recursive: true });
@@ -53,7 +66,7 @@ async function run(command, args, cwd = root) {
   return new Promise((resolveRun, reject) => {
     const child = spawn(command, args, {
       cwd,
-      env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" },
+      env: { ...smokeEnvironment, NEXT_TELEMETRY_DISABLED: "1" },
       windowsHide: true,
     });
     let output = "";
