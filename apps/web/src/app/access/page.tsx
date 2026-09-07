@@ -39,14 +39,24 @@ export default async function AccessPage({
 
             <div className="grid gap-px overflow-hidden rounded-lg border border-white/12 bg-white/12 sm:grid-cols-2">
               <div className="bg-[#0d1728] p-5">
-                <ShieldCheck aria-hidden="true" className="text-[#8ea8ff]" size={21} strokeWidth={1.8} />
+                <ShieldCheck
+                  aria-hidden="true"
+                  className="text-[#8ea8ff]"
+                  size={21}
+                  strokeWidth={1.8}
+                />
                 <p className="mt-5 text-sm font-bold">Server-side validation</p>
                 <p className="mt-1 text-xs leading-5 text-[#9fadc4]">
                   Credentials remain outside the browser bundle.
                 </p>
               </div>
               <div className="bg-[#0d1728] p-5">
-                <Fingerprint aria-hidden="true" className="text-[#d58850]" size={21} strokeWidth={1.8} />
+                <Fingerprint
+                  aria-hidden="true"
+                  className="text-[#d58850]"
+                  size={21}
+                  strokeWidth={1.8}
+                />
                 <p className="mt-5 text-sm font-bold">Scoped session</p>
                 <p className="mt-1 text-xs leading-5 text-[#9fadc4]">
                   Access applies only to this MarketLens deployment.
@@ -55,7 +65,12 @@ export default async function AccessPage({
             </div>
           </div>
 
-          <ArrowDownRight aria-hidden="true" className="absolute right-7 bottom-7 text-white/8" size={190} strokeWidth={0.55} />
+          <ArrowDownRight
+            aria-hidden="true"
+            className="absolute right-7 bottom-7 text-white/8"
+            size={190}
+            strokeWidth={0.55}
+          />
         </section>
 
         <section className="flex items-center rounded-b-xl border border-t-0 border-[var(--rule)] bg-white px-5 py-9 sm:px-9 lg:rounded-r-xl lg:rounded-bl-none lg:border-t lg:border-l-0 lg:px-12">
