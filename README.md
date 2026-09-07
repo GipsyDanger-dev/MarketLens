@@ -123,6 +123,7 @@ timeouts, and retry behavior.
 - [Known limitations](docs/known-limitations.md)
 - [Public roadmap](docs/roadmap.md)
 - [v1.0.0 release notes](docs/release-v1.0.md)
+- [1.3.2 candidate and publication instructions](docs/release-v1.3.2.md)
 
 Public project direction is recorded in the [roadmap](docs/roadmap.md) and
 [architecture](docs/architecture.md). Internal planning notes are not published.

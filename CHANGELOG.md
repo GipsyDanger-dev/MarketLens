@@ -1,5 +1,27 @@
 # Changelog
 
+## v1.3.2 — Release Readiness Candidate
+
+- Restore a 250-record default and 1000-record hard ceiling. Enforce operator
+  limits for new projects, legacy jobs, Overpass queries and scraper detail visits.
+- Honor the configured provider in research creation and display the finite
+  record budget. Label browser collection as experimental.
+- Release browser resources after each collection, including failures, and
+  apply radius filtering at zero latitude/longitude.
+- Patch Prisma's transitive deepmerge-ts and mysql2 dependencies; audit is
+  enforced in CI alongside formatting and browser tests.
+- Fix clean CLI startup by generating Prisma before building and refreshing
+  dependencies when the lockfile or Node version changes. Bind the embedded
+  server to loopback explicitly.
+- Include Apache and MIT licenses in the npm package, preserve upstream scraper
+  attribution, derive displayed versions from package metadata, and replace
+  documentation links to private planning files.
+- Add Windows/Linux tarball installation tests covering embedded collection,
+  persisted contact details, CSV/JSON/PDF exports and restart retention.
+
+This entry prepares the candidate; npm publication is a separate maintainer step.
+See [release instructions](docs/release-v1.3.2.md).
+
 ## v1.3.1 — Private Runtime Security Update
 
 - Add optional private-installation access control with a server-side token,
