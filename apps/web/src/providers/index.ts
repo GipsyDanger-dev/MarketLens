@@ -26,6 +26,7 @@ export function createProviderRegistry(
   // Google Maps Scraper is always available (no API key required)
   registry.register(
     new GoogleMapsScraperProvider({
+      maxResults: configuration.MAX_RESEARCH_RESULTS,
       proxyUrl: configuration.SCRAPER_PROXY_URL,
       proxyList: configuration.SCRAPER_PROXY_LIST,
       proxyRotation: configuration.SCRAPER_PROXY_ROTATION,

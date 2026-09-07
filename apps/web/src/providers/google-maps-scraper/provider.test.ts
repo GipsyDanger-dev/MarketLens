@@ -1,8 +1,12 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ProviderError } from "../errors";
 import type { PlaceSearchRequest } from "../types";
 import { GoogleMapsScraperProvider } from "./provider";
+import { ScraperEngine } from "./scraper";
+import type { GmapsEntry } from "./types";
+
+afterEach(() => vi.restoreAllMocks());
 
 vi.mock("server-only", () => ({}));
 
@@ -15,6 +19,52 @@ const baseRequest: PlaceSearchRequest = {
 };
 
 describe("GoogleMapsScraperProvider", () => {
+  it("enforces the operator budget, filters at the equator and releases each search engine", async () => {
+    const entry = {
+      title: "Cafe",
+      placeId: "one",
+      latitude: 0,
+      longitude: 1,
+      category: "cafe",
+      categories: [],
+      completeAddress: {},
+      emails: [],
+    } as unknown as GmapsEntry;
+    const search = vi
+      .spyOn(ScraperEngine.prototype, "search")
+      .mockResolvedValue({
+        searchUrl: "https://www.google.com/maps/search/cafe",
+        entries: [
+          { ...entry, latitude: 20 },
+          entry,
+          { ...entry, placeId: "two" },
+        ],
+      });
+    const cleanup = vi.spyOn(ScraperEngine.prototype, "cleanup");
+    const provider = new GoogleMapsScraperProvider({ maxResults: 1 });
+    const request = { ...baseRequest, latitude: 0, longitude: 1 };
+    await expect(provider.search(request)).resolves.toMatchObject({
+      places: [{ externalId: "one" }],
+    });
+    await provider.search(request);
+    expect(search).toHaveBeenCalledWith(
+      request.query,
+      expect.objectContaining({ maxResults: 1 }),
+    );
+    expect(cleanup).toHaveBeenCalledTimes(2);
+    expect(search.mock.instances[0]).not.toBe(search.mock.instances[1]);
+  });
+
+  it("releases the browser pool when collection fails", async () => {
+    vi.spyOn(ScraperEngine.prototype, "search").mockRejectedValue(
+      new Error("timeout"),
+    );
+    const cleanup = vi.spyOn(ScraperEngine.prototype, "cleanup");
+    await expect(
+      new GoogleMapsScraperProvider().search(baseRequest),
+    ).rejects.toThrow("timeout");
+    expect(cleanup).toHaveBeenCalledOnce();
+  });
   it("has correct id and capabilities", () => {
     const provider = new GoogleMapsScraperProvider();
 

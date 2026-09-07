@@ -43,12 +43,14 @@ export class GoogleMapsScraperProvider implements PlaceProvider {
   readonly name = "Google Maps (Scraper)";
   readonly capabilities = googleMapsScraperCapabilities;
 
-  private readonly engine: ScraperEngine;
+  private readonly engineOptions: ConstructorParameters<
+    typeof ScraperEngine
+  >[0];
   private readonly now: () => Date;
   private readonly maxResults: number;
 
   constructor(options: GoogleMapsScraperProviderOptions = {}) {
-    this.engine = new ScraperEngine({
+    this.engineOptions = {
       timeoutMilliseconds: options.timeoutMilliseconds,
       maxDepth: options.maxDepth,
       langCode: options.langCode,
@@ -61,7 +63,7 @@ export class GoogleMapsScraperProvider implements PlaceProvider {
       concurrency: options.concurrency,
       poolSize: options.poolSize,
       maxPagesPerBrowser: options.maxPagesPerBrowser,
-    });
+    };
     this.now = options.now ?? (() => new Date());
     this.maxResults = boundedResearchResults(
       options.maxResults ?? 250,
@@ -88,12 +90,13 @@ export class GoogleMapsScraperProvider implements PlaceProvider {
       });
     }
 
+    const engine = new ScraperEngine(this.engineOptions);
     try {
       const maxResults = boundedResearchResults(
         request.maxResults,
         this.maxResults,
       );
-      const result = await this.engine.search(request.query, {
+      const result = await engine.search(request.query, {
         latitude: request.latitude,
         longitude: request.longitude,
         zoom: this.zoomFromRadius(request.radiusMeters),
@@ -141,7 +144,7 @@ export class GoogleMapsScraperProvider implements PlaceProvider {
         cause: error,
       });
     } finally {
-      await this.engine.cleanup();
+      await engine.cleanup();
     }
   }
 
