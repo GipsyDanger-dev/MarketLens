@@ -250,7 +250,9 @@ export function MapRadiusPicker({
     which: "center" | "edge",
     event: KeyboardEvent<HTMLButtonElement>,
   ) {
-    if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) {
+    if (
+      !["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)
+    ) {
       return;
     }
     event.preventDefault();
@@ -260,10 +262,18 @@ export function MapRadiusPicker({
       const [currentLng, currentLat] = stateRef.current.center;
       const nextLat =
         currentLat +
-        (event.key === "ArrowUp" ? coordinateStep : event.key === "ArrowDown" ? -coordinateStep : 0);
+        (event.key === "ArrowUp"
+          ? coordinateStep
+          : event.key === "ArrowDown"
+            ? -coordinateStep
+            : 0);
       const nextLng =
         currentLng +
-        (event.key === "ArrowRight" ? coordinateStep : event.key === "ArrowLeft" ? -coordinateStep : 0);
+        (event.key === "ArrowRight"
+          ? coordinateStep
+          : event.key === "ArrowLeft"
+            ? -coordinateStep
+            : 0);
       stateRef.current.center = [nextLng, nextLat];
       setLatitude(Math.round(nextLat * 1e6) / 1e6);
       setLongitude(Math.round(nextLng * 1e6) / 1e6);
@@ -319,7 +329,11 @@ export function MapRadiusPicker({
         ) : null}
 
         <div className="pointer-events-none absolute top-3 left-3 z-30 flex items-center gap-2 rounded-md border border-white/80 bg-[rgb(255_255_255/0.9)] px-3 py-2 shadow-[0_8px_24px_rgb(11_18_32/0.14)] backdrop-blur-md">
-          <LocateFixed aria-hidden="true" className="text-[var(--accent)]" size={15} />
+          <LocateFixed
+            aria-hidden="true"
+            className="text-[var(--accent)]"
+            size={15}
+          />
           <span className="font-mono text-[0.63rem] font-bold tracking-[0.08em] text-[var(--ink)] uppercase">
             Live boundary editor
           </span>
@@ -439,12 +453,24 @@ export function MapRadiusPicker({
 
       <div className="mt-3 grid gap-3 rounded-md border border-[var(--rule)] bg-[var(--paper-subtle)] px-4 py-3 text-xs text-[var(--ink-soft)] sm:grid-cols-[1fr_auto_auto] sm:items-center">
         <span className="flex items-center gap-2">
-          <LocateFixed aria-hidden="true" className="text-[var(--accent)]" size={15} />
-          Center <strong className="font-mono text-[var(--ink)]">{latitude.toFixed(4)}, {longitude.toFixed(4)}</strong>
+          <LocateFixed
+            aria-hidden="true"
+            className="text-[var(--accent)]"
+            size={15}
+          />
+          Center{" "}
+          <strong className="font-mono text-[var(--ink)]">
+            {latitude.toFixed(4)}, {longitude.toFixed(4)}
+          </strong>
         </span>
         <span className="flex items-center gap-2">
-          <CircleDot aria-hidden="true" className="text-[var(--copper)]" size={15} />
-          Radius <strong className="font-mono text-[var(--ink)]">{radiusKm} km</strong>
+          <CircleDot
+            aria-hidden="true"
+            className="text-[var(--copper)]"
+            size={15}
+          />
+          Radius{" "}
+          <strong className="font-mono text-[var(--ink)]">{radiusKm} km</strong>
         </span>
         <span className="flex items-center gap-2 text-[var(--ink-faint)]">
           <MousePointer2 aria-hidden="true" size={14} />
