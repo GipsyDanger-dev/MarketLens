@@ -27,7 +27,9 @@ describe("access control", () => {
 
   it("reads the token only from the named cookie", () => {
     const request = new Request("http://localhost/api/research", {
-      headers: { cookie: "unrelated=value; marketlens_access=test-access-token" },
+      headers: {
+        cookie: "unrelated=value; marketlens_access=test-access-token",
+      },
     });
     expect(requestHasAccess(request, privateEnvironment)).toBe(true);
   });

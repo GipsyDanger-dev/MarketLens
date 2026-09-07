@@ -33,7 +33,10 @@ export function SiteHeader({ tone = "light" }: { tone?: "light" | "dark" }) {
           </span>
         </Link>
 
-        <nav aria-label="Primary navigation" className="flex items-center gap-1.5">
+        <nav
+          aria-label="Primary navigation"
+          className="flex items-center gap-1.5"
+        >
           <a
             className={`hidden min-h-11 items-center gap-1.5 rounded-md px-3 text-sm font-semibold transition-colors sm:inline-flex ${
               dark

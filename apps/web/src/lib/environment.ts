@@ -22,86 +22,90 @@ const urlListFromEnvironment = z
   )
   .pipe(z.array(z.url()));
 
-export const serverEnvironmentSchema = z.object({
-  DATABASE_URL: z.url(),
-  DEFAULT_PLACE_PROVIDER: z.string().min(1).default("openstreetmap"),
-  GOOGLE_MAPS_API_KEY: optionalSecret,
-  ENABLE_AI: booleanFromEnvironment,
-  DEFAULT_AI_PROVIDER: z.literal("gemini").default("gemini"),
-  GEMINI_API_KEY: optionalSecret,
-  AI_TIMEOUT_MILLISECONDS: z.coerce
-    .number()
-    .int()
-    .positive()
-    .max(60_000)
-    .default(20_000),
-  AI_MAX_RETRIES: z.coerce.number().int().min(0).max(3).default(1),
-  ENABLE_AUTH: booleanFromEnvironment,
-  MARKETLENS_ACCESS_TOKEN: optionalSecret,
-  OVERPASS_API_URL: z.url().default("https://overpass-api.de/api/interpreter"),
-  OVERPASS_FALLBACK_URLS: urlListFromEnvironment,
-  OVERPASS_TIMEOUT_SECONDS: z.coerce
-    .number()
-    .int()
-    .positive()
-    .max(60)
-    .default(25),
-  OVERPASS_MAX_RETRIES: z.coerce.number().int().min(0).max(3).default(1),
-  OVERPASS_RETRY_DELAY_MILLISECONDS: z.coerce
-    .number()
-    .int()
-    .min(100)
-    .max(10_000)
-    .default(750),
-  MAX_RESEARCH_RESULTS: z.coerce
-    .number()
-    .int()
-    .positive()
-    .max(1_000)
-    .default(250),
-  SCRAPER_TIMEOUT_MILLISECONDS: z.coerce
-    .number()
-    .int()
-    .positive()
-    .max(120_000)
-    .default(30_000),
-  SCRAPER_MAX_DEPTH: z.coerce.number().int().min(1).max(50).default(10),
-  SCRAPER_LANG_CODE: z.string().min(2).max(5).default("en"),
-  SCRAPER_EXTRACT_EMAILS: booleanFromEnvironment,
-  SCRAPER_EXTRACT_EXTRA_REVIEWS: booleanFromEnvironment,
-  SCRAPER_PROXY_URL: z
-    .string()
-    .trim()
-    .transform((value) => value || undefined)
-    .pipe(z.string().min(1).optional()),
-  SCRAPER_PROXY_LIST: z
-    .string()
-    .default("")
-    .transform((value) =>
-      value
-        .split(",")
-        .map((proxy) => proxy.trim())
-        .filter(Boolean),
-    ),
-  SCRAPER_PROXY_ROTATION: booleanFromEnvironment,
-  SCRAPER_CONCURRENCY: z.coerce.number().int().min(1).max(20).default(5),
-  SCRAPER_POOL_SIZE: z.coerce.number().int().min(1).max(10).default(2),
-  SCRAPER_MAX_PAGES_PER_BROWSER: z.coerce
-    .number()
-    .int()
-    .min(1)
-    .max(20)
-    .default(5),
-}).superRefine((environment, context) => {
-  if (environment.ENABLE_AUTH && !environment.MARKETLENS_ACCESS_TOKEN) {
-    context.addIssue({
-      code: "custom",
-      message:
-        "MARKETLENS_ACCESS_TOKEN is required when ENABLE_AUTH is enabled.",
-      path: ["MARKETLENS_ACCESS_TOKEN"],
-    });
-  }
-});
+export const serverEnvironmentSchema = z
+  .object({
+    DATABASE_URL: z.url(),
+    DEFAULT_PLACE_PROVIDER: z.string().min(1).default("openstreetmap"),
+    GOOGLE_MAPS_API_KEY: optionalSecret,
+    ENABLE_AI: booleanFromEnvironment,
+    DEFAULT_AI_PROVIDER: z.literal("gemini").default("gemini"),
+    GEMINI_API_KEY: optionalSecret,
+    AI_TIMEOUT_MILLISECONDS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .max(60_000)
+      .default(20_000),
+    AI_MAX_RETRIES: z.coerce.number().int().min(0).max(3).default(1),
+    ENABLE_AUTH: booleanFromEnvironment,
+    MARKETLENS_ACCESS_TOKEN: optionalSecret,
+    OVERPASS_API_URL: z
+      .url()
+      .default("https://overpass-api.de/api/interpreter"),
+    OVERPASS_FALLBACK_URLS: urlListFromEnvironment,
+    OVERPASS_TIMEOUT_SECONDS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .max(60)
+      .default(25),
+    OVERPASS_MAX_RETRIES: z.coerce.number().int().min(0).max(3).default(1),
+    OVERPASS_RETRY_DELAY_MILLISECONDS: z.coerce
+      .number()
+      .int()
+      .min(100)
+      .max(10_000)
+      .default(750),
+    MAX_RESEARCH_RESULTS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .max(1_000)
+      .default(250),
+    SCRAPER_TIMEOUT_MILLISECONDS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .max(120_000)
+      .default(30_000),
+    SCRAPER_MAX_DEPTH: z.coerce.number().int().min(1).max(50).default(10),
+    SCRAPER_LANG_CODE: z.string().min(2).max(5).default("en"),
+    SCRAPER_EXTRACT_EMAILS: booleanFromEnvironment,
+    SCRAPER_EXTRACT_EXTRA_REVIEWS: booleanFromEnvironment,
+    SCRAPER_PROXY_URL: z
+      .string()
+      .trim()
+      .transform((value) => value || undefined)
+      .pipe(z.string().min(1).optional()),
+    SCRAPER_PROXY_LIST: z
+      .string()
+      .default("")
+      .transform((value) =>
+        value
+          .split(",")
+          .map((proxy) => proxy.trim())
+          .filter(Boolean),
+      ),
+    SCRAPER_PROXY_ROTATION: booleanFromEnvironment,
+    SCRAPER_CONCURRENCY: z.coerce.number().int().min(1).max(20).default(5),
+    SCRAPER_POOL_SIZE: z.coerce.number().int().min(1).max(10).default(2),
+    SCRAPER_MAX_PAGES_PER_BROWSER: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(20)
+      .default(5),
+  })
+  .superRefine((environment, context) => {
+    if (environment.ENABLE_AUTH && !environment.MARKETLENS_ACCESS_TOKEN) {
+      context.addIssue({
+        code: "custom",
+        message:
+          "MARKETLENS_ACCESS_TOKEN is required when ENABLE_AUTH is enabled.",
+        path: ["MARKETLENS_ACCESS_TOKEN"],
+      });
+    }
+  });
 
 export type ServerEnvironment = z.infer<typeof serverEnvironmentSchema>;
 
