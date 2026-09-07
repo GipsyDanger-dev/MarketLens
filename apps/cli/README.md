@@ -1,7 +1,7 @@
 # MarketLens CLI
 
 The MarketLens CLI creates and runs a secure local MarketLens installation.
-It requires Node.js 22+. Docker Desktop is optional and only used when you
+It requires Node.js 24+, npm 11+, and Git. Docker Desktop is optional and only used when you
 select the advanced Docker runtime.
 
 ```bash
@@ -29,12 +29,22 @@ server-side keys directly to the generated local `.env` file. Use
 To update the cloned runtime used by an existing global installation, run:
 
 ```bash
+npm install --global @gipsydanger-dev/marketlens@latest
+marketlens down
 marketlens update
 marketlens up
 ```
 
 `update` performs a fast-forward-only pull for the CLI-managed runtime; it does
 not alter local research data or the generated `.env` file.
+On start the CLI installs updated locked dependencies, generates the database
+client, migrates local storage, and builds the web application. Allow several
+minutes and an internet connection for the first start.
+
+The experimental Google Maps browser adapter requires Playwright Chromium;
+see the [browser collection guide](https://github.com/GipsyDanger-dev/MarketLens/blob/main/docs/google-maps-scraper.md).
+The implemented optional web AI adapter is Gemini; other CLI AI configuration
+names are reserved for future adapters.
 
 The CLI writes its configuration and generated local PostgreSQL password to the
 current working directory. It binds services to localhost and does not enable
@@ -54,3 +64,8 @@ npm publish --workspace=@gipsydanger-dev/marketlens
 ```
 
 Publishing requires an npm account authorized for the `gipsydanger-dev` scope.
+
+## License
+
+Original MarketLens code is available under Apache-2.0 or MIT, at your option.
+Both `LICENSE` and `LICENSE-MIT` are included in this package.

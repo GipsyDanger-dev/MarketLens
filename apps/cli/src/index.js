@@ -3,6 +3,7 @@
 import { defaultConfig } from "./config.js";
 import { createMarketLensCli } from "./marketlens-cli.js";
 import { runTui } from "./tui.js";
+import packageMetadata from "../package.json" with { type: "json" };
 
 const HELP = `MarketLens local-first CLI
 
@@ -185,7 +186,7 @@ function formatStatus(status) {
     }`,
     `Provider     ${config.provider}`,
     `AI           ${config.ai.enabled ? config.ai.provider : "Disabled"}`,
-    `Version      1.3.1`,
+    `Version      ${packageMetadata.version}`,
     `URL          http://${config.web.host}:${config.web.port}`,
   ].join("\n");
 }

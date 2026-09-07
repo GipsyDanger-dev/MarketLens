@@ -3,7 +3,8 @@ import { readFile, writeFile } from "node:fs/promises";
 
 import { defaultConfig, getLocalPaths } from "./config.js";
 
-const VERSION = "1.3.1";
+import packageMetadata from "../package.json" with { type: "json" };
+const VERSION = packageMetadata.version;
 
 export const TUI_ACTIONS = Object.freeze({
   1: "initialize",
