@@ -41,9 +41,7 @@ test("keeps every ready-research tool usable inside the results workspace", asyn
           competitionScore: 0.68,
           densityScore: 0.07,
           metricJson: {
-            ratingDistribution: [
-              { label: "4-5", count: 2 },
-            ],
+            ratingDistribution: [{ label: "4-5", count: 2 }],
             reviewDistribution: [
               { label: "10-99", count: 1 },
               { label: "100-999", count: 1 },
@@ -136,7 +134,9 @@ test("keeps every ready-research tool usable inside the results workspace", asyn
   await expect(
     page.getByRole("heading", { name: "Business directory" }),
   ).toBeVisible();
-  await expect(page.getByText("2 shown from 2 collected records")).toBeVisible();
+  await expect(
+    page.getByText("2 shown from 2 collected records"),
+  ).toBeVisible();
 
   await page.getByRole("tab", { name: "Map", exact: true }).click();
   await expect(page.locator("button.maplibregl-marker")).toHaveCount(2, {

@@ -113,7 +113,10 @@ test("update fast-forwards only the CLI-managed runtime", async (t) => {
     "runtime",
   );
   await mkdir(runtimeDirectory, { recursive: true });
-  await writeFile(join(runtimeDirectory, "docker-compose.yml"), "services: {}\n");
+  await writeFile(
+    join(runtimeDirectory, "docker-compose.yml"),
+    "services: {}\n",
+  );
 
   const invocations = [];
   const cli = createMarketLensCli({

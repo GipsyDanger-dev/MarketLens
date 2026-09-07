@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 
-test("presents a responsive private-workspace access gate", async ({ page }) => {
+test("presents a responsive private-workspace access gate", async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/access?next=/research/new");
 
