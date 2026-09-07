@@ -34,16 +34,25 @@ export default function ResearchError({
               <AlertTriangle aria-hidden="true" size={23} strokeWidth={1.8} />
             </span>
             <div className="mt-16">
-              <p className="font-mono text-[0.65rem] font-bold tracking-[0.13em] text-[#f29a8f] uppercase">Research interruption</p>
-              <p className="type-display mt-4 text-6xl leading-none tracking-[-0.055em] text-white">The view stopped. The record did not.</p>
+              <p className="font-mono text-[0.65rem] font-bold tracking-[0.13em] text-[#f29a8f] uppercase">
+                Research interruption
+              </p>
+              <p className="type-display mt-4 text-6xl leading-none tracking-[-0.055em] text-white">
+                The view stopped. The record did not.
+              </p>
             </div>
           </div>
 
           <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-14">
             <div className="flex items-start gap-3 rounded-md border border-[var(--accent-line)] bg-[var(--accent-soft)] p-4">
-              <Database aria-hidden="true" className="mt-0.5 shrink-0 text-[var(--accent)]" size={18} />
+              <Database
+                aria-hidden="true"
+                className="mt-0.5 shrink-0 text-[var(--accent)]"
+                size={18}
+              />
               <p className="text-sm leading-6 text-[var(--ink-soft)]">
-                Persisted collection data is stored separately from this interface error.
+                Persisted collection data is stored separately from this
+                interface error.
               </p>
             </div>
             <p className="eyebrow mt-8">Recovery options</p>
@@ -51,7 +60,8 @@ export default function ResearchError({
               This research could not be displayed.
             </h1>
             <p className="mt-5 max-w-xl text-sm leading-6 text-[var(--ink-soft)]">
-              Retry the page first. If the problem continues, start a new field study and use the reference below when checking server logs.
+              Retry the page first. If the problem continues, start a new field
+              study and use the reference below when checking server logs.
             </p>
 
             {error.digest ? (
@@ -62,10 +72,15 @@ export default function ResearchError({
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button onClick={reset} size="lg">
-                <RefreshCw aria-hidden="true" size={16} />Retry research
+                <RefreshCw aria-hidden="true" size={16} />
+                Retry research
               </Button>
-              <Link className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-[var(--rule-strong)] bg-white px-5 text-sm font-bold text-[var(--ink)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]" href="/research/new">
-                <ArrowLeft aria-hidden="true" size={16} />New field study
+              <Link
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-[var(--rule-strong)] bg-white px-5 text-sm font-bold text-[var(--ink)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                href="/research/new"
+              >
+                <ArrowLeft aria-hidden="true" size={16} />
+                New field study
               </Link>
             </div>
           </div>

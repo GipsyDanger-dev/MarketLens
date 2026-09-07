@@ -79,8 +79,8 @@ export default function Home() {
               Read the ground before you make a move.
             </h1>
             <p className="mt-8 max-w-xl text-lg leading-8 text-[#bdc8db] sm:text-xl">
-              Collect local business data, see the competitive pattern, and
-              keep every market conclusion tied to evidence.
+              Collect local business data, see the competitive pattern, and keep
+              every market conclusion tied to evidence.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
@@ -108,7 +108,11 @@ export default function Home() {
                 "MIT licensed",
               ].map((item) => (
                 <li className="flex items-center gap-2" key={item}>
-                  <Check aria-hidden="true" size={15} className="text-[#8fa8ff]" />
+                  <Check
+                    aria-hidden="true"
+                    size={15}
+                    className="text-[#8fa8ff]"
+                  />
                   {item}
                 </li>
               ))}
@@ -231,7 +235,11 @@ export default function Home() {
       <footer className="bg-[var(--graphite)] text-[#aeb9cc]">
         <div className="workspace-frame flex flex-col gap-5 border-t border-white/10 py-8 text-sm sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <ShieldCheck aria-hidden="true" size={17} className="text-[#8fa8ff]" />
+            <ShieldCheck
+              aria-hidden="true"
+              size={17}
+              className="text-[#8fa8ff]"
+            />
             <p>MarketLens · MIT License · Local intelligence in the open.</p>
           </div>
           <a
@@ -261,7 +269,10 @@ function MarketPreview() {
       aria-label="Example MarketLens research workspace"
       className="enter-reveal-delay relative lg:pl-4"
     >
-      <div className="absolute -inset-6 bg-[#315ef5]/12 blur-3xl" aria-hidden="true" />
+      <div
+        className="absolute -inset-6 bg-[#315ef5]/12 blur-3xl"
+        aria-hidden="true"
+      />
       <div className="relative overflow-hidden rounded-[1.125rem] border border-white/16 bg-[#f8faff] text-[var(--ink)] shadow-[var(--shadow-lg)]">
         <div className="flex min-h-12 items-center justify-between border-b border-[#dbe1ec] bg-white px-4">
           <div className="flex items-center gap-2">
@@ -326,7 +337,11 @@ function MarketPreview() {
               <PreviewMetric label="Density" value="0.61/km²" />
             </dl>
             <p className="mt-5 flex gap-2 text-xs leading-5 text-[var(--ink-soft)]">
-              <Database aria-hidden="true" className="mt-0.5 shrink-0 text-[var(--copper)]" size={14} />
+              <Database
+                aria-hidden="true"
+                className="mt-0.5 shrink-0 text-[var(--copper)]"
+                size={14}
+              />
               Central activity is high. Two western pockets remain lightly
               served.
             </p>

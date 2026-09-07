@@ -130,8 +130,7 @@ select:disabled {
   min-height: 100svh;
   background:
     linear-gradient(90deg, rgb(49 94 245 / 0.025) 1px, transparent 1px),
-    linear-gradient(rgb(49 94 245 / 0.025) 1px, transparent 1px),
-    var(--canvas);
+    linear-gradient(rgb(49 94 245 / 0.025) 1px, transparent 1px), var(--canvas);
   background-size: 40px 40px;
   color: var(--ink);
 }
@@ -273,7 +272,11 @@ select:disabled {
     linear-gradient(90deg, rgb(143 168 255 / 0.055) 1px, transparent 1px),
     linear-gradient(rgb(143 168 255 / 0.055) 1px, transparent 1px),
     var(--graphite);
-  background-size: auto, 56px 56px, 56px 56px, auto;
+  background-size:
+    auto,
+    56px 56px,
+    56px 56px,
+    auto;
 }
 
 .fine-scrollbar {
