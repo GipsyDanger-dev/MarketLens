@@ -28,6 +28,14 @@
     "npm": ">=11.0.0"
   },
   "packageManager": "npm@11.17.0",
+  "overrides": {
+    "@prisma/config": {
+      "deepmerge-ts": "8.0.2"
+    },
+    "prisma": {
+      "mysql2": "3.24.3"
+    }
+  },
   "devDependencies": {
     "dotenv": "^17.3.1",
     "prettier": "^3.8.3",
