@@ -1,6 +1,7 @@
 import { ResearchCreationForm } from "@/components/research/research-creation-form";
 import { SiteHeader } from "@/components/site-header";
 import { createProviderRegistry } from "@/providers";
+import { parseServerEnvironment } from "@/lib/environment";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,10 @@ export default function NewResearchPage() {
     <main className="app-shell min-h-screen bg-[var(--paper-subtle)]">
       <SiteHeader />
       <div className="workspace-frame py-7 sm:py-10 lg:py-12">
-        <ResearchCreationForm providers={providers} />
+        <ResearchCreationForm
+          providers={providers}
+          resultLimit={parseServerEnvironment(process.env).MAX_RESEARCH_RESULTS}
+        />
       </div>
     </main>
   );

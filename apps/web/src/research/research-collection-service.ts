@@ -1,5 +1,8 @@
 import "server-only";
 
+import { boundedResearchResults } from "../core/research-project";
+import { parseServerEnvironment } from "../lib/environment";
+
 import {
   completeResearchCollection,
   failResearchCollection,
@@ -38,16 +41,22 @@ export async function runResearchCollection(
     });
 
     const provider = registry.get(project.providerId);
+    const maxResults = boundedResearchResults(
+      project.maxResults,
+      parseServerEnvironment(process.env).MAX_RESEARCH_RESULTS,
+    );
     const response = await provider.search({
       query: project.query,
       category: project.category ?? undefined,
       latitude: project.latitude,
       longitude: project.longitude,
       radiusMeters: project.radiusMeters,
-      maxResults: project.maxResults,
+      maxResults,
       scrollDepth: project.scrollDepth,
     });
-    totalDiscovered = response.places.length;
+    // Enforce the budget even for third-party adapters and older projects.
+    const candidates = response.places.slice(0, maxResults);
+    totalDiscovered = candidates.length;
 
     await updateResearchCollectionStage({
       projectId,
@@ -58,7 +67,7 @@ export async function runResearchCollection(
       totalFailed,
     });
 
-    for (const candidate of response.places) {
+    for (const candidate of candidates) {
       try {
         const place = candidateToPersistablePlace(candidate);
 
